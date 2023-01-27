@@ -19,9 +19,9 @@ Guide til oppsett:
 10. Kjør: pip install -r requirements.txt (ikke tenk på dette steget om du har forket repoet)
 11. Gå tilbake til vs code og lag en fil som heter .env i samme mappe som du finner demo.py (ngisopenapi)
 12. Lim inn dette i .env filen du har laget: 
-NGISAPI_URL=https://openapi-test.kartverket.no/v1
-NGISAPI_USER=AI_test
-NGISAPI_PASS=KjedeligIdiotReiser
-13. Husk å lagre etter du har limt inn teksten over
+    NGISAPI_URL=
+    NGISAPI_USER=
+    NGISAPI_PASS=
+13. Skriv inn URL for databasen og innlogging i sine respektive plasser (Husk å lagre etter du har limt inn teksten over).
 14. Gå tilbake til git bash og kjør koden: python demo.py
 15. Voila
