@@ -9,10 +9,10 @@ def transfer_geojson(fname):
     cur = None
     try:
         conn = psycopg2.connect(
-            host="postgresql-dev-kartai.postgres.database.azure.com",
-            database="kartai_bachelor_2023",
-            user="kartai_bachelor_2023@postgresql-dev-kartai",
-            password="Io4$7M1e"
+            host=os.getenv('db_host'),
+            database=os.getenv('db_name'),
+            user=os.getenv('db_user'),
+            password=os.getenv('db_pass')
         )
 
         cur = conn.cursor()
