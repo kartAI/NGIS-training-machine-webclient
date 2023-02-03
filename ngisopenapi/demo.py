@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import json 
+import uuid
+import transfer
+
 
 from api import NgisOpenApi
 
@@ -15,7 +18,7 @@ def get_api():
 
 
 def save_json(data, filename):
-    file_path = "C:\\Users\\T490\\Documents\\" + filename
+    file_path = "C:\\temp\\" + filename
     f = open(file_path, "w")
     f.write(json.dumps(data))
     f.close()
@@ -37,11 +40,13 @@ def main() -> int:
     
     print("Get features")
     bbox = "584080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
-    filename = "buildings1.geojson"
+    filename = str(uuid.uuid4())
     res = api.get_features(dataset_id, bbox, "Bygning")
     print(f'Got {len(res["features"])} features. Saving to {filename}')
     save_json(res, filename)
     
+    transfer.transfer_geojson(filename)
+
     return 0
 
 if __name__ == '__main__':
