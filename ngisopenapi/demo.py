@@ -27,10 +27,10 @@ def main() -> int:
 
     dataset_id = '63cb2b40-1461-4a9a-90c1-446ef0ee42f4'
 
-    
+    '''
     print("Get datasets")
     print(api.get_datasets())
-    
+    '''
 
     '''
     print("Get dataset")
@@ -40,7 +40,7 @@ def main() -> int:
     
     print("Get features")
     bbox = "584080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
-    filename = str(uuid.uuid4())
+    filename = str(uuid.uuid4()) + ".geojson"
     res = api.get_features(dataset_id, bbox, "Bygning")
     print(f'Got {len(res["features"])} features. Saving to {filename}')
     save_json(res, filename)
