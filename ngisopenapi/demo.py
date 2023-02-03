@@ -18,7 +18,7 @@ def get_api():
 
 
 def save_json(data, filename):
-    file_path = "C:\\temp\\" + filename
+    file_path = os.getenv('f_path') + filename
     f = open(file_path, "w")
     f.write(json.dumps(data))
     f.close()
