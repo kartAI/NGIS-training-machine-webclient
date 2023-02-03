@@ -21,7 +21,7 @@ def transfer_geojson(fname):
         row_count_before = cur.fetchone()[0]
 
         # Open the GeoJSON file
-        with open("C:\\temp\\" + fname) as f:
+        with open(os.getenv('f_path') + fname) as f:
             geojson = json.load(f)
 
         # Loop over the features in the GeoJSON
@@ -60,7 +60,7 @@ def transfer_geojson(fname):
     # Check if the file was transferred correctly and delete it if so
     try:
         print("Deleting the geojson file...")
-        os.remove("C:\\temp\\" + fname)
+        os.remove(os.getenv('f_path') + fname)
     except Exception as e:
         print(f"An error occurred while deleting the file: {e}")
     print("Done")
