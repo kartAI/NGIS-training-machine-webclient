@@ -23,5 +23,10 @@ Guide til oppsett:
     NGISAPI_USER=
     NGISAPI_PASS=
 13. Skriv inn URL for databasen og innlogging i sine respektive plasser (Husk å lagre etter du har limt inn teksten over).
-14. Gå tilbake til git bash og kjør koden: python demo.py
-15. Voila
+14. Gå inn i filen "demo.py"
+15. Endre file_path til ønsket plassering av geojson filen som blir opprettet.
+16. Kjør kode i git-bash/terminal: pip install psycopg2
+17. Gå i transfer.py
+18. Legg til filepath i koden som åpner geoJSON filen og i koden som sletter geoJSON filen.
+18. Gå tilbake til git bash og kjør koden: python demo.py
+19. Voila
