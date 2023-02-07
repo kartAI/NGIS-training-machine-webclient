@@ -22,6 +22,7 @@ def save_json(data, filename):
     f = open(file_path, "w")
     f.write(json.dumps(data))
     f.close()
+
 def main() -> int:
     api = get_api()
 
@@ -39,14 +40,20 @@ def main() -> int:
 
     
     print("Get features")
-    bbox = "584080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
+    bbox = "437756.2840227, 6457207.022491,438044.71753695, 6457391.3724821"
+    #229000, 759000 / 6398000, 7265000
     filename = str(uuid.uuid4()) + ".geojson"
-    res = api.get_features(dataset_id, bbox, "Bygning")
+    res = api.get_features(dataset_id, bbox) #, "Mønelinje"
     print(f'Got {len(res["features"])} features. Saving to {filename}')
+    '''
+    for f in res["features"]:
+        print(f["properties"]["featuretype"])
+    '''
+    
     save_json(res, filename)
     
     transfer.transfer_geojson(filename)
-
+    
     return 0
 
 if __name__ == '__main__':
