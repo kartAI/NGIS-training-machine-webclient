@@ -28,20 +28,20 @@ def main() -> int:
 
     dataset_id = '63cb2b40-1461-4a9a-90c1-446ef0ee42f4'
 
-    '''
-    print("Get datasets")
-    print(api.get_datasets())
-    '''
+    
+    #print("Get datasets")
+    #print(api.get_datasets())
+    
 
-    '''
-    print("Get dataset")
-    print(api.get_dataset_info(dataset_id))
-    '''
+    
+    #print("Get dataset")
+    #print(api.get_dataset_info(dataset_id))
+    
 
     
     print("Get features")
-    bbox = "437756.2840227, 6457207.022491,438044.71753695, 6457391.3724821"
-    #229000, 759000 / 6398000, 7265000
+    bbox = "594080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
+    #bbox_dataset = "229000,759000,6398000,7265000"
     filename = str(uuid.uuid4()) + ".geojson"
     res = api.get_features(dataset_id, bbox) #, "Mønelinje"
     print(f'Got {len(res["features"])} features. Saving to {filename}')
