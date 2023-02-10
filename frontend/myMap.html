@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <!-- Google Icons CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <style>
+        /*Custom styles for the menu*/
+        #menu {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 25%;
+            overflow-y: scroll;
+            padding: 0.5rem;
+        }
+
+        /*Custom styles for buttons*/
+        .btn {
+            background-color: DodgerBlue;
+            color: white;
+        }
+
+        /*Custom styles for buttons*/
+        #icon-btn {
+            margin-left: 2px;
+            margin-right: 2px;
+
+        }
+
+        .card {
+            border: 1px solid gray;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px gray;
+
+
+        }
+
+        .cards {
+            padding: 20px;
+        }
+
+        .card-header {
+            display: flex;
+        }
+
+        .card-btns {
+            text-align: end;
+        }
+
+        /*Custom styles for the map*/
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 25%;
+            align-self: self-end;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main container spanning the screen -->
+    <div class="container-fluid">
+
+        <!-- Left container for vertical scrolling content -->
+        <div id="menu">
+
+            <!-- Headline -->
+            <h1 class="m-3">Polygoner</h1>
+
+            <!-- Cards -->
+            <div class="cards mb-3">
+
+                <div class="card row">
+                    <div class="card-header col">
+                        <p class="col">Card Header</p>
+                        <div class="buttons">
+                            <button class="btn">Button 1</button>
+                            <button class="btn">Button 2</button>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><b>P1:</b>&ensp;6.28418, 60.871661</li>
+                        <li class="list-group-item"><b>P2:</b>&ensp;6.28418, 60.871661</li>
+                        <li class="list-group-item"><b>P3:</b>&ensp;6.28418, 60.871661</li>
+                        <li class="list-group-item"><b>P4:</b>&ensp;6.28418, 60.871661</li>
+                        <li class="list-group-item"><b>P5:</b>&ensp;6.28418, 60.871661</li>
+                        <li class="list-group-item"><b>P6:</b>&ensp;6.28418, 60.871661</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right container for map-->
+        <div id="map"></div>
+    </div>
+
+
+</html>
+<!-- Leaflet js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+
+<!-- Leaflet draw plugin-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+
+<script>
+
+    //map initialization
+    var map = L.map('map').setView([60.4720, 8.4689], 8);
+
+    //Add OpenStreetMap Tiles
+    var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=gBHYqk3cSCXUdQqICyH3', {
+        attribution: '<a href=" https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a><a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
+    }).addTo(map);
+
+
+    //marker
+    var singleMarker = L.marker([60.4720, 8.4689], {
+        radius: 400, draggable: true
+    });
+    var popup = singleMarker.bindPopup('Popup text' + singleMarker.getLatLng()).openPopup();
+
+
+    //markercoordinates to GeoJSON
+    console.log(singleMarker.toGeoJSON());
+
+    //leaflet draw
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    //adds drawcontrols
+    var drawControl = new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems,
+            remove: false
+        }
+    });
+    map.addControl(drawControl);
+
+
+    map.on("draw:created", function (e) {
+        var type = e.layerType;
+        var layer = e.layer;
+        console.log(layer.toGeoJSON());
+
+        layer.bindPopup(`<p>${JSON.stringify(layer.toGeoJSON())}</p>`)
+        drawnItems.addLayer(layer);
+    }
+    );
+
+</script>
