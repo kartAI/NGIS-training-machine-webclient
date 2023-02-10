@@ -93,6 +93,7 @@
                         <li class="list-group-item"><b>P4:</b>&ensp;6.28418, 60.871661</li>
                         <li class="list-group-item"><b>P5:</b>&ensp;6.28418, 60.871661</li>
                         <li class="list-group-item"><b>P6:</b>&ensp;6.28418, 60.871661</li>
+                        <h1>"Coordinates test: " <span id="coord"></span></h1>
                     </ul>
                 </div>
             </div>
@@ -102,7 +103,7 @@
         <div id="map"></div>
     </div>
 
-
+</body>
 </html>
 <!-- Leaflet js -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -155,6 +156,15 @@
         var type = e.layerType;
         var layer = e.layer;
         console.log(layer.toGeoJSON());
+
+        
+        //Her er det, bruker den siste linjen i denne if statement til å printe ut i html lenger oppe
+        if (type === 'polyline') {
+        var line = layer.getLatLngs();
+        lineCoordinates = line;
+        console.log(lineCoordinates);
+        document.getElementById("coord").innerHTML = line;
+        }
 
         layer.bindPopup(`<p>${JSON.stringify(layer.toGeoJSON())}</p>`)
         drawnItems.addLayer(layer);
