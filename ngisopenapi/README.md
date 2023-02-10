@@ -22,6 +22,14 @@ Guide til oppsett:
     NGISAPI_URL=
     NGISAPI_USER=
     NGISAPI_PASS=
+
+    db_host=
+    db_name=
+    db_user=
+    db_pass=
+
 13. Skriv inn URL for databasen og innlogging i sine respektive plasser (Husk å lagre etter du har limt inn teksten over).
-14. Gå tilbake til git bash og kjør koden: python demo.py
-15. Voila
+14. Mens du er i .env filen må du legge til "f_path=" også lime inn pathen til hvor du ønsker geojson filen til å bli lagret midlertidig.(husk at du må bruke \\ i mellom vær mappe.) eks C:\Windows\Temp\ = C:\\Windows\\Temp\\
+15. Kjør kode i git-bash/terminal: pip install psycopg2
+16. Gå tilbake til git bash og kjør koden: python demo.py
+17. Voila
