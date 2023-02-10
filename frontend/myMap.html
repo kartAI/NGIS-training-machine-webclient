@@ -87,13 +87,10 @@
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><b>P1:</b>&ensp;6.28418, 60.871661</li>
-                        <li class="list-group-item"><b>P2:</b>&ensp;6.28418, 60.871661</li>
-                        <li class="list-group-item"><b>P3:</b>&ensp;6.28418, 60.871661</li>
-                        <li class="list-group-item"><b>P4:</b>&ensp;6.28418, 60.871661</li>
-                        <li class="list-group-item"><b>P5:</b>&ensp;6.28418, 60.871661</li>
-                        <li class="list-group-item"><b>P6:</b>&ensp;6.28418, 60.871661</li>
-                        <h1>"Coordinates test: " <span id="coord"></span></h1>
+                        <li class="list-group-item"><b>P1:&nbsp;</b><span id="coord1"></span></li>
+                        <li class="list-group-item"><b>P2:&nbsp;</b><span id="coord2"></span></li>
+                        <li class="list-group-item"><b>P3:&nbsp;</b><span id="coord3"></span></li>
+
                     </ul>
                 </div>
             </div>
@@ -104,6 +101,7 @@
     </div>
 
 </body>
+
 </html>
 <!-- Leaflet js -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -155,19 +153,19 @@
     map.on("draw:created", function (e) {
         var type = e.layerType;
         var layer = e.layer;
-        console.log(layer.toGeoJSON());
 
-        
-        //Her er det, bruker den siste linjen i denne if statement til å printe ut i html lenger oppe
-        if (type === 'polyline') {
-        var line = layer.getLatLngs();
-        lineCoordinates = line;
-        console.log(lineCoordinates);
-        document.getElementById("coord").innerHTML = line;
-        }
-
-        layer.bindPopup(`<p>${JSON.stringify(layer.toGeoJSON())}</p>`)
         drawnItems.addLayer(layer);
+
+        //Gjør korrdinater til array
+        var resp = layer.getLatLngs().map(function (point) {
+            return [point.lat, point.lng];
+        });
+
+
+        //Setter id til koordinatene til "coordinates"
+        document.getElementById("coord1").innerHTML = resp[0];
+        document.getElementById("coord2").innerHTML = resp[1];
+        document.getElementById("coord3").innerHTML = resp[2];
     }
     );
 
