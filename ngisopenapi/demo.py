@@ -40,7 +40,7 @@ def main() -> int:
 
     
     print("Get features")
-    bbox = "584080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
+    bbox = "437756.2840227, 6457207.022491,438044.71753695, 6457391.3724821"
     #229000, 759000 / 6398000, 7265000
     filename = str(uuid.uuid4()) + ".geojson"
     res = api.get_features(dataset_id, bbox) #, "Mønelinje"
