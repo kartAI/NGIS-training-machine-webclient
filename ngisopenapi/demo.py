@@ -6,6 +6,7 @@ import os
 import json 
 import uuid
 import transfer
+import convert_epsg
 
 
 from api import NgisOpenApi
@@ -42,8 +43,9 @@ def main() -> int:
     print("Get features")
     bbox = "594080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
     #bbox_dataset = "229000,759000,6398000,7265000"
+    epsg="5972"
     filename = str(uuid.uuid4()) + ".geojson"
-    res = api.get_features(dataset_id, bbox) #, "Mønelinje"
+    res = api.get_features(dataset_id, bbox, epsg)
     print(f'Got {len(res["features"])} features. Saving to {filename}')
     '''
     for f in res["features"]:
@@ -52,7 +54,8 @@ def main() -> int:
     
     save_json(res, filename)
     
-    transfer.transfer_geojson(filename)
+    convert_epsg.convert_epsg(filename)
+    #transfer.transfer_geojson(filename)
     
     return 0
 
