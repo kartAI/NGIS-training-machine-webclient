@@ -10,15 +10,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
     <style>
-        /*Custom styles for the menu*/
-        #menu {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-container {
             width: 25%;
-            overflow-y: scroll;
-            padding: 0.5rem;
+            height: 100%;
+            padding: 15px;
+            background-color: #ffffff;
+            overflow-y: auto;
+        }
+
+        .btn1 {
+            margin-right: 10px;
+        }
+
+        .btn2 {
+            margin-left: 10px;
+        }
+
+        .map-container {
+            height: 100%;
+        }
+
+        /*Styling of scrollbar in menu-container*/
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            background: light-gray;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
         }
 
 
@@ -43,19 +80,10 @@
 
 
         .card {
-            border: 1px solid gray;
-            border-radius: 10px;
+            border-radius: 3px;
             box-shadow: 2px 2px 5px gray;
 
 
-        }
-
-        .cards {
-            padding: 20px;
-        }
-
-        .card-header {
-            display: flex;
         }
 
         .card-btns {
@@ -65,17 +93,10 @@
         .menu-bottom {
             position: fixed;
             bottom: 0;
-            padding: 0.5rem;
-
-            display: flex;
-
-            margin-left: auto;
-            margin-right: auto;
-            box-sizing: border-box
         }
 
 
-        /* The container <div> - needed to position the dropup content */
+        /* The container - needed to position the dropup content */
         .dropup {
             position: relative;
             display: inline-block;
@@ -121,9 +142,9 @@
             top: 0;
             bottom: 0;
             right: 0;
-            left: 25%;
-            align-self: self-end;
-            z-index: 1
+            width: 75%;
+            z-index: 1;
+
         }
 
         /*inputtext*/
@@ -152,17 +173,10 @@
             margin: 8px 0;
             border: none;
             cursor: pointer;
-            width: 100%;
             border-radius: 3px;
         }
 
-        .btn1 {
-            margin-right: 10px;
-        }
 
-        .btn2 {
-            margin-left: 10px;
-        }
 
         button:hover {
             opacity: 0.8;
@@ -274,55 +288,53 @@
 </head>
 
 <body>
-    <!-- Main container spanning the screen -->
     <div class="container-fluid">
-        <!-- Left container for vertical scrolling content -->
-        <div id="menu ">
-
+        <div class="col-md-3 col-lg-2 menu-container">
             <!-- Headline -->
             <h1 class="m-3">Polygoner</h1>
 
-            <!-- Cards container -->
-            <div class="cards mb-3">
-                <!-- Card -->
-                <div class="card row">
-                    <div class="card-header col">
-                        <h5 class="col"><span id="shapeType">
-                            </span></h5>
-                        <div class="buttons">
-                            <button class="icon-btn"><span class="material-symbols-outlined">
-                                    edit
-                                </span></button>
-                            <button class="icon-btn" style="background-color: red;"><span
-                                    class="material-symbols-outlined">
-                                    delete
-                                </span></button>
+            <!-- Card -->
+            <div class="card ">
+                <div class="card-header ">
+                    <h5><span id="shapeType">
+                        </span></h5>
+                    <div class="buttons">
+                        <button class="icon-btn"><span class="material-symbols-outlined">
+                                edit
+                            </span></button>
+                        <button class="icon-btn" style="background-color: red;"><span class="material-symbols-outlined">
+                                delete
+                            </span></button>
+                    </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><b>P1:&nbsp;</b><span id="P1"></span></li>
+                    <li class="list-group-item"><b>P2:&nbsp;</b><span id="P2"></span>
+                    </li>
+                </ul>
+            </div>
+            <!-- bottom of menu-->
+            <div class="container menu-bottom">
+                <div class="d-flex flex-row">
+                    <button onclick="document.getElementById('id01').style.display='block'" class="btn1">Bestill
+                        treningsdata</button>
+                    <div class="dropup">
+                        <button class="btn2">legg til ny</button>
+                        <div class="dropup-content">
+                            <a href="#">Tegn form på kart</a>
+                            <a href="#" id="setCoords">Skriv inn koordinater</a>
                         </div>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><b>P1:&nbsp;</b><span id="P1"></span></li>
-                        <li class="list-group-item"><b>P2:&nbsp;</b><span id="P2"></span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
 
-            <!-- bottom of menu-->
-            <div class="d-grid gap-2 d-md-block menu-bottom">
-                <button onclick="document.getElementById('id01').style.display='block'" class="btn1">Bestill
-                    treningsdata</button>
-                <div class="dropup">
-                    <button class="btn2">legg til ny</button>
-                    <div class="dropup-content">
-                        <a href="#">Tegn form på kart</a>
-                        <a href="#" id="setCoords">Skriv inn koordinater</a>
-                    </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-9 col-lg-10 map-container">
+            <div id="map"></div>
+        </div>
 
-        <!-- Right container for map-->
-        <div id="map"></div>
+
+
         <div id="id01" class="modal">
 
             <form class="modal-content animate" action="/action_page.php" method="post">
@@ -373,6 +385,7 @@
             </form>
         </div>
     </div>
+
 
 </body>
 
