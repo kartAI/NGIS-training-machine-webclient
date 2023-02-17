@@ -32,7 +32,7 @@ def transfer_geojson(fname):
 
             # Insert the feature into the database
             cur.execute(
-                "INSERT INTO mytable (properties, geometry) VALUES (%s, ST_GeomFromGeoJSON(%s))",
+                "INSERT INTO mytable (properties, geometry) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857))",
                 (json.dumps(properties), json.dumps(geometry))
             )
 
