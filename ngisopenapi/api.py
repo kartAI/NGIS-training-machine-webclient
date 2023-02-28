@@ -32,25 +32,13 @@ class NgisOpenApi:
 
     def get_dataset_info(self, dataset_id):
         return self._send_request(f'/datasets/{dataset_id}')[0]
-
-    def get_features(self, dataset_id, bbox, epsg):
-      query_params = {"bbox": bbox, "crs_EPSG": epsg}
-      features = merge_lists(self._get_features_paginated(f'/datasets/{dataset_id}/features', query_params))
-      return {
-        "type": "FeatureCollection",
-        "features": features,
-        "crs": {
-            "type": "name",
-            "properties": {
-                "name": "EPSG:" + epsg
-            }
-        }
-      }
-
-
-
     
-
+    def get_features(self, dataset_id, bounds, objectType=None):
+        return {
+            "type": "FeatureCollection",
+            "features": merge_lists(self._get_features_paginated(f'/datasets/{dataset_id}/features', {"bbox": bounds, "query": get_query(objectType)}))
+        }
+    
     def _get_features_paginated(self, path, params=None):
       t = self._send_request(path, params, {"accept": "application/vnd.kartverket.sosi+json; version=1.0"})
       if t[1] is not None:
@@ -65,6 +53,7 @@ class NgisOpenApi:
           headers=merge_dicts({"X-Client-Product-Version": self.client_product_version}, extra_headers)
         )
         if r.ok:
+            #print(r.headers)
             next_link = get_link(r.headers)
             return (r.json(), next_link.replace(self.url, "") if next_link is not None else None)
         return (None, None)
