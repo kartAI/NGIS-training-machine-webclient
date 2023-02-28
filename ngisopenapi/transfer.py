@@ -5,6 +5,8 @@ def transfer_geojson(fname):
     import psycopg2
 
     # Connect to the PostgreSQL database
+    print("Connecting to database")
+
     conn = None
     cur = None
     try:
@@ -30,12 +32,20 @@ def transfer_geojson(fname):
             properties = feature["properties"]
             geometry = feature["geometry"]
 
+            
+            cur.execute(
+                "INSERT INTO kasp (properties, geom, id) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857), DEFAULT)",
+                (json.dumps(properties), json.dumps(geometry))
+)
+            
+            '''
             # Insert the feature into the database
             cur.execute(
-                "INSERT INTO mytable (properties, geometry) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857))",
+                "INSERT INTO mytable (properties, geom) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857))",
                 (json.dumps(properties), json.dumps(geometry))
             )
-
+            '''
+            
         # Commit the changes
         conn.commit()
 
