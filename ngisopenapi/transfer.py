@@ -25,7 +25,7 @@ def transfer_geojson(fname):
         # Open the GeoJSON file
         with open(os.getenv('f_path') + fname) as f:
             geojson = json.load(f)
-
+        print("Inserting data")
         # Loop over the features in the GeoJSON
         for feature in geojson["features"]:
             # Get the feature's properties and geometry
