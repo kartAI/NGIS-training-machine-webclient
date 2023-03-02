@@ -34,7 +34,7 @@ def main() -> int:
     #print(api.get_dataset_info(dataset_id))
     
     print("Get features")
-    bbox = "584080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
+    bbox = "584501.1079749034,6639556.316979835,585975.5127302224,6640769.565718482"
     bbox_dataset = "229000,759000,6398000,7265000"
     filename = str(uuid.uuid4()) + ".geojson"
     res = api.get_features(dataset_id, bbox)

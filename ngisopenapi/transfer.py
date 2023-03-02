@@ -19,7 +19,7 @@ def transfer_geojson(fname):
 
         cur = conn.cursor()
         # Check rows of data before insertion
-        cur.execute("SELECT COUNT(*) FROM mytable")
+        cur.execute("SELECT COUNT(*) FROM demo")
         row_count_before = cur.fetchone()[0]
 
         # Open the GeoJSON file
@@ -34,7 +34,7 @@ def transfer_geojson(fname):
 
             
             cur.execute(
-                "INSERT INTO kasp (properties, geom, id) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857), DEFAULT)",
+                "INSERT INTO demo (properties, geom) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857))",
                 (json.dumps(properties), json.dumps(geometry))
 )
             
@@ -51,7 +51,7 @@ def transfer_geojson(fname):
 
         # Check if the data was inserted successfully
         cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM mytable")
+        cur.execute("SELECT COUNT(*) FROM demo")
         row_count_after = cur.fetchone()[0]
         if row_count_after > row_count_before:
             print("Data was successfully inserted.")
