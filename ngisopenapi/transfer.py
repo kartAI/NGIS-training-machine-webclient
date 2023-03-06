@@ -5,6 +5,8 @@ def transfer_geojson(fname):
     import psycopg2
 
     # Connect to the PostgreSQL database
+    print("Connecting to database")
+
     conn = None
     cur = None
     try:
@@ -17,7 +19,7 @@ def transfer_geojson(fname):
 
         cur = conn.cursor()
         # Check rows of data before insertion
-        cur.execute("SELECT COUNT(*) FROM mytable")
+        cur.execute("SELECT COUNT(*) FROM demo")
         row_count_before = cur.fetchone()[0]
 
         # Open the GeoJSON file
@@ -30,18 +32,26 @@ def transfer_geojson(fname):
             properties = feature["properties"]
             geometry = feature["geometry"]
 
+            
+            cur.execute(
+                "INSERT INTO demo (properties, geom) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857))",
+                (json.dumps(properties), json.dumps(geometry))
+)
+            
+            '''
             # Insert the feature into the database
             cur.execute(
-                "INSERT INTO mytable (properties, geometry) VALUES (%s, ST_GeomFromGeoJSON(%s))",
+                "INSERT INTO mytable (properties, geom) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857))",
                 (json.dumps(properties), json.dumps(geometry))
             )
-
+            '''
+            
         # Commit the changes
         conn.commit()
 
         # Check if the data was inserted successfully
         cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM mytable")
+        cur.execute("SELECT COUNT(*) FROM demo")
         row_count_after = cur.fetchone()[0]
         if row_count_after > row_count_before:
             print("Data was successfully inserted.")
