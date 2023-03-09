@@ -41,7 +41,7 @@ def main() -> int:
     
     filename = str(uuid.uuid4()) + ".geojson"
     
-    res = api.get_features(dataset_id, bbox)
+    res = api.get_features(dataset_id, bbox, "Bygning")
     print(f'Got {len(res["features"])} features. Saving to {filename}')
     
     '''
