@@ -1,0 +1,47 @@
+{
+  "TileGrid": {
+    "srid": 3857,
+    "x0": 563000.0,
+    "y0": 6623000.0,
+    "dx": 100.0,
+    "dy": 100.0
+  },
+  "ImageSources": [
+    {
+      "name": "OrtofotoWMS",
+      "type": "WMSImageSource",
+      "image_format": "image/tiff",
+      "url": "https://wms.geonorge.no/skwms1/wms.nib",
+      "layers": ["ortofoto"],
+      "styles": ["default"]
+    },
+    {
+      "srid": 3857,
+      "name": "Bachelor_2023",
+      "type": "PostgresImageSource",
+      "host": "postgresql-dev-kartai.postgres.database.azure.com",
+      "port": "5432",
+      "database": "kartai_bachelor_2023",
+      "user": "kartai_bachelor_2023@postgresql-dev-kartai",
+      "passwd": "AZURE_BYGG_POSTGRESQL_PSW",
+      "image_format": "image/tiff",
+      "table": "public.mytable"
+    }
+  ],
+  
+  "ImageSets": [
+    {
+      "name": "image",
+      "source": "OrtofotoWMS",
+      "tile_size": 512
+    },
+    {
+      "name": "label",
+      "source": "Bachelor_2023",
+      "tile_size": 512
+      
+    }
+  
+    ]
+  
+}
