@@ -6,7 +6,7 @@ import os
 import json 
 import uuid
 import transfer
-
+import bbox_extractor
 
 from api import NgisOpenApi
 
@@ -22,31 +22,37 @@ def save_json(data, filename):
     f = open(file_path, "w")
     f.write(json.dumps(data))
     f.close()
+
 def main() -> int:
     api = get_api()
 
     dataset_id = '63cb2b40-1461-4a9a-90c1-446ef0ee42f4'
 
-    '''
-    print("Get datasets")
-    print(api.get_datasets())
-    '''
-
-    '''
-    print("Get dataset")
-    print(api.get_dataset_info(dataset_id))
-    '''
-
+    #print("Get datasets")
+    #print(api.get_datasets())
+    
+    #print("Get dataset")
+    #print(api.get_dataset_info(dataset_id))
     
     print("Get features")
     bbox = "584080.3856561417,6638847.17958132,584237.6979578076,6639009.613057086"
+    bbox_geojson = bbox_extractor.get_bbox()
+    bbox_dataset = "229000,759000,6398000,7265000"
+    
     filename = str(uuid.uuid4()) + ".geojson"
+    
     res = api.get_features(dataset_id, bbox, "Bygning")
     print(f'Got {len(res["features"])} features. Saving to {filename}')
+    
+    '''
+    for f in res["features"]:
+        print(f["properties"]["featuretype"])
+    '''
+    
     save_json(res, filename)
     
     transfer.transfer_geojson(filename)
-
+    
     return 0
 
 if __name__ == '__main__':
