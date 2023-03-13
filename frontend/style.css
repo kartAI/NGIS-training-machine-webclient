@@ -1,0 +1,32 @@
+.material-symbols-outlined { 
+    font-variation-settings: 'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48;
+    font-size: 78px!important;
+    color:white;
+    background: rgba(0, 157, 211, 1);
+    border-radius: 6rem;
+    padding: 3rem;
+}
+/*setting cursor to pointer on card*/
+.card{
+    cursor: pointer;
+    text-decoration: none !important;
+    color: black;
+}
+/*scaling and changing bg-color on hover*/
+.card:hover{ 
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+    background:rgba(0, 157, 211, 1);
+}
+/*changing colors when hovering card*/
+.card:hover .material-symbols-outlined{ 
+    color:rgba(0, 157, 211, 1);
+    background: white;
+}  
+/*changing color when hovering card*/
+.card:hover h3{ 
+    color:white;
+}
