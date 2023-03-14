@@ -15,5 +15,3 @@ document.getElementById('file-input').addEventListener('change', function() {
     reader.readAsText(file);
     });
 
-
-    

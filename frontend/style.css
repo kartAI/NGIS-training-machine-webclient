@@ -22,13 +22,10 @@
   cursor: pointer;
   text-decoration: none !important;
   color: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  margin: 10px;
-  
+  margin: 30px;
 }
+
 
 .card:hover {
   box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
@@ -38,12 +35,26 @@
 .card:hover h3 {
   color: white;
 }
+
+
+
+
 #map {
     position: relative;
     height: 100vh;
     width: 100%;
 }
+#map1 .leaflet-container {
+  touch-action: none;
+}
 
+#map1 .leaflet-container:focus {
+  outline: none;
+}
+
+#map1 .leaflet-control-zoom {
+  display: none;
+}
 .drop-container {
     position: relative;
     display: flex;
@@ -61,7 +72,7 @@
   }
   
   .drop-container:hover {
-    background: #eee;
+    background: #009dd30a;
     border-color: #009dd3;
   }
   
@@ -78,4 +89,9 @@
   }
   label, input {
     margin-bottom: 10px;
+  }
+  
+  .file{
+
+
   }
