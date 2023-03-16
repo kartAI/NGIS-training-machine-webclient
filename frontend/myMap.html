@@ -300,8 +300,12 @@
                     </div>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><b>Coordinates&nbsp;</b><br><span id="coordinates"></span></li>
-                        <li class="list-group-item"><b>Upload file:&nbsp;</b><br><input type="file" id="file-input">
-                        </li>
+                        <li class="list-group-item"><b>Upload file:&nbsp;</b><br><input type="file" id="file-input"></li>
+                        <form>
+                            <label for="coordinates">Coordinates:</label><br>
+                            <input type="text" id="coordi" name="coordinates" placeholder="Enter coordinates, separated by comma"><br>
+                            <button type="button" onclick="saveCoordinates()">Save</button>
+                        </form>
                     </ul>
                 </div>
             </div>
@@ -472,5 +476,21 @@
     };
     reader.readAsText(file);
     });
-            
+
+    function saveCoordinates() {
+        var coordinatesInput = document.getElementById("coordi").value;
+        console.log("coordinatesInput:", coordinatesInput);
+        var coordinatesArray = coordinatesInput.split(",");
+        console.log("coordinatesArray:", coordinatesArray);
+        var latLngArray = [];
+        for (var i = 0; i < coordinatesArray.length; i += 2) {
+            var latLng = L.latLng(parseFloat(coordinatesArray[i]), parseFloat(coordinatesArray[i + 1]));
+            latLngArray.push(latLng);
+        }
+        console.log("latLngArray:", latLngArray);
+        var polygon = L.polygon(latLngArray, { color: "red" }).addTo(map);
+        map.fitBounds(polygon.getBounds());
+    }
+
+        
 </script>
