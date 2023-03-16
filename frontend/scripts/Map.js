@@ -10,7 +10,6 @@ var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.j
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
-
 //adds drawcontrols
 var drawControl = new L.Control.Draw({
     draw: {
@@ -77,7 +76,6 @@ for (var i = 0; i < uniqueCoords.length; i++) {
 }
 
 coordinatesElement.innerHTML = coordinatesString;
-
 
 });
 
