@@ -1,42 +1,60 @@
-.material-symbols-outlined { 
-    font-variation-settings: 'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 48;
-    font-size: 78px!important;
-    color:white;
-    background: rgba(0, 157, 211, 1);
-    border-radius: 6rem;
-    padding: 3rem;
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+.card .fas {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+  font-size: 78px!important;
+  color: white;
+  background:  #009dd3;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-/*setting cursor to pointer on card*/
-.card{
-    cursor: pointer;
-    text-decoration: none !important;
-    color: black;
+
+.card:hover .fas {
+  color:  #009dd3;
+  background-color: white;
 }
-/*scaling and changing bg-color on hover*/
-.card:hover{ 
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
-    background:rgba(0, 157, 211, 1);
+
+.card {
+  cursor: pointer;
+  text-decoration: none !important;
+  color: black;
+  align-items: center;
+  margin: 30px;
 }
-/*changing colors when hovering card*/
-.card:hover .material-symbols-outlined{ 
-    color:rgba(0, 157, 211, 1);
-    background: white;
-}  
-/*changing color when hovering card*/
-.card:hover h3{ 
-    color:white;
+
+
+.card:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+  background: #009dd3;
 }
+
+.card:hover h3 {
+  color: white;
+}
+
+
+
 
 #map {
     position: relative;
     height: 100vh;
     width: 100%;
 }
+#map1 .leaflet-container {
+  touch-action: none;
+}
 
+#map1 .leaflet-container:focus {
+  outline: none;
+}
+
+#map1 .leaflet-control-zoom {
+  display: none;
+}
 .drop-container {
     position: relative;
     display: flex;
@@ -47,15 +65,15 @@
     height: 200px;
     padding: 20px;
     border-radius: 10px;
-    border: 2px dashed rgb(135, 206, 235);
+    border: 2px dashed #009dd3;
     color: #444;
     cursor: pointer;
     transition: background .2s ease-in-out, border .2s ease-in-out;
   }
   
   .drop-container:hover {
-    background: #eee;
-    border-color: skyblue;
+    background: #009dd30a;
+    border-color: #009dd3;
   }
   
   .drop-container:hover .drop-title {
@@ -71,4 +89,9 @@
   }
   label, input {
     margin-bottom: 10px;
+  }
+  
+  .file{
+
+
   }

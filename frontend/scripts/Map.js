@@ -10,6 +10,7 @@ var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.j
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
+
 //adds drawcontrols
 var drawControl = new L.Control.Draw({
     draw: {
@@ -31,13 +32,12 @@ map.addControl(drawControl);
 map.on("draw:created", function (c) {
     //retrieves the type of a shape drawn and sets the inner HTML of an element to display that type.
     document.getElementById("shapeType").innerHTML = c.layerType;
-
+    
     //retrieves drawn shape
     var layer = c.layer;
-
     //adds shape to layergroup: drawnItems
     drawnItems.addLayer(layer);
-
+    
     //retrieves the coordinates of the shape
     var coords;
     if (layer instanceof L.Polygon) {
