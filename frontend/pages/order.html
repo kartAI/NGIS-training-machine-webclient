@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="en">
 
 <head>
@@ -16,7 +15,7 @@
 </head>
 
 <body>
-    <div class="container py-3">
+    <div class="container py-3 ">
 
         <!-- Main header used across all the pages -->
         <header>
@@ -24,73 +23,82 @@
                 <a href="./index.html" class="d-flex align-items-center text-dark text-decoration-none">
                     <span class="fs-4">Kart-AI Trainingdata</span>
                 </a>
-
-
             </div>
-            <!-- Subheading/description -->
-            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-                <h1 class="display-4 fw-normal">Order</h1>
-                <p class="fs-5 text-muted">Do duis et do veniam ut non dolor Lorem. Sint irure incididunt do commodo
-                    excepteur qui anim exercitation laborum in ullamco.
-                </p>
-            </div>
+
         </header>
 
         <main>
-            <form>
-                <!-- Email input -->
-                <div class="form-outline mb-4">
-                    <label class="form-label" for="form6Example5">Email</label><input type="email" id="form6Example5"
-                        class="form-control" />
+            <div class="main-container">
+                <!-- Subheading/description -->
+                <div class="pricing-header pb-md-4 mx-auto text-center">
+                    <h1 class="display-4 fw-normal">Order</h1>
+                    <p class=" text-muted">Do duis et do veniam ut non dolor Lorem. Sint irure incididunt do commodo
+                        excepteur qui anim exercitation laborum in ullamco.
+                    </p>
                 </div>
-                <!-- Dropdown input -->
-                <div class="form-outline mb-4">
-                    <label class="form-label" for="form7Example">Label</label>
-                    <select id="form7Example" class=" form-control">
-                        <option selected>Choose...</option>
-                        <option>...</option>
-                        <option>...</option>
-                        <option>...</option>
-                        <option>...</option>
-                    </select>
+                <form>
+                    <!-- Email input -->
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form6Example5">Email</label><input type="email"
+                            id="form6Example5" class="form-control">
+                    </div>
+                    <!-- Dropdown input -->
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form6Example5">Tilesize</label><input type="tilesize"
+                            id="form6Example5" class="form-control">
+                    </div>
+
+                    <!-- Dropdown input -->
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form7Example">Rules</label>
+                        <select id="form7Example" class=" form-control">
+                            <option selected="">Choose rules</option>
+                            <option>...</option>
+                            <option>...</option>
+                            <option>...</option>
+                            <option>...</option>
+                        </select>
+                    </div>
+
+                    <!-- Text input -->
+                    <label class="form-label" for="form6Example3"><b>Constraints</b></label>
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form6Example3">Trening</label>
+                        <input type="text" id="form6Example3" class="form-control">
+
+                    </div>
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form6Example3">Validering</label>
+                        <input type="text" id="form6Example3" class="form-control">
+
+                    </div>
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form6Example3">Test</label>
+                        <input type="text" id="form6Example3" class="form-control">
+
+                    </div>
+
+                    <!-- Checkbox -->
+                    <div class="form-check d-flex justify-content-start mb-4">
+                        <input class="form-check-input me-2" type="checkbox" value="" id="form6Example8" checked="">
+                        <label class="form-check-label" for="form6Example8"> Checkbox </label>
+                    </div>
+                    <!-- Drop-down -->
+
+
+                </form>
+                <div class="row justify-content-end">
+                    <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3"
+                        onclick="return nav();">Bestill
+                        treningsdata</button>
                 </div>
-                <!-- Dropdown input -->
-                <div class="form-outline mb-4">
-                    <label class="form-label" for="form7Example">Label</label>
-                    <select id="form7Example" class=" form-control">
-                        <option selected>Choose...</option>
-                        <option>...</option>
-                        <option>...</option>
-                        <option>...</option>
-                        <option>...</option>
-                    </select>
-                </div>
-
-                <!-- Text input -->
-                <div class="form-outline mb-4">
-                    <label class="form-label" for="form6Example3">Label</label>
-                    <input type="text" id="form6Example3" class="form-control" />
-
-                </div>
-
-                <!-- Checkbox -->
-                <div class="form-check d-flex justify-content-start mb-4">
-                    <input class="form-check-input me-2" type="checkbox" value="" id="form6Example8" checked />
-                    <label class="form-check-label" for="form6Example8"> Checkbox </label>
-                </div>
-                <!-- Drop-down -->
-
-
-            </form>
-            <div class="row justify-content-end">
-                <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3"
-                    onclick="return nav();">Bestill
-                    treningsdata</button>
             </div>
         </main>
     </div>
     <script src="../scripts/script.js"></script>
-</body>
+
+
+
 </body>
 
 </html>

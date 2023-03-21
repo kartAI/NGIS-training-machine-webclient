@@ -1,5 +1,15 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
 
+
+.main-container{
+  border-radius: var(--bs-border-radius)!important;
+  --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb),var(--bs-bg-opacity))!important;
+    margin-bottom: 3rem!important;
+    box-shadow: 0 1rem 3rem rgba(var(--bs-body-color-rgb),.175)!important;
+    padding: 5rem;
+    
+}
 .card .fas {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
   font-size: 78px!important;
@@ -44,17 +54,7 @@
     height: 100vh;
     width: 100%;
 }
-#map1 .leaflet-container {
-  touch-action: none;
-}
 
-#map1 .leaflet-container:focus {
-  outline: none;
-}
-
-#map1 .leaflet-control-zoom {
-  display: none;
-}
 .drop-container {
     position: relative;
     display: flex;

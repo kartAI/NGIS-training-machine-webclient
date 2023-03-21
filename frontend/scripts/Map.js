@@ -10,6 +10,7 @@ var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.j
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
+
 //adds drawcontrols
 var drawControl = new L.Control.Draw({
     draw: {
@@ -36,7 +37,7 @@ map.on("draw:created", function (c) {
     var layer = c.layer;
     //adds shape to layergroup: drawnItems
     drawnItems.addLayer(layer);
-    
+    noScroll();
     //retrieves the coordinates of the shape
     var coords;
     if (layer instanceof L.Polygon) {
@@ -46,6 +47,7 @@ map.on("draw:created", function (c) {
         //retrieves the bounding box of the rectangle
         coords = layer.getBounds();
     }
+    
 
 // convert the coordinates to an array
 var coordsArray = coords[0].map(function(coord) {
@@ -77,6 +79,7 @@ for (var i = 0; i < uniqueCoords.length; i++) {
 
 coordinatesElement.innerHTML = coordinatesString;
 
+
 });
 
 function saveCoordinates() {
@@ -93,3 +96,7 @@ function saveCoordinates() {
     var polygon = L.polygon(latLngArray, { color: "red" }).addTo(map);
     map.fitBounds(polygon.getBounds());
 }
+
+function noScroll() {
+    map.scrollWheelZoom.disable();
+};

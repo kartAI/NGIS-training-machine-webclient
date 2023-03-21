@@ -1,4 +1,4 @@
-  const formContainer = document.getElementById('form-container');
+const formContainer = document.getElementById('form-container');
   const inputsArray = [];
 
   for (let i = 1; i <= 5; i++) {
