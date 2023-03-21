@@ -1,0 +1,97 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+
+.main-container{
+  border-radius: var(--bs-border-radius)!important;
+  --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-white-rgb),var(--bs-bg-opacity))!important;
+    margin-bottom: 3rem!important;
+    box-shadow: 0 1rem 3rem rgba(var(--bs-body-color-rgb),.175)!important;
+    padding: 5rem;
+    
+}
+.card .fas {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+  font-size: 78px!important;
+  color: white;
+  background:  #009dd3;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card:hover .fas {
+  color:  #009dd3;
+  background-color: white;
+}
+
+.card {
+  cursor: pointer;
+  text-decoration: none !important;
+  color: black;
+  align-items: center;
+  margin: 30px;
+}
+
+
+.card:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+  background: #009dd3;
+}
+
+.card:hover h3 {
+  color: white;
+}
+
+
+
+
+#map {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+}
+
+.drop-container {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed #009dd3;
+    color: #444;
+    cursor: pointer;
+    transition: background .2s ease-in-out, border .2s ease-in-out;
+  }
+  
+  .drop-container:hover {
+    background: #009dd30a;
+    border-color: #009dd3;
+  }
+  
+  .drop-container:hover .drop-title {
+    color: #222;
+  }
+  
+  .drop-title {
+    color: #444;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    transition: color .2s ease-in-out;
+  }
+  label, input {
+    margin-bottom: 10px;
+  }
+  
+  .file{
+
+
+  }
