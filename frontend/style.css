@@ -91,7 +91,8 @@
     margin-bottom: 10px;
   }
   
-  .file{
-
-
+  .input-group {
+    position: relative;
+    z-index: 1000;
   }
+  
