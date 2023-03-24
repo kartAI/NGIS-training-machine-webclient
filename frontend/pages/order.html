@@ -32,58 +32,69 @@
                 <!-- Subheading/description -->
                 <div class="pricing-header pb-md-4 mx-auto text-center">
                     <h1 class="display-4 fw-normal">Order</h1>
-                    <p class=" text-muted">Do duis et do veniam ut non dolor Lorem. Sint irure incididunt do commodo
-                        excepteur qui anim exercitation laborum in ullamco.
+                    <p class=" text-muted"> Fill in info about the order
                     </p>
                 </div>
                 <form>
                     <!-- Email input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example5">Email</label><input type="email"
-                            id="form6Example5" class="form-control">
-                    </div>
-                    <!-- Dropdown input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example5">Tilesize</label><input type="tilesize"
-                            id="form6Example5" class="form-control">
+
+                    <div class="form-outline mb-4" title="Email" data-bs-toggle="tooltip" data-bs-placement="top">
+                        <label class="form-label">Email*</label>
+                        <input type="email" id="form6Example5" class="form-control">
                     </div>
 
-                    <!-- Dropdown input -->
+                    <!-- TileSize -->
+                    <div class="form-outline mb-4 " title="Tilesize" data-bs-toggle="tooltip" data-bs-placement="top">
+                        <label class="form-label">Tilesize*</label><input type="tilesize" id="form6Example5"
+                            class="form-control">
+                    </div>
+
+
+
+
+
+
+                    <!-- Underoverskrift -->
+                    <label class="form-label"><b>Rules/ constraints</b></label>
+
+                    <!-- Container 3 kolonner -->
+                    <div class="row">
+
+                        <!-- Training -->
+                        <div class="form-outline mb-4 col"><label class="form-label">Training</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-text" id="basic-addon2">%</span>
+                            </div>
+                        </div>
+                        <!-- Validation -->
+                        <div class="form-outline mb-4 col"><label class="form-label">Validation</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-text" id="basic-addon2">%</span>
+                            </div>
+                        </div>
+                        <!-- Test-->
+                        <div class="form-outline mb-4 col"><label class="form-label">Test</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-text" id="basic-addon2">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bygningsprosent -->
+
                     <div class="form-outline mb-4">
-                        <label class="form-label" for="form7Example">Rules</label>
-                        <select id="form7Example" class=" form-control">
-                            <option selected="">Choose rules</option>
-                            <option>...</option>
-                            <option>...</option>
-                            <option>...</option>
-                            <option>...</option>
-                        </select>
+                        <label class="form-label">Bygningsprosent</label>
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" aria-label="Recipient's username"
+                                aria-describedby="basic-addon2">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
                     </div>
 
-                    <!-- Text input -->
-                    <label class="form-label" for="form6Example3"><b>Constraints</b></label>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example3">Trening</label>
-                        <input type="text" id="form6Example3" class="form-control">
-
-                    </div>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example3">Validering</label>
-                        <input type="text" id="form6Example3" class="form-control">
-
-                    </div>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example3">Test</label>
-                        <input type="text" id="form6Example3" class="form-control">
-
-                    </div>
-
-                    <!-- Checkbox -->
-                    <div class="form-check d-flex justify-content-start mb-4">
-                        <input class="form-check-input me-2" type="checkbox" value="" id="form6Example8" checked="">
-                        <label class="form-check-label" for="form6Example8"> Checkbox </label>
-                    </div>
-                    <!-- Drop-down -->
 
 
                 </form>
