@@ -12,12 +12,12 @@ document.getElementById('file-input').addEventListener('change', function() {
 
                 var output = '';
                 for (var i = 0; i < latLongCoordinates.length; i++) {
-                    output += 'P' + (i + 1) + ' = ' + latLongCoordinates[i] + '<br>';
+                    output += '<b>P' + (i + 1) + ':</b> ' + latLongCoordinates[i] + '<br>';
 
                     // Create a circle for each coordinate
                     var circle = L.circle(latLongCoordinates[i], {
                         radius: 10, // Adjust the radius as needed
-                        color: 'red',
+                        color: 'blue',
                         fillColor: '#f03',
                         fillOpacity: 0.5
                     }).addTo(map);
