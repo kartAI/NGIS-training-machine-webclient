@@ -25,7 +25,7 @@
       "user": "kartai_bachelor_2023@postgresql-dev-kartai",
       "passwd": "AZURE_BYGG_POSTGRESQL_PSW",
       "image_format": "image/tiff",
-      "table": "public.mytable"
+      "table": "public.kasp"
     }
   ],
   
