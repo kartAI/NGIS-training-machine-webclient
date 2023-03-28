@@ -30,67 +30,81 @@
         <main>
             <div class="main-container">
                 <!-- Subheading/description -->
-                <div class="pricing-header pb-md-4 mx-auto text-center">
+                <div class="text-center">
                     <h1 class="display-4 fw-normal">Order</h1>
-                    <p class=" text-muted">Do duis et do veniam ut non dolor Lorem. Sint irure incididunt do commodo
-                        excepteur qui anim exercitation laborum in ullamco.
+                    <p class=" text-muted"> Fill in info about the order
                     </p>
                 </div>
                 <form>
                     <!-- Email input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example5">Email</label><input type="email"
-                            id="form6Example5" class="form-control">
-                    </div>
-                    <!-- Dropdown input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example5">Tilesize</label><input type="tilesize"
-                            id="form6Example5" class="form-control">
+
+                    <div class="form-outline mb-4" title="Email" data-bs-toggle="tooltip" data-bs-placement="top">
+                        <label class="form-label col-sm-2 col-form-label col-form-label-lg">Email*</label>
+                        <input type="email" id="form6Example5" class="form-control form-control-lg">
                     </div>
 
-                    <!-- Dropdown input -->
+                    <!-- TileSize -->
+                    <div class="form-outline mb-4 " title="Tilesize" data-bs-toggle="tooltip" data-bs-placement="top">
+                        <label class="form-label col-sm-2 col-form-label col-form-label-lg">Tilesize*</label><input
+                            type="tilesize" id="form6Example5" class="form-control form-control-lg">
+                    </div>
+
+
+
+
+
+
+                    <!-- Underoverskrift -->
+                    <label class="form-label col-sm-2 col-form-label col-form-label-lg"><b>Rules/
+                            constraints</b></label>
+
+                    <!-- Container 3 kolonner -->
+                    <div class="row">
+
+                        <!-- Training -->
+                        <div class="form-outline mb-4 col"><label
+                                class="form-label col-sm-2 col-form-label col-form-label-lg">Training</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-lg">
+                                <span class="input-group-text" id="basic-addon2">%</span>
+                            </div>
+                        </div>
+                        <!-- Validation -->
+                        <div class="form-outline mb-4 col"><label
+                                class="form-label col-sm-2 col-form-label col-form-label-lg">Validation</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-lg">
+                                <span class="input-group-text" id="basic-addon2">%</span>
+                            </div>
+                        </div>
+                        <!-- Test-->
+                        <div class="form-outline mb-4 col"><label
+                                class="form-label col-sm-2 col-form-label col-form-label-lg">Test</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-lg">
+                                <span class="input-group-text" id="basic-addon2">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bygningsprosent -->
+
                     <div class="form-outline mb-4">
-                        <label class="form-label" for="form7Example">Rules</label>
-                        <select id="form7Example" class=" form-control">
-                            <option selected="">Choose rules</option>
-                            <option>...</option>
-                            <option>...</option>
-                            <option>...</option>
-                            <option>...</option>
-                        </select>
+                        <label class="form-label col-sm-2 col-form-label col-form-label-lg">Bygningsprosent</label>
+                        <div class="input-group ">
+
+                            <input type="text" class="form-control form-control-lg" aria-label="Recipient's username"
+                                aria-describedby="basic-addon2">
+                            <span class="input-group-text" id="basic-addon2">%</span>
+                        </div>
                     </div>
 
-                    <!-- Text input -->
-                    <label class="form-label" for="form6Example3"><b>Constraints</b></label>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example3">Trening</label>
-                        <input type="text" id="form6Example3" class="form-control">
-
-                    </div>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example3">Validering</label>
-                        <input type="text" id="form6Example3" class="form-control">
-
-                    </div>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form6Example3">Test</label>
-                        <input type="text" id="form6Example3" class="form-control">
-
-                    </div>
-
-                    <!-- Checkbox -->
-                    <div class="form-check d-flex justify-content-start mb-4">
-                        <input class="form-check-input me-2" type="checkbox" value="" id="form6Example8" checked="">
-                        <label class="form-check-label" for="form6Example8"> Checkbox </label>
-                    </div>
-                    <!-- Drop-down -->
 
 
                 </form>
                 <div class="row justify-content-end">
                     <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3"
-                        onclick="return nav();">Bestill
-                        treningsdata</button>
+                        onclick="return nav();">Confirm order</button>
                 </div>
             </div>
         </main>

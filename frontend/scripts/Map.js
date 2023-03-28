@@ -60,7 +60,7 @@ var coordsMap = new Map();
 for (var i = 0; i < coordsArray.length; i++) {
     var key = coordsArray[i].join(',');
     if (!coordsMap.has(key)) {
-        uniqueCoordsArray.push(coordsArray[i]);
+        uniqueCoordsArray.push(coordsArray[i]); 
         coordsMap.set(key, true);
     }
 }
@@ -74,10 +74,12 @@ var uniqueCoords = uniqueCoordsArray.map(function(coord) {
 var coordinatesElement = document.getElementById("coordinates");
 var coordinatesString = "";
 for (var i = 0; i < uniqueCoords.length; i++) {
+    var point = L.CRS.EPSG4326.project(uniqueCoords[i]);
     coordinatesString += "<b>P" + (i+1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
 }
 
 coordinatesElement.innerHTML = coordinatesString;
+updateCoordinates(uniqueCoordsArray);
 
 
 });
@@ -96,6 +98,20 @@ function saveCoordinates() {
     var polygon = L.polygon(latLngArray, { color: "red" }).addTo(map);
     map.fitBounds(polygon.getBounds());
 }
+
+async function updateCoordinates(coordinates) {
+    const response = await fetch('http://localhost:8000/update_coordinates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(coordinates),
+    });
+  
+    const data = await response.json();
+    return data;
+  }
+  
 
 function noScroll() {
     map.scrollWheelZoom.disable();

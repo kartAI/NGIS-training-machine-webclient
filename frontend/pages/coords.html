@@ -29,17 +29,41 @@
 
             </div>
             <!-- Subheading/description -->
-            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-                <h1 class="display-4 fw-normal">Coordinates</h1>
-                <p class="fs-5 text-muted">Do duis et do veniam ut non dolor Lorem. Sint irure incididunt do commodo
-                    excepteur qui anim exercitation laborum in ullamco.
-                <div id=""></div>
-                </p>
-            </div>
+
         </header>
         <main class="main-container">
-            <div id="form-container"></div>
-            <div class="row justify-content-center">
+            <div class="text-center">
+                <h1 class="display-4 fw-normal">Coordinates</h1>
+                <p class="fs-5 text-muted">Choose coordinatesystem, enter coordinates in field and push done.
+                </p>
+            </div>
+            <div class="form-group " id="form-container">
+                <label for="coordSys" class="col-sm-2 col-form-label col-form-label-lg">Coordinatesystem</label>
+                <select id="coordSys form-control-lg" class="form-control form-control-lg">
+                    <option selected>Choose coordinatesystem</option>
+                    <option>EPSG:4326</option>
+                    <option>EPSG:25833</option>
+                    <option>EPSG:32632</option>
+                    <option>EPSG:32633</option>
+                    <option>EPSG:32634</option>
+                    <option>EPSG:32635</option>
+                    <option>EPSG:32636</option>
+                    <option>EPSG:25832</option>
+                    <option>EPSG:25833</option>
+                    <option>EPSG:25834</option>
+                    <option>EPSG:25835</option>
+                    <option>EPSG:25836</option>
+                </select>
+                <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates</label>
+                <div class="input-group ">
+                    <textarea id="coordinates-input" class="form-control form-control-lg"
+                        aria-describedby="coordinateHelp" rows="3"
+                        placeholder="Enter coordinates, separated by commas"></textarea>
+                    <button type="button" class="btn btn-primary btn-lg" id="done-button">Done</button>
+                </div>
+            </div>
+            <br>
+            <div>
                 <div id="map" onmouseenter="return noScroll();"></div>
             </div>
             <div class="row justify-content-end">
