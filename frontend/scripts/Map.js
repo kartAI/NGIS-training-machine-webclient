@@ -60,7 +60,7 @@ var coordsMap = new Map();
 for (var i = 0; i < coordsArray.length; i++) {
     var key = coordsArray[i].join(',');
     if (!coordsMap.has(key)) {
-        uniqueCoordsArray.push(coordsArray[i]);
+        uniqueCoordsArray.push(coordsArray[i]); 
         coordsMap.set(key, true);
     }
 }
