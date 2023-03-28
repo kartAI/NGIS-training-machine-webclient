@@ -42,7 +42,20 @@
     return transformMultipleCoordinates(coordinates, from_epsg, to_epsg);
     }
 
+    async function updateCoordinates(coordinates) {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ coordinates }),
+        };
+        const response = await fetch('http://localhost:8000/update-coordinates', requestOptions);
+        const data = await response.json();
+        console.log(data.message);
+    }
+    
+
     module.exports = {
     getAvailableProjections,
-    transformCoordinates
+    transformCoordinates,
+    updateCoordinates
     };
