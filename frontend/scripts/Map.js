@@ -74,12 +74,12 @@ var uniqueCoords = uniqueCoordsArray.map(function(coord) {
 var coordinatesElement = document.getElementById("coordinates");
 var coordinatesString = "";
 for (var i = 0; i < uniqueCoords.length; i++) {
-    // Convert the LatLng to EPSG:3857 Point
-    var point = L.CRS.EPSG3857.project(uniqueCoords[i]);
-    coordinatesString += "<b>P" + (i+1) + ": </b>" + point.x + ", " + point.y + "<br>";
+    var point = L.CRS.EPSG4326.project(uniqueCoords[i]);
+    coordinatesString += "<b>P" + (i+1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
 }
 
 coordinatesElement.innerHTML = coordinatesString;
+updateCoordinates(uniqueCoordsArray);
 
 
 });
@@ -98,6 +98,20 @@ function saveCoordinates() {
     var polygon = L.polygon(latLngArray, { color: "red" }).addTo(map);
     map.fitBounds(polygon.getBounds());
 }
+
+async function updateCoordinates(coordinates) {
+    const response = await fetch('http://localhost:8000/update_coordinates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(coordinates),
+    });
+  
+    const data = await response.json();
+    return data;
+  }
+  
 
 function noScroll() {
     map.scrollWheelZoom.disable();
