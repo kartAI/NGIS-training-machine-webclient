@@ -65,6 +65,12 @@ for (var i = 0; i < coordsArray.length; i++) {
     }
 }
 
+// Add the first coordinate again at the end of the array
+uniqueCoordsArray.push(uniqueCoordsArray[0]);
+
+// Print the uniqueCoordsArray to console
+console.log(uniqueCoordsArray);
+
 // convert the unique coordinates back to Leaflet LatLng objects
 var uniqueCoords = uniqueCoordsArray.map(function(coord) {
     return L.latLng(coord[0], coord[1]);
@@ -77,6 +83,7 @@ for (var i = 0; i < uniqueCoords.length; i++) {
     var point = L.CRS.EPSG4326.project(uniqueCoords[i]);
     coordinatesString += "<b>P" + (i+1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
 }
+
 
 coordinatesElement.innerHTML = coordinatesString;
 updateCoordinates(uniqueCoordsArray);
