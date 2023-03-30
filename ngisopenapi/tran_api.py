@@ -31,5 +31,5 @@ def transform_coords(coords, fra, til):
     return response.json()
 
 coordinates = [(10.51749515507254, 59.884356859704404), (10.51749515507254, 59.888276515139424),(10.527923583722442, 59.888276515139424), (10.527923583722442, 59.884356859704404)]
-transformed = transform_coords(coordinates, 4326, 5972)
+transformed = transform_coords(coordinates, 4326, 3857)
 print(f"Transformed coordinates (4326 -> 5972):", transformed)
