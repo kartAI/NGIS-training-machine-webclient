@@ -51,7 +51,7 @@ map.on("draw:created", function (c) {
 
 // convert the coordinates to an array
 var coordsArray = coords[0].map(function(coord) {
-    return [coord.lat, coord.lng];
+    return [coord.lng, coord.lat];
 });
 
 // create a new array with unique coordinates
