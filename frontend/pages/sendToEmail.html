@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/static/scripts/email.js"></script>
+    <title>Kart-AI Trainingdata</title>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Stylesheet for bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="container py-3 ">
+
+        <!-- Main header used across all the pages -->
+        <header>
+            <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+                <a href="./index.html" class="d-flex align-items-center text-dark text-decoration-none">
+                    <span class="fs-4">Kart-AI Trainingdata</span>
+                </a>
+            </div>
+
+        </header>
+
+        <main>
+            <div class="main-container">
+                <!-- Subheading/description -->
+                <div class="pricing-header pb-md-4 mx-auto text-center">
+                    <h1 class="display-4 fw-normal">Bestill data til E-post</h1>
+                    <p class=" text-muted">Her kan du se dataene som vil bli sendt til den oppgitte e-postadressen.</p>
+
+                </div>
+
+                <!-- Email form -->
+                <form id="emailForm">
+                    <!-- Email input -->
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="emailInput">Email</label>
+                        <input type="email" id="emailInput" name="email" class="form-control">
+                    </div>
+
+                    <!-- Preview files -->
+                    <div id="filesPreview">
+                        <p>Følgende filer vil bli sendt:</p>
+                        <p id="fileCountSummary"></p>
+                        <ul id="fileList"></ul>
+                      </div>
+
+                    <!-- Submit button -->
+                    <button type="button" class="btn btn-secondary btn-lg col-md-3 offset-md-3 m-3"
+                        onclick="sendEmail()" id="submitButton">Bestill på E-post</button>
+
+                </form>
+            </div>
+        </main>
+
+        <!-- Scripts -->
+        <!-- Bootstrap core JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ejyk1xtWk3e0v41xoxhJIfpkn+uyGL3q3Kj/jkvyONtmaTKJdDw+zsKzvVgJzBnF"
+            crossorigin="anonymous"></script>
+        <!-- FastAPI app scripts -->
+        <script src="/static/scripts/email.js"></script>
+
+    </div>
+</body>
+
+</html>
