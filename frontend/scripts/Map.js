@@ -14,10 +14,10 @@ map.addLayer(drawnItems);
 //adds drawcontrols
 var drawControl = new L.Control.Draw({
     draw: {
-        polyline: true,
+        polyline: false,
         polygon: true,
         rectangle: true,
-        circle: true,
+        circle: false,
         marker: false
     },
     edit: {
