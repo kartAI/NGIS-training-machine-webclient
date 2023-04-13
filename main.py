@@ -19,7 +19,10 @@ from fastapi import Response
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
+class Coordinates(BaseModel):
+    coordinates: list
 
 app = FastAPI()
 
@@ -34,6 +37,16 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REGION_FILE = os.path.join(
     BASE_DIR, "kartAI", "training_data", "regions", "small_building_region.json")
+
+@app.post("/update_coord.js")
+async def update_coordinates(coords: Coordinates):
+    coordinates = coords.coordinates
+    with open(REGION_FILE, "r") as file:
+        data = json.load(file)
+    data["coordinates"] = [coordinates]
+    with open(REGION_FILE, "w") as file:
+        json.dump(data, file)
+    return {"status": "success"}
 
 
 @app.post("/update_coordinates")
