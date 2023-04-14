@@ -24,10 +24,24 @@ document.getElementById('file-input').addEventListener('change', function() {
                     circle.bindPopup('P' + (i + 1) + ' = ' + latLongCoordinates[i]).openPopup();
                 }
                 document.getElementById('coordinates').innerHTML = output;
+                updateCoordinates(latLongCoordinates);   
             }
         });
         geojsonLayer.addTo(map);
         map.fitBounds(geojsonLayer.getBounds());
     };
     reader.readAsText(file);
+
+    async function updateCoordinates(coordinates) {
+        const response = await fetch('http://localhost:8000/update_coordinates', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(coordinates),
+        });
+      
+        const data = await response.json();
+        return data;
+      }
 });
