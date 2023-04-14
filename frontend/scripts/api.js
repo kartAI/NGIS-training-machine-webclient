@@ -53,6 +53,18 @@
         console.log(data.message);
     }
     
+    export async function updateCoordinates(coordinates) {
+        const response = await fetch('http://localhost:8000/update_coordinates', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(coordinates),
+        });
+      
+        const data = await response.json();
+        return data;
+      }
 
     module.exports = {
     getAvailableProjections,
