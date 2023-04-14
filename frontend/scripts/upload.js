@@ -5,26 +5,21 @@ document.getElementById('file-input').addEventListener('change', function() {
         var data = JSON.parse(e.target.result);
         var geojsonLayer = L.geoJSON(data, {
             onEachFeature: function(feature, layer) {
-                var coordinates = feature.geometry.coordinates[0]; // Access the first nested array
-                var latLongCoordinates = coordinates.map(function(coord) {
-                    return [coord[1], coord[0]]; // Swap the coordinates to get lat-long format
+                var coordinates4326 = feature.geometry.coordinates[0]; // Access the first nested array
+                var coordinates3857 = [];
+                var latLongCoordinates = coordinates4326.map(function(coord) {
+                    // Convert from EPSG 4326 (lat-long) to EPSG 3857 (Web Mercator)
+                    var point = proj4('EPSG:4326', 'EPSG:3857', [coord[0], coord[1]]);
+                    coordinates3857.push(point); // Add the converted point to the 3857 array
+                    return [coord[0], coord[1]]; // Return the original point in lat-long format
                 });
 
                 var output = '';
                 for (var i = 0; i < latLongCoordinates.length; i++) {
                     output += '<b>P' + (i + 1) + ':</b> ' + latLongCoordinates[i] + '<br>';
-
-                    // Create a circle for each coordinate
-                    var circle = L.circle(latLongCoordinates[i], {
-                        radius: 10, // Adjust the radius as needed
-                        color: 'blue',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5
-                    }).addTo(map);
-                    circle.bindPopup('P' + (i + 1) + ' = ' + latLongCoordinates[i]).openPopup();
                 }
                 document.getElementById('coordinates').innerHTML = output;
-                updateCoordinates(latLongCoordinates);   
+                updateCoordinates(coordinates3857);
             }
         });
         geojsonLayer.addTo(map);
@@ -32,13 +27,13 @@ document.getElementById('file-input').addEventListener('change', function() {
     };
     reader.readAsText(file);
 
-    async function updateCoordinates(coordinates) {
+    async function updateCoordinates(coords) {
         const response = await fetch('http://localhost:8000/update_coordinates', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(coordinates),
+          body: JSON.stringify(coords),
         });
       
         const data = await response.json();
