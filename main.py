@@ -93,7 +93,7 @@ async def start_training():
 
 @app.get("/get_files")
 async def get_files():
-    folder_path = r"C:/Users/nikla/OneDrive/Skrivebord/Bachelor/Bachelor/kartAI/training_data/OrtofotoWMS/3857_563000.0_6623000.0_100.0_100.0/512"
+    folder_path = r"C:/xampp/htdocs/Bachelor2023/Bachelor/kartAI/training_data/Bachelor_2023/3857_563000.0_6623000.0_100.0_100.0/512"
     files = [f for f in os.listdir(folder_path) if f.endswith('.tif')]
     num_files = len(files)
     if num_files == 0:
@@ -115,7 +115,7 @@ async def send_zip_file(request: Request):
         return {"message": "No email specified"}
 
     # Get the absolute path of the training data folder
-    training_data_folder = r"C:/Users/nikla/OneDrive/Skrivebord/Bachelor/Bachelor/kartAI/training_data/OrtofotoWMS/3857_563000.0_6623000.0_100.0_100.0/512"
+    training_data_folder = r"C:/xampp/htdocs/Bachelor2023/Bachelor/kartAI/training_data/Bachelor_2023/3857_563000.0_6623000.0_100.0_100.0/512"
 
     # Create a zip file
     zipf = zipfile.ZipFile("OrtofotoWMS.zip", "w", zipfile.ZIP_DEFLATED)

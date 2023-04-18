@@ -61,7 +61,7 @@ class DatasetBuilder:
         if np_band is None:
             print(f"Bilde {img.file_path} ikke lastet")
             return
-        
+
         if rule["type"] == "And":
             for r in rule["rules"]:
                 if not self._evaluate_rule(img, r, source_config, confidence_threshold, eval_model_checkpoint):
@@ -155,11 +155,13 @@ class DatasetBuilder:
 
         return True
 
-    def assemble_data(self, region, source_config, project_config=None, confidence_threshold=None, eval_model_checkpoint=None):
+    def assemble_data(self, region, source_config, project_config=None, confidence_threshold=None,
+                      eval_model_checkpoint=None, eager_load=False):
         """Generate cached images for an area, possibly satisfying the test implemented in the callable
          'evaluate' and return list of examples. An 'example' is a dictionary mapping image set names to
-         image paths in the cache. The 'evaluate(example)' should return True if the example is good"""
-        
+         image paths in the cache. The 'evaluate(example)' should return True if the example is good.
+         For eager loading of data set eager_load=True"""
+
         number_of_examples = 0  # Images added to dataset
         skipped_images = 0  # Images looked at but not added due to dataset rule
 
@@ -182,7 +184,7 @@ class DatasetBuilder:
         for img_set_name, img_set in self.image_set_dict.items():
             if(img_set.rule and img_set.rule["type"] == "ModelConfidence"):
                 hasModelConfidenceRule = True
-    
+
         #has_reached_start = True
         for i, j in region_data:
             print(i, j)
@@ -204,7 +206,7 @@ class DatasetBuilder:
                 print(
                     f"\n !! Dataset stopped at {number_of_examples} instances, stopped after {search_limit} instances that was skipped due to confidence rule \n")
                 break
-        
+
             example = {}
             for img_set_name in self.image_set_dict:
                 img_set = self.image_set_dict[img_set_name]
@@ -217,6 +219,12 @@ class DatasetBuilder:
                     number_of_examples += 1
                     print(
                         f"\nAdded to dataset, total instances: {number_of_examples} of {max_size}")
+                    if eager_load:
+                        for k, v in example.items():
+                            if v.array is None:
+                                raise ValueError(
+                                    f"Component {k} not loaded in example {number_of_examples}")
+
                     yield example
                 else:
                     print("Skipping image, didn't pass dataset rule")
