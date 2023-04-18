@@ -31,28 +31,17 @@
             <div class="main-container">
                 <!-- Subheading/description -->
                 <div class="text-center">
-                    <h1 class="display-4 fw-normal">Order</h1>
+                    <h1 class="display-4 fw-normal">Bestilling</h1>
                     <p class=" text-muted"> Fill in info about the order
                     </p>
                 </div>
                 <form>
-                    <!-- Email input -->
-
-                    <div class="form-outline mb-4" title="Email" data-bs-toggle="tooltip" data-bs-placement="top">
-                        <label class="form-label col-sm-2 col-form-label col-form-label-lg">Email*</label>
-                        <input type="email" id="form6Example5" class="form-control form-control-lg">
-                    </div>
 
                     <!-- TileSize -->
                     <div class="form-outline mb-4 " title="Tilesize" data-bs-toggle="tooltip" data-bs-placement="top">
                         <label class="form-label col-sm-2 col-form-label col-form-label-lg">Tilesize*</label><input
                             type="tilesize" id="form6Example5" class="form-control form-control-lg">
                     </div>
-
-
-
-
-
 
                     <!-- Underoverskrift -->
                     <label class="form-label col-sm-2 col-form-label col-form-label-lg"><b>Rules/
@@ -100,27 +89,87 @@
                     </div>
 
                     <!-- HTML code -->
-
                     <div class="row justify-content-end">
                         <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3 ml-auto"
-                            onclick="startTraining()">Bekreft bestilling</button>
+                            onclick="startTrainingAndShowPopup()">Bekreft bestilling</button>
 
-                        <script>
-                            function startTraining() {
-                                fetch('/startTraining', {
-                                    method: 'POST'
-                                })
-                                    .then(() => {
-                                        // Navigate to confirm.html regardless of the response
-                                        window.location.href = '/confirm.html';
-                                    })
-                                    .catch(error => console.error(error));
-                            }
-                        </script>
+                        <button id="newButton" style="display: none;" type="button"
+                            class="btn btn-secondary btn-lg col-md-3 offset-md-3 m-3 ml-auto"
+                            onclick="change_page()">Send data til Epost</button>
+
+
                     </div>
+                    <!-- ... -->
+
+                    <div id="popup-modal"
+                        style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);">
+                        <div
+                            style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 50%;">
+                            <h2>Treningsdataen lastes nå ned...</h2>
+                            <p>Nedlastningen av data kan ta tid. Du kan avbryte nedlastningen eller se nederst på siden
+                                for å få tilsendt data på E-post.</p>
+                            </p>
+                            <button id="cancel-button" type="button">Avbryt</button>
+                            <button id="continue-button" type="button">Fortsett</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </main>
     </div>
+
+    <script>
+        function startTrainingAndShowPopup() {
+            // Show the popup modal
+            document.getElementById('popup-modal').style.display = 'block';
+
+            // Start training in the background
+            startTraining();
+
+            // Show the new button
+            document.getElementById('newButton').style.display = 'block';
+        }
+
+        function change_page() {
+            window.location.href = "sendToEmail.html";
+        }
+
+
+        // Attach click event listeners to the popup buttons
+        document.getElementById('cancel-button').addEventListener('click', function () {
+            document.getElementById('popup-modal').style.display = 'none';
+        });
+
+        document.getElementById('continue-button').addEventListener('click', function () {
+            document.getElementById('popup-modal').style.display = 'none';
+        });
+
+        function startTraining() {
+            return fetch('/startTraining', {
+                method: 'POST'
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Failed to start training:', response.status, response.statusText);
+                    return;
+                }
+
+                console.log('Training started successfully');
+            }).catch(error => {
+                console.error('Error starting training:', error);
+            });
+        }
+
+        function closePopup(hideNewButton = false) {
+            document.getElementById('popup-modal').style.display = 'none';
+            if (hideNewButton) {
+                document.getElementById('newButton').style.display = 'none';
+            }
+        }
+
+
+    </script>
+
+
     <script src="frontend/scripts/script.js"></script>
 
 
