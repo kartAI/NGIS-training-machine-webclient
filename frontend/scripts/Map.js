@@ -14,10 +14,10 @@ map.addLayer(drawnItems);
 //adds drawcontrols
 var drawControl = new L.Control.Draw({
     draw: {
-        polyline: true,
+        polyline: false,
         polygon: true,
         rectangle: true,
-        circle: true,
+        circle: false,
         marker: false
     },
     edit: {
@@ -51,7 +51,7 @@ map.on("draw:created", function (c) {
 
 // convert the coordinates to an array
 var coordsArray = coords[0].map(function(coord) {
-    return [coord.lat, coord.lng];
+    return [coord.lng, coord.lat];
 });
 
 // create a new array with unique coordinates
@@ -64,6 +64,12 @@ for (var i = 0; i < coordsArray.length; i++) {
         coordsMap.set(key, true);
     }
 }
+
+// Add the first coordinate again at the end of the array
+uniqueCoordsArray.push(uniqueCoordsArray[0]);
+
+// Print the uniqueCoordsArray to console
+console.log(uniqueCoordsArray);
 
 // convert the unique coordinates back to Leaflet LatLng objects
 var uniqueCoords = uniqueCoordsArray.map(function(coord) {
@@ -78,8 +84,28 @@ for (var i = 0; i < uniqueCoords.length; i++) {
     coordinatesString += "<b>P" + (i+1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
 }
 
+kartAIcoords4326 = uniqueCoordsArray;
+
+// Define the source (EPSG:4326) and destination (EPSG:3857) projections
+const epsg4326 = 'EPSG:4326';
+const epsg3857 = 'EPSG:3857';
+
+// Function to convert coordinates from EPSG:4326 to EPSG:3857
+function convertToEPSG3857(coordsArray) {
+  return coordsArray.map(coord => {
+    const [longitude, latitude] = coord;
+    const [x, y] = proj4(epsg4326, epsg3857, [longitude, latitude]);
+    return [x, y];
+  });
+}
+
+// Convert the coordinates and store them in a new array
+const kartAIcoords = convertToEPSG3857(kartAIcoords4326);
+
+console.log(kartAIcoords);
+
 coordinatesElement.innerHTML = coordinatesString;
-updateCoordinates(uniqueCoordsArray);
+updateCoordinates(kartAIcoords);
 
 
 });
