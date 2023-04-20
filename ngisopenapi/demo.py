@@ -33,8 +33,17 @@ def main() -> int:
     
     print("Get features")
 
+    # Get the directory of the current file
+    file_dir = os.path.dirname(os.path.abspath(__file__))
+    # Get the parent directory of the file directory
+    parent_dir = os.path.dirname(file_dir)
+  
+    # Define the path to the region file
+    region_file = os.path.join(parent_dir, "kartAI", "training_data", "regions", "small_building_region.json")
+   
+    
     #Block of code for extracting coordinates from kartAI
-    with open('..\\kartAI\\training_data\\regions\\small_building_region.json') as f:
+    with open(region_file) as f:
         data = json.load(f)
     coordinates = [(point[0], point[1]) for point in data['coordinates'][0]]
     polygon = Polygon(coordinates)
