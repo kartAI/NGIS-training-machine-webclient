@@ -1,8 +1,18 @@
 # start.py code
-# Check correct pathing for you computer to where anaconda is installed and all the way to the activate.
 
 import subprocess
 
-print('Starting training process...')
-subprocess.call('start cmd.exe /k "%USERPROFILE%\\anaconda3\\Scripts\\activate && run_all_commands.bat"', shell=True)
+# makes the code work locally
+print('Starting download process...')
+subprocess.call(['cmd.exe', '/c', 'cd ngisopenapi && conda activate venv && python demo.py && conda deactivate && cd ..'])
+subprocess.call(['cmd.exe', '/c', 'cd kartAI && conda activate gdal_env && kai.bat create_training_data -n small_test_area -c config/dataset/kartai.json --region training_data/regions/small_building_region.json -eager True && conda deactivate && cd ..'])
+subprocess.call(['cmd.exe', '/c', 'cd ngisopenapi && conda activate venv && python deleteDB.py && conda deactivate && cd ..'])
+#deletes kartAI trainingdata folders
+#subprocess.call(['cmd.exe', '/c', 'python deleteFolder.py'])
 
+
+# makes the code work for docker build
+#print('Starting download process...')
+#subprocess.call(['sh', '-c', 'cd ngisopenapi && python demo.py && cd ..'])
+#subprocess.call(['sh', '-c', 'cd kartAI && ./kai create_training_data -n small_test_area -c config/dataset/kartai.json --region training_data/regions/small_building_region.json && cd ..'])
+#subprocess.call(['sh', '-c', 'cd ngisopenapi && conda activate venv && python deleteDB.py && conda deactivate && cd ..'])
