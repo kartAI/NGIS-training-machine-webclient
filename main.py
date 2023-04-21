@@ -20,6 +20,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from deleteFolder import delete_all_folders
 
 class Coordinates(BaseModel):
     coordinates: list
@@ -48,6 +49,10 @@ async def update_coordinates(coords: Coordinates):
         json.dump(data, file)
     return {"status": "success"}
 
+@app.post("/delete_folders")
+async def delete_folders():
+    delete_all_folders()
+    return {"message": "Sletting av mapper fullført."}
 
 @app.post("/update_coordinates")
 async def update_coordinates(coordinates: list):
@@ -93,14 +98,22 @@ async def start_training():
 
 @app.get("/get_files")
 async def get_files():
-    folder_path = r"C:/xampp/htdocs/Bachelor2023/Bachelor/kartAI/training_data/Bachelor_2023/3857_563000.0_6623000.0_100.0_100.0/512"
-    files = [f for f in os.listdir(folder_path) if f.endswith('.tif')]
+    folder_path = r"C:/xampp/htdocs/Bachelor2023/Bachelor/kartAI/training_data/Training_data/3857_563000.0_6623000.0_100.0_100.0/512"
+    files = [f for f in os.listdir(folder_path) if f.endswith(('.tif', '.json', '.vrt'))]
     num_files = len(files)
     if num_files == 0:
         folder_summary = "Ingen filer funnet!"
     else:
         folder_summary = f"{num_files} fil(er) valgt: <br><br> {', '.join(files)}"
     return {"folder_summary": folder_summary}
+
+def zip_folder(folder_path, zip_file, folder_prefix):
+    for root, _, files in os.walk(folder_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            arcname = os.path.join(folder_prefix, os.path.relpath(file_path, folder_path))
+            zip_file.write(file_path, arcname)
+
 
 
 @app.post("/send_zip_file")
@@ -115,22 +128,28 @@ async def send_zip_file(request: Request):
         return {"message": "No email specified"}
 
     # Get the absolute path of the training data folder
-    training_data_folder = r"C:/xampp/htdocs/Bachelor2023/Bachelor/kartAI/training_data/Bachelor_2023/3857_563000.0_6623000.0_100.0_100.0/512"
+    training_data_folder = os.path.join(BASE_DIR, "kartAI", "training_data", "Training_data")
+    folder_2 = os.path.join(BASE_DIR, "kartAI", "training_data", "created_datasets")
+    folder_3 = os.path.join(BASE_DIR, "kartAI", "training_data", "OrtofotoWMS")
 
-    # Create a zip file
-    zipf = zipfile.ZipFile("OrtofotoWMS.zip", "w", zipfile.ZIP_DEFLATED)
 
-    # Add all the .tif files in the training data folder to the zip file
     selected_files = []
-    for file_name in os.listdir(training_data_folder):
-        if file_name.endswith(".tif"):
-            file_path = os.path.join(training_data_folder, file_name)
-            zipf.write(file_path, file_name)
-            selected_files.append(file_name)
+    zipf = zipfile.ZipFile("All_Data.zip", "w", zipfile.ZIP_DEFLATED)
+    zip_folder(training_data_folder, zipf, "Training_data")
+    zip_folder(folder_2, zipf, "created_datasets")
+    zip_folder(folder_3, zipf, "OrtofotoWMS")
 
-    # Close the zip file
     zipf.close()
 
+    print(f"Size of the zip file before sending: {os.path.getsize('All_Data.zip')} bytes")
+
+
+    message = Mail(
+        from_email="no-reply-KartAI@hotmail.com",
+        to_emails=email["email"],
+        subject="Training data",
+        html_content=f"<strong>Vedlagt ligger treningsdataen som er bestilt.</strong>"
+    )
     # Generate the summary of selected files
     num_files = len(selected_files)
     files_str = f"{num_files} files"
@@ -152,14 +171,14 @@ async def send_zip_file(request: Request):
 
     )
 
-    with open("OrtofotoWMS.zip", "rb") as f:
+    with open("All_data.zip", "rb") as f:
         attachment = f.read()
 
     encoded_file = base64.b64encode(attachment).decode()
 
     attachedFile = Attachment(
         FileContent(encoded_file),
-        FileName('OrtofotoWMS.zip'),
+        FileName('All_data.zip'),
         FileType('application/zip'),
         Disposition('attachment')
     )
@@ -177,6 +196,6 @@ async def send_zip_file(request: Request):
         print(e)
 
     # Delete the zip file
-    os.remove("OrtofotoWMS.zip")
+    os.remove("All_data.zip")
 
     return {"message": "E-post ble sendt!"}
