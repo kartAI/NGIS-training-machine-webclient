@@ -18,7 +18,7 @@
     },
     {
       "srid": 3857,
-      "name": "Bachelor_2023",
+      "name": "Training_data",
       "type": "PostgresImageSource",
       "host": "postgresql-dev-kartai.postgres.database.azure.com",
       "port": "5432",
@@ -38,7 +38,7 @@
     },
     {
       "name": "label",
-      "source": "Bachelor_2023",
+      "source": "Training_data",
       "tile_size": 512
       
     }
