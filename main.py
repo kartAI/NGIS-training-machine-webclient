@@ -7,6 +7,7 @@ import ssl
 import zipfile
 import base64
 import sendgrid
+import asyncio
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
