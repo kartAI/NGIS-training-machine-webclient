@@ -43,8 +43,8 @@ CONFIG_FILE = os.path.join(
 
 @app.post("/update_training")
 async def update_training(coordinates: list):
-    if len(coordinates) != 2:
-        return {"status": "error", "message": "coordinates must have exactly 2 elements"}
+    if len(coordinates) != 3:
+        return {"status": "error", "message": "coordinates must have exactly 3 elements"}
 
     with open(CONFIG_FILE, "r") as file:
         data = json.load(file)
@@ -54,6 +54,15 @@ async def update_training(coordinates: list):
 
     data["ProjectArguments"]["training_fraction"] = int(coordinates[0])
     data["ProjectArguments"]["validation_fraction"] = int(coordinates[1])
+
+    # Update the ImageSets part of the JSON with the third value in the coordinates list
+    data["ImageSets"][1]["rules"] = [
+        {
+            "type": "PixelValueAreaFraction",
+            "values": [1],
+            "more_than": float(coordinates[2])/100
+        }
+    ]
 
     with open(CONFIG_FILE, "w") as file:
         json.dump(data, file)
