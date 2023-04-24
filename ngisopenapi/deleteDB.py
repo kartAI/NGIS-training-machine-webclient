@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # Load environment variables from the .env file
 load_dotenv()
 
-# Function to delete all rows from the 'kasp' table
+# Function to delete all rows from the 'buildings' table
 def delete_data():
     # Initialize connection and cursor objects as None
     conn = None
@@ -21,8 +21,8 @@ def delete_data():
 
         # Create a cursor object
         cur = conn.cursor()
-        # Execute the DELETE query on the 'kasp' table
-        cur.execute("DELETE FROM kasp")
+        # Execute the DELETE query on the 'buildings' table
+        cur.execute("DELETE FROM buildings")
         # Commit the changes
         conn.commit()
         print("Data was successfully deleted.")

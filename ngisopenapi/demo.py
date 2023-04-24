@@ -40,7 +40,6 @@ def main() -> int:
   
     # Define the path to the region file
     region_file = os.path.join(parent_dir, "kartAI", "training_data", "regions", "small_building_region.json")
-   
     
     #Block of code for extracting coordinates from kartAI
     with open(region_file) as f:
@@ -58,14 +57,14 @@ def main() -> int:
     #Gives the file a random name to avoid duplication and defines it as geojson
     filename = str(uuid.uuid4()) + ".geojson"
     
-    #Calls the api.get_features method to get the features from the NGIS API.
+    #Calls the api.get_features method to get the features from the NGIS Open-API.
     res = api.get_features(dataset_id, NGIS_bbox, "Bygning")
     print(f'Got {len(res["features"])} features. Saving to {filename}')
     
     #Saves the features from NGIS to a geojson file
     save_json(res, filename)
     
-    #Uses the transfer_geojson function to insert the features to the PostgreSQL databse
+    #Uses the transfer_geojson function to insert the features to the PostgreSQL database
     transfer.transfer_geojson(filename)
     
     return 0
