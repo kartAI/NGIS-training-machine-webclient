@@ -11,7 +11,7 @@ async function getFiles() {
   }
 }
 
-window.onload = function() {
+window.onload = function () {
   getFiles();
 };
 
@@ -35,19 +35,35 @@ function sendEmail() {
   fetch("/send_zip_file", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email })
+    body: JSON.stringify({ email }),
   })
-    .then(response => {
+    .then((response) => {
       if (response.ok) {
         document.getElementById("filesPreview").innerHTML = "<p>E-posten ble sendt!</p>";
+        // Kjør delete_all_folders funksjonen ved å sende en forespørsel til /delete_folders
+        fetch("/delete_folders", {
+          method: "POST",
+        })
+          .then((response) => {
+            if (!response.ok) {
+              console.error("En feil oppstod under sletting av mapper:", response.statusText);
+            }
+          })
+          .catch((error) => {
+            console.error("En feil oppstod under sletting av mapper:", error);
+          });
+        setTimeout(() => {
+          window.location.href = "confirm.html";
+        }, 2000);
+          
       } else {
         document.getElementById("filesPreview").innerHTML = "<p>En feil har oppstått... prøv igjen senere.</p>";
         console.error(response.statusText);
       }
     })
-    .catch(error => {
+    .catch((error) => {
       document.getElementById("filesPreview").innerHTML = "<p>En feil har oppstått... prøv igjen senere.</p>";
       console.error(error);
     });
