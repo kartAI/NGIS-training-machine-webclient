@@ -52,8 +52,8 @@ async def update_training(coordinates: list):
     if "ProjectArguments" not in data:
         data["ProjectArguments"] = {}
 
-    data["ProjectArguments"]["training_fraction"] = coordinates[0]
-    data["ProjectArguments"]["validation_fraction"] = coordinates[1]
+    data["ProjectArguments"]["training_fraction"] = int(coordinates[0])
+    data["ProjectArguments"]["validation_fraction"] = int(coordinates[1])
 
     with open(CONFIG_FILE, "w") as file:
         json.dump(data, file)
