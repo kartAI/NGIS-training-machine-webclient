@@ -67,4 +67,4 @@ function sendEmail() {
       document.getElementById("filesPreview").innerHTML = "<p>En feil har oppstått... prøv igjen senere.</p>";
       console.error(error);
     });
-  }
+}

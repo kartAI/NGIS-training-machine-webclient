@@ -11,13 +11,14 @@
       "name": "OrtofotoWMS",
       "type": "WMSImageSource",
       "image_format": "image/tiff",
-      "url": "https://wms.geonorge.no/skwms1/wms.nib",
+      "url": "https://waapi.webatlas.no/wms-orto/",
+      "api_key": "NK_WMS_API_KEY",
       "layers": ["ortofoto"],
-      "styles": ["default"]
+      "styles": ["new_up"]
     },
     {
       "srid": 3857,
-      "name": "Bachelor_2023",
+      "name": "Training_data",
       "type": "PostgresImageSource",
       "host": "postgresql-dev-kartai.postgres.database.azure.com",
       "port": "5432",
@@ -37,7 +38,7 @@
     },
     {
       "name": "label",
-      "source": "Bachelor_2023",
+      "source": "Training_data",
       "tile_size": 512
       
     }
