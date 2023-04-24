@@ -22,7 +22,7 @@
                     <h1 class="display-4 fw-normal">Order of trainingdata</h1>
                     <p class=" text-muted"> Fill in needed information about the order </p>
                 </div>
-                <form> <!-- TileSize -->
+                <form method="GET"> <!-- TileSize -->
                     <div class="form-outline mb-4 " title="Tilesize" data-bs-toggle="tooltip" data-bs-placement="top">
                         <label class="form-label col-sm-2 col-form-label col-form-label-lg">Tilesize*</label><input
                             type="tilesize" id="form6Example5" class="form-control form-control-lg">
@@ -31,21 +31,19 @@
                         class="form-label col-sm-2 col-form-label col-form-label-lg"><b>Rules/ constraints</b></label>
                     <!-- Container 3 kolonner -->
                     <div class="row"> <!-- Training -->
-                        <div class="form-outline mb-4 col"><label
-                                class="form-label col-sm-2 col-form-label col-form-label-lg">Training</label>
-                            <div class="input-group"> <input type="text" class="form-control form-control-lg"> <span
-                                    class="input-group-text" id="basic-addon2">%</span> </div>
+                        <div class="form-outline mb-4 col">
+                            <label class="form-label col-sm-2 col-form-label col-form-label-lg">Training*</label>
+                            <div class="input-group">
+                              <input type="text" id="training" class="form-control form-control-lg">
+                              <span class="input-group-text">%</span>
+                            </div>
                         </div> <!-- Validation -->
                         <div class="form-outline mb-4 col"><label
-                                class="form-label col-sm-2 col-form-label col-form-label-lg">Validation</label>
-                            <div class="input-group"> <input type="text" class="form-control form-control-lg"> <span
-                                    class="input-group-text" id="basic-addon2">%</span> </div>
-                        </div> <!-- Test-->
-                        <div class="form-outline mb-4 col"><label
-                                class="form-label col-sm-2 col-form-label col-form-label-lg">Test</label>
-                            <div class="input-group"> <input type="text" class="form-control form-control-lg"> <span
-                                    class="input-group-text" id="basic-addon2">%</span> </div>
-                        </div>
+                                class="form-label col-sm-2 col-form-label col-form-label-lg">Validation*</label>
+                            <div class="input-group"> 
+                                <input type="text" id="validation" class="form-control form-control-lg"> <span
+                                    class="input-group-text">%</span> </div>
+
                     </div> <!-- Bygningsprosent -->
                     <div class="form-outline mb-4"> <label
                             class="form-label col-sm-2 col-form-label col-form-label-lg">Buildingpercentage</label>
@@ -55,7 +53,7 @@
                     </div> <!-- HTML code -->
                     <div class="row justify-content-end"> <button type="button"
                             class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3 ml-auto"
-                            onclick="startTraining()">Continue</button> </div> <!-- Modal structure -->
+                            onclick="updateValue(); startTraining()">Continue</button> </div> <!-- Modal structure -->
                     <div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -77,28 +75,11 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <script src="frontend/scripts/script.js"></script>
                     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
                     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
                     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-                
-                    <script>
-
-                        function startTraining() {
-                            // Show the modal
-                            $('#confirmationModal').modal('show');
-                        }
-
-                        function confirmTraining() {
-                            fetch('/startTraining', {
-                                method: 'POST'
-                            })
-                                .then(() => {
-                                    // Navigate to confirm.html regardless of the response
-                                    window.location.href = '/sendToEmail.html';
-                                })
-                                .catch(error => console.error(error));
-                        }
-                    </script>
 
             </div>
 
@@ -108,17 +89,7 @@
 
     </div>
 
-    <script src="frontend/scripts/script.js"></script>
-
 </body>
 
-
-</html>
-</div>
-</div>
-</main>
-</div>
-<script src="frontend/scripts/script.js"></script>
-</body>
 
 </html>

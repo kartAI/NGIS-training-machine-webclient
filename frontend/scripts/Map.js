@@ -1,5 +1,5 @@
 //map initialization
-var map = L.map('map', {crs: L.CRS.EPSG3857}).setView([58.146513160381325, 7.99581527709961], 14);
+var map = L.map('map', {crs: L.CRS.EPSG3857}).setView([59.887537, 10.523083], 14);
 
 //Add OpenStreetMap Tiles
 var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=gBHYqk3cSCXUdQqICyH3', {
