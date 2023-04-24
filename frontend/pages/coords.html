@@ -18,18 +18,8 @@
 
 <body>
     <div class="container py-3">
-
-        <!-- Main header used across all the pages -->
         <header>
-            <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
-                <a href="./index.html" class="d-flex align-items-center text-dark text-decoration-none">
-                    <span class="fs-4">Kart-AI Trainingdata</span>
-                </a>
-
-
-            </div>
-            <!-- Subheading/description -->
-
+            <div id="header"></div>
         </header>
         <main class="main-container">
             <div class="text-center">
@@ -66,7 +56,7 @@
             <div>
                 <div id="map" onmouseenter="return noScroll();"></div>
             </div>
-            <div class="row justify-content-end">
+            <div class="btn-container">
                 <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3" onclick="return nav();">Go
                     to order</button>
             </div>
@@ -82,6 +72,7 @@
     <script src="frontend/scripts/coords.js"></script>
     <script src="frontend/scripts/script.js"></script>
     <script src="frontend/scripts/map.js"></script>
+    <script src="frontend/scripts/header.js"></script>
 </body>
 
 </html>
