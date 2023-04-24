@@ -54,6 +54,10 @@ function sendEmail() {
           .catch((error) => {
             console.error("En feil oppstod under sletting av mapper:", error);
           });
+        setTimeout(() => {
+          window.location.href = "confirm.html";
+        }, 2000);
+          
       } else {
         document.getElementById("filesPreview").innerHTML = "<p>En feil har oppstått... prøv igjen senere.</p>";
         console.error(response.statusText);
