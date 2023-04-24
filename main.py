@@ -98,7 +98,7 @@ async def start_training():
 
 @app.get("/get_files")
 async def get_files():
-    folder_path = r"C:/xampp/htdocs/Bachelor2023/Bachelor/kartAI/training_data/Training_data/3857_563000.0_6623000.0_100.0_100.0/512"
+    folder_path = os.path.join(BASE_DIR, "kartAI", "training_data", "Training_data", "3857_563000.0_6623000.0_100.0_100.0", "512")
     files = [f for f in os.listdir(folder_path) if f.endswith(('.tif', '.json', '.vrt'))]
     num_files = len(files)
     if num_files == 0:
