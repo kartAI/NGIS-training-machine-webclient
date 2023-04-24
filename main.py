@@ -38,6 +38,27 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REGION_FILE = os.path.join(
     BASE_DIR, "kartAI", "training_data", "regions", "small_building_region.json")
+CONFIG_FILE = os.path.join(
+    BASE_DIR, "kartAI", "config", "dataset", "kartai.json")
+
+@app.post("/update_training")
+async def update_training(coordinates: list):
+    if len(coordinates) != 2:
+        return {"status": "error", "message": "coordinates must have exactly 2 elements"}
+
+    with open(CONFIG_FILE, "r") as file:
+        data = json.load(file)
+
+    if "ProjectArguments" not in data:
+        data["ProjectArguments"] = {}
+
+    data["ProjectArguments"]["training_fraction"] = int(coordinates[0])
+    data["ProjectArguments"]["validation_fraction"] = int(coordinates[1])
+
+    with open(CONFIG_FILE, "w") as file:
+        json.dump(data, file)
+
+    return {"status": "success"}
 
 @app.post("/update_coord.js")
 async def update_coordinates(coords: Coordinates):
