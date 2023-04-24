@@ -47,4 +47,8 @@ function confirmTraining() {
       })
       .catch(error => console.error(error));
 }
+//loading screen function
+function loadingModal(){
+  $('.modal').modal('show');
 
+}

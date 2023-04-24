@@ -113,3 +113,23 @@ label, input {
 .btn {
   background: #009dd3 !important;
 }
+
+.loading {
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  font-variation-settings: 'FILL'0, 'wght'400, 'GRAD'0, 'opsz'48;
+}
+
+.modal-dialog {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.spinner-container {
+  text-align: center;
+  margin: 0 auto;
+
+  justify-content: center;
+}
