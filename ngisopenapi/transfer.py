@@ -32,12 +32,11 @@ def transfer_geojson(fname):
             properties = feature["properties"]
             geometry = feature["geometry"]
 
-            
             cur.execute(
                 "INSERT INTO buildings (properties, geom, id) VALUES (%s, ST_Transform(ST_SetSRID(ST_GeomFromGeoJSON(%s), 5972), 3857), DEFAULT)",
                 (json.dumps(properties), json.dumps(geometry))
-)
-            
+            )
+
         # Commit the changes
         conn.commit()
 
