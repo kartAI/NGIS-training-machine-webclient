@@ -16,7 +16,8 @@ function nav() {
 async function updateValue() {
   let inputTraining = document.getElementById("training");
   let inputValidation = document.getElementById("validation");
-  let training_fraction = [inputTraining.value, inputValidation.value];
+  let inputBuilding = document.getElementById("building");
+  let training_fraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
   console.log(training_fraction);
 
@@ -47,4 +48,8 @@ function confirmTraining() {
       })
       .catch(error => console.error(error));
 }
+//loading screen function
+function loadingModal(){
+  $('.modal').modal('show');
 
+}
