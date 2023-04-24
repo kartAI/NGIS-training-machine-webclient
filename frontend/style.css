@@ -12,10 +12,9 @@
   margin-bottom: 3rem !important;
   box-shadow: 0 1rem 3rem rgba(var(--bs-body-color-rgb), .175) !important;
   padding: 5rem;
-  align-items: center;
-  justify-content: center;
-
+  margin: auto;
 }
+
 
 .card .fas {
   font-variation-settings: 'FILL'0, 'wght'400, 'GRAD'0, 'opsz'48;
@@ -109,9 +108,17 @@ label, input {
 .form-group {
   margin-top: 3rem;
 }
-
+.btn-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 .btn {
   background: #009dd3 !important;
+}
+
+.btn:hover {
+  background: #006f95 !important;
 }
 
 .loading {
@@ -125,6 +132,11 @@ label, input {
   display: flex;
   justify-content: center;
   width: 100%;
+}
+
+.fa {
+  font-size: 80px;
+  color: #009dd3
 }
 
 .spinner-container {
