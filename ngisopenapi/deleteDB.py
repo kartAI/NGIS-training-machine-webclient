@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Function to delete all rows from the 'buildings' table
+
+
 def delete_data():
     # Initialize connection and cursor objects as None
     conn = None
@@ -35,6 +37,7 @@ def delete_data():
             cur.close()
         if conn:
             conn.close()
+
 
 # Call the delete_data function
 delete_data()
