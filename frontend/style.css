@@ -5,7 +5,7 @@
 .content {
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  /*height: 100vh;*/
   padding: 4rem;
 }
 
@@ -173,4 +173,11 @@ label, input {
 
 .list-group-item {
   background-color: #f8f9fa;
+}
+
+#error-message {
+  padding: 0.3rem;
+  /* adjust the padding as per your requirement */
+  font-size: 0.9rem;
+  /* adjust the font size as per your requirement */
 }
