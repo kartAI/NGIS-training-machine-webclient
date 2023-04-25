@@ -41,7 +41,6 @@ def transfer_geojson(fname):
         conn.commit()
 
         # Check if the data was inserted successfully
-        cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM buildings")
         row_count_after = cur.fetchone()[0]
         if row_count_after > row_count_before:
@@ -50,7 +49,7 @@ def transfer_geojson(fname):
             print("Data insertion failed.")
 
     except Exception as e:
-        print("Error connecting to database, data was not inserted.")
+        print("Error connecting to database, data was not inserted.", e)
     finally:
         # Close the cursor and the connection
         if cur:

@@ -17,6 +17,35 @@ function nav() {
   }
 }
 
+let inputTraining = document.getElementById("training");
+let inputValidation = document.getElementById("validation");
+let inputBuilding = document.getElementById("building");
+let continueBtn = document.getElementById("continueBtn");
+const errorMessage = document.getElementById('error-message');
+
+// Function to check if all required fields have values
+function allFieldsFilled() {
+  return (
+    inputTraining.value !== '' &&
+    inputValidation.value !== '' &&
+    inputBuilding.value !== ''
+  );
+}
+
+// Function to validate fields and start training
+function validateStart() {
+  if (allFieldsFilled()) {
+    // Hide the error message if it's visible
+    errorMessage.classList.add('d-none');
+
+    // Call your existing functions
+    updateValue();
+    startTraining();
+  } else {
+    // Show the error message
+    errorMessage.classList.remove('d-none');
+  }
+}
 
 //update the training data fractions on the server
 async function updateValue() {
@@ -24,8 +53,6 @@ async function updateValue() {
   let inputValidation = document.getElementById("validation");
   let inputBuilding = document.getElementById("building");
   let training_fraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
-
-  console.log(training_fraction);
 
   const response = await fetch('http://localhost:8000/update_training', {
     method: 'POST',
