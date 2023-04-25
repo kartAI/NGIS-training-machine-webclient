@@ -24,12 +24,30 @@
 #card-container {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row;
-  align-items: center;
   justify-content: center;
+  align-items: stretch;
+  /* Stretch to fill the container */
   padding-top: 3rem;
 }
 
+.card {
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none !important;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 340px !important;
+  height: 300px;
+  /* Set a fixed height */
+  margin: 30px;
+  max-width: 25%;
+  width: -webkit-fill-available !important;
+  border: 1px solid #ccc;
+  /* Add a border for visualization */
+}
 
 .card .fas {
   font-variation-settings: 'FILL'0, 'wght'400, 'GRAD'0, 'opsz'48;
@@ -49,21 +67,7 @@
   background-color: white;
 }
 
-.card {
-  text-align: center;
-  height: inherit;
-  cursor: pointer;
-  text-decoration: none !important;
-  color: black;
-  align-items: center;
-  min-width: 340px !important;
-  min-height: min-content !important;
-  display: flex;
-  list-style: none;
-  margin: 30px;
-  max-width: 25%;
-  width: -webkit-fill-available !important;
-}
+
 
 
 
