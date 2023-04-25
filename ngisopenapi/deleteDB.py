@@ -30,7 +30,7 @@ def delete_data():
         print("Data was successfully deleted.")
 
     except Exception as e:
-        print("Error connecting to database")
+        print("Error connecting to database, data was not insterted.", e)
     finally:
         # Close the cursor and the connection
         if cur:
