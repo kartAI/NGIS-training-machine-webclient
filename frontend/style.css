@@ -7,10 +7,28 @@
   justify-content: center;
   /*height: 100vh;*/
   padding: 4rem;
+  z-index: 0;
+
+
 }
 
 .header {
-  padding: 10px;
+  z-index: 300;
+  background-color: white;
+}
+
+.myHeader {
+  position: fixed;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.2);
+  width: 100vw;
+  padding: 1rem !important;
+  background-color: white;
+  z-index: 300;
+}
+
+.logo {
+  height: 10px;
+  width: 10px;
 }
 
 .main-container {
@@ -18,18 +36,40 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
-
+  background: white;
+  padding-top: 4rem;
+  padding-bottom: 8rem;
+  z-index: 0;
 }
 
 #card-container {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row;
-  align-items: center;
   justify-content: center;
+  align-items: stretch;
+  /* Stretch to fill the container */
   padding-top: 3rem;
+
 }
 
+.card {
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none !important;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 340px !important;
+  height: 300px;
+  /* Set a fixed height */
+  margin: 30px;
+  max-width: 25%;
+  width: -webkit-fill-available !important;
+  border: 1px solid #ccc;
+  /* Add a border for visualization */
+}
 
 .card .fas {
   font-variation-settings: 'FILL'0, 'wght'400, 'GRAD'0, 'opsz'48;
@@ -49,21 +89,7 @@
   background-color: white;
 }
 
-.card {
-  text-align: center;
-  height: inherit;
-  cursor: pointer;
-  text-decoration: none !important;
-  color: black;
-  align-items: center;
-  min-width: 340px !important;
-  min-height: min-content !important;
-  display: flex;
-  list-style: none;
-  margin: 30px;
-  max-width: 25%;
-  width: -webkit-fill-available !important;
-}
+
 
 
 
@@ -81,8 +107,8 @@
   position: relative;
   width: 100%;
   border-radius: 0.375rem;
-  aspect-ratio: 0.5 / 0.35;
-  height: 75vh;
+  height: 65vh;
+  width: 75%;
 }
 
 .drop-container {
