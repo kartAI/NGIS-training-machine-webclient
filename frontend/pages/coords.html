@@ -23,10 +23,10 @@
             <div id="header"></div>
         </header>
 
-        <!-- Container for page content-->
+        <!-- Page content -->
         <div class="main-container">
 
-            <!-- Page heading-->
+            <!-- Headline and info -->
             <div class="text-center">
                 <h1 class="display-4 fw-normal">Coordinates</h1>
                 <p class="fs-5 text-muted">Choose coordinatesystem, enter coordinates in field and push done.
@@ -54,6 +54,7 @@
                         <option>EPSG:25835</option>
                         <option>EPSG:25836</option>
                     </select>
+
                     <!-- Freetext-field -->
                     <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates</label>
                     <div class="input-group ">
@@ -64,13 +65,12 @@
                     </div>
                 </div>
 
-
                 <!-- Map -->
                 <div>
                     <div id="map" onmouseenter="return noScroll();"></div>
                 </div>
 
-                <!-- Button -->
+                <!-- Continue button -->
                 <div class="btn-container">
                     <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3" onclick="return nav();">Go
                         to order</button>
@@ -78,10 +78,6 @@
             </div>
         </div>
     </div>
-
-
-    <!-- Scripts -->
-
 
     <!-- Proj4 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
