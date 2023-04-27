@@ -5,76 +5,99 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Trainingdata Generator</title>
 
-    <!-- Stylesheet -->
+    <!-- Import custom stylesheet -->
     <link rel="stylesheet" href="frontend/style.css">
-    <!-- Stylesheet for bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="">
+    <!-- Import Bootstrap stylesheet from a CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Import Leaflet stylesheet from a CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
 </head>
 
 <body>
-    <header>
-        <div id="header"></div>
-    </header>
     <div class="content">
+
+        <!-- Header/navbar-->
+        <header>
+            <div id="header"></div>
+        </header>
+
+        <!-- Container for page content-->
         <div class="main-container">
+
+            <!-- Page heading-->
             <div class="text-center">
                 <h1 class="display-4 fw-normal">Coordinates</h1>
                 <p class="fs-5 text-muted">Choose coordinatesystem, enter coordinates in field and push done.
                 </p>
             </div>
-            <div class="form-group " id="form-container">
-                <label for="coordSys" class="col-sm-2 col-form-label col-form-label-lg">Coordinatesystem</label>
-                <select id="coordSys" class="form-control form-control-lg">
-                    <option selected>Choose coordinatesystem</option>
-                    <option>EPSG:4326</option>
-                    <option>EPSG:25833</option>
-                    <option>EPSG:32632</option>
-                    <option>EPSG:32633</option>
-                    <option>EPSG:32634</option>
-                    <option>EPSG:32635</option>
-                    <option>EPSG:32636</option>
-                    <option>EPSG:25832</option>
-                    <option>EPSG:25833</option>
-                    <option>EPSG:25834</option>
-                    <option>EPSG:25835</option>
-                    <option>EPSG:25836</option>
-                </select>
-                <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates</label>
-                <div class="input-group ">
-                    <textarea id="coordinates-input" class="form-control form-control-lg"
-                        aria-describedby="coordinateHelp" rows="3"
-                        placeholder="Enter coordinates, separated by commas"></textarea>
-                    <button type="button" class="btn btn-primary btn-lg" id="done-button">Done</button>
+
+            <!-- Form -->
+            <div class="row w-75">
+                <div class="form-group pb-3" id="form-container">
+
+                    <!-- Selectfield -->
+                    <label for="coordSys" class="col-sm-2 col-form-label col-form-label-lg">Coordinatesystem</label>
+                    <select id="coordSys" class="form-control form-control-lg">
+                        <option selected>Choose coordinatesystem</option>
+                        <option>EPSG:4326</option>
+                        <option>EPSG:25833</option>
+                        <option>EPSG:32632</option>
+                        <option>EPSG:32633</option>
+                        <option>EPSG:32634</option>
+                        <option>EPSG:32635</option>
+                        <option>EPSG:32636</option>
+                        <option>EPSG:25832</option>
+                        <option>EPSG:25833</option>
+                        <option>EPSG:25834</option>
+                        <option>EPSG:25835</option>
+                        <option>EPSG:25836</option>
+                    </select>
+                    <!-- Freetext-field -->
+                    <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates</label>
+                    <div class="input-group ">
+                        <textarea id="coordinates-input" class="form-control form-control-lg"
+                            aria-describedby="coordinateHelp" rows="3"
+                            placeholder="Enter coordinates, separated by commas"></textarea>
+                        <button type="button" class="btn btn-primary btn-lg" id="done-button">Done</button>
+                    </div>
+                </div>
+
+
+                <!-- Map -->
+                <div>
+                    <div id="map" onmouseenter="return noScroll();"></div>
+                </div>
+
+                <!-- Button -->
+                <div class="btn-container">
+                    <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3" onclick="return nav();">Go
+                        to order</button>
                 </div>
             </div>
         </div>
-        <br>
-        <div>
-            <div id="map" onmouseenter="return noScroll();"></div>
-        </div>
-        <div class="btn-container">
-            <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3" onclick="return nav();">Go
-                to order</button>
-        </div>
     </div>
-    </div>
+
+
+    <!-- Scripts -->
+
+
     <!-- Proj4 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
         integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- Leaflet js -->
+    <!-- Leaflet library-->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
         integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-    <script src="frontend/scripts/coords.js"></script>
-    <script src="frontend/scripts/script.js"></script>
+
+    <!-- Custom JS files -->
+    <script src="frontend/scripts/coords.js"></script> <!-- Contains functions related to coordinate conversion -->
+    <script src="frontend/scripts/script.js"></script> <!-- Contains general-purpose functions -->
     <script src="frontend/scripts/map.js"></script>
     <script src="frontend/scripts/header.js"></script>
+
 </body>
 
 </html>
