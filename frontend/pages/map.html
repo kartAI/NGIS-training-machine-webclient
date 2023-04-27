@@ -32,7 +32,6 @@
 </head>
 
 <body>
-
     <header>
         <div id="header"></div>
     </header>
@@ -56,37 +55,40 @@
                         </li>
                     </ul>
                 </div>
-                <div id="map"></div>
+            </div>
+
+            <div id="map">
                 <div id="drawControl"></div>
                 <div id="shapeType"></div>
-
             </div>
-
-            <div class="btn-container">
-                <button type="button" class="btn btn-primary btn-lg col-3 offset-3 m-3"
-                    onclick="return nav();">Next</button>
-            </div>
-
         </div>
 
-        <!-- Leaflet map library -->
-        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-            integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+        <div class="btn-container w-75">
+            <button type=" button" class="btn btn-primary btn-lg col-3 offset-3" onclick=" return
+                nav();">Next</button>
+        </div>
+    </div>
 
-        <!-- Proj4 library for coordinate transformations -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
-            integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        <!-- plugin for drawing shapes on Leaflet maps-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
 
-        <!-- custom JavaScript scripts -->
-        <script src="frontend/scripts/Map.js"></script>
-        <script src="frontend/scripts/script.js"></script>
-        <script src="frontend/scripts/header.js"></script>
-        <script src="frontend/scripts/api.js"></script>
+    <!-- Leaflet map library -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <!-- Proj4 library for coordinate transformations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
+        integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- plugin for drawing shapes on Leaflet maps-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+
+    <!-- custom JavaScript scripts -->
+    <script src="frontend/scripts/Map.js"></script>
+    <script src="frontend/scripts/script.js"></script>
+    <script src="frontend/scripts/header.js"></script>
+    <script src="frontend/scripts/api.js"></script>
 
 </body>
 

@@ -30,7 +30,7 @@
             </p>
 
 
-            <label for="file-input" class="drop-container mb-3">
+            <label for="file-input" class="drop-container mb-3 w-75">
                 <span class="drop-title">Choose file</span>
                 <input type="file" id="file-input">
             </label>
@@ -45,18 +45,17 @@
                 </ul>
             </div>
 
-            <div>
-                <div id="map" onmouseenter="return noScroll();"></div>
-            </div>
-            <div class="btn-container">
-                <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3 m-3"
-                    onclick="return nav();">Next</button>
-            </div>
-
+        </div>
+        <div class="d-flex justify-content-center">
+            <div id="map" onmouseenter="return noScroll();"></div>
 
         </div>
-    </div>
 
+        <div class="btn-container">
+            <button type="button" class="btn btn-primary btn-lg col-3 offset-3" onclick="validateStart()"
+                id="continueBtn">Continue</button>
+        </div>
+    </div>
     <!-- Proj4 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
         integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
