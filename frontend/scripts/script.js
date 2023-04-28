@@ -1,3 +1,18 @@
+//Header
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'header.html');
+xhr.responseType = 'text';
+
+xhr.onload = function () {
+  if (xhr.status === 200) {
+    var headerDiv = document.getElementById('header');
+    headerDiv.innerHTML = xhr.response;
+  }
+};
+xhr.send();
+
+
+// Map of pages and their corresponding next pages
 const pageMap = {
   'uploadFile.html': 'setConstraints.html',
   'map.html': 'setConstraints.html',
@@ -14,10 +29,13 @@ function nav() {
     document.location.href = `./${targetPage}`;
   }
 }
+
+// Navigate to home page
 function home() {
   var url = "frontend\pages\home.html";
   window.location(url);
 }
+
 
 const inputTraining = document.getElementById("training");
 const inputValidation = document.getElementById("validation");
@@ -25,7 +43,7 @@ const inputBuilding = document.getElementById("building");
 const continueBtn = document.getElementById("continueBtn");
 const errorMessage = document.getElementById('error-message');
 
-// Check if all required fields have values
+// Validate that all required fields are filled out before continuing
 function validateStart() {
   const inputFields = ['training', 'validation', 'building'];
   const errorMessages = ['Please fill out this field.', 'Please fill out this field.', 'Please fill out this field.'];
@@ -68,7 +86,7 @@ async function updateValue() {
   return data;
 }
 
-// Show the confirmation modal
+// Display a confirmation modal
 function startTraining() {
   $('#confirmationModal').modal('show');
 }
@@ -84,7 +102,7 @@ function confirmTraining() {
     .catch(error => console.error(error));
 }
 
-// Show the loading modal
+// Display the loading modal
 function loadingModal() {
   $('.modal').modal('show');
 }
