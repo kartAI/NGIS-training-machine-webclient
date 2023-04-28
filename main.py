@@ -42,7 +42,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Paths to the relevant files
+# Paths to the relevant files and directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REGION_FILE = os.path.join(
     BASE_DIR, "kartAI", "training_data", "regions", "small_building_region.json")
@@ -50,8 +50,6 @@ CONFIG_FILE = os.path.join(
     BASE_DIR, "kartAI", "config", "dataset", "kartai.json")
 
 # Code block for updating test/validation/building
-
-
 @app.post("/update_training")
 async def update_training(input: list):
     if len(input) != 3:
@@ -60,6 +58,7 @@ async def update_training(input: list):
     with open(CONFIG_FILE, "r") as file:
         data = json.load(file)
 
+# Ensure that the "ProjectArguments" key exists in the JSON object
     if "ProjectArguments" not in data:
         data["ProjectArguments"] = {}
 
@@ -183,6 +182,7 @@ async def send_zip_file(request: Request):
         BASE_DIR, "kartAI", "training_data", "created_datasets")
     folder_3 = os.path.join(BASE_DIR, "kartAI", "training_data", "OrtofotoWMS")
 
+    # Create a zip file containing the training data folders and their contents
     selected_files = []
     zipf = zipfile.ZipFile("All_Data.zip", "w", zipfile.ZIP_DEFLATED)
     zip_folder(training_data_folder, zipf, "Training_data")
@@ -217,7 +217,7 @@ async def send_zip_file(request: Request):
 
     with open("All_Data.zip", "rb") as f:
         attachment = f.read()
-
+    # Encode the attachment in base64 and attach it to the email message
     encoded_file = base64.b64encode(attachment).decode()
 
     attachedFile = Attachment(
@@ -229,6 +229,7 @@ async def send_zip_file(request: Request):
 
     message.attachment = attachedFile
 
+    # Send the email using the SendGrid API
     try:
         sg = sendgrid.SendGridAPIClient(
             api_key='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')
@@ -239,7 +240,7 @@ async def send_zip_file(request: Request):
     except Exception as e:
         print(e)
 
-    # Delete the zip file
+    # Delete the zip file that is temporary stored
     os.remove("All_Data.zip")
 
-    return {"message": "E-post ble sendt!"}
+    return {"message": "Email was sent successfully!"}
