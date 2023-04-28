@@ -92,7 +92,7 @@ async def update_coordinates(coords: Input):
         json.dump(data, file)
     return {"status": "success"}
 
-
+# Deletes the folders locally after email is sent
 @app.post("/delete_folders")
 async def delete_folders():
     delete_all_folders()
@@ -130,7 +130,7 @@ async def read_page(request: Request, page: str):
 async def favicon():
     return Response(content="", media_type="image/x-icon")
 
-
+# Start the training script
 @app.post("/startTraining")
 async def start_training():
     try:
@@ -141,7 +141,7 @@ async def start_training():
 
     return {"message": "Training process started successfully"}
 
-
+# Collect and lists up files before sending the email
 @app.get("/get_files")
 async def get_files():
     folder_path = os.path.join(BASE_DIR, "kartAI", "training_data",
@@ -150,9 +150,9 @@ async def get_files():
         folder_path) if f.endswith(('.tif', '.json', '.vrt'))]
     num_files = len(files)
     if num_files == 0:
-        folder_summary = "Ingen filer funnet!"
+        folder_summary = "No files found!"
     else:
-        folder_summary = f"{num_files} fil(er) valgt: <br><br> {', '.join(files)}"
+        folder_summary = f"{num_files} file(s) selected: <br><br> {', '.join(files)}"
     return {"folder_summary": folder_summary}
 
 
@@ -194,12 +194,6 @@ async def send_zip_file(request: Request):
     print(
         f"Size of the zip file before sending: {os.path.getsize('All_Data.zip')} bytes")
 
-    message = Mail(
-        from_email="no-reply-KartAI@hotmail.com",
-        to_emails=email["email"],
-        subject="Training data",
-        html_content=f"<strong>Vedlagt ligger treningsdataen som er bestilt.</strong>"
-    )
     # Generate the summary of selected files
     num_files = len(selected_files)
     files_str = f"{num_files} files"
@@ -217,7 +211,7 @@ async def send_zip_file(request: Request):
         from_email="no-reply-KartAI@hotmail.com",
         to_emails=email["email"],
         subject="Training data",
-        html_content=f"<strong>Vedlagt ligger treningsdataen som er bestilt.</strong>"
+        html_content=f"<strong>The ordered training data is attached</strong>"
 
     )
 
