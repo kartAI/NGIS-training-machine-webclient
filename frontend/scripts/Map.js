@@ -37,7 +37,7 @@ map.on("draw:created", function (c) {
     // Adds shape to layergroup: drawnItems
     drawnItems.addLayer(layer);
     noScroll();
-    
+
     // Retrieves the coordinates of the shape
     var coords;
     if (layer instanceof L.Polygon) {
