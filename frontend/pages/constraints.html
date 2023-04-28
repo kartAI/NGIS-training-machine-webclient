@@ -35,21 +35,23 @@
             <!-- Form-->
             <div class="row w-75">
                 <div class="form-outline mb-4 col">
-                    <label class="form-label col-sm-2 col-form-label col-form-label-lg">Training*</label>
+                    <label class="form-label col-2 col-form-label col-form-label-lg" for="training">Training*</label>
                     <div class="input-group">
                         <input type="number" id="training" class="form-control form-control-lg">
                         <span class="input-group-text">%</span>
                     </div>
                 </div>
                 <div class="form-outline mb-4 col">
-                    <label class="form-label col-sm-2 col-form-label col-form-label-lg">Validation*</label>
+                    <label class="form-label col-2 col-form-label col-form-label-lg"
+                        for="validation">Validation*</label>
                     <div class="input-group">
                         <input type="number" id="validation" class="form-control form-control-lg">
                         <span class="input-group-text">%</span>
                     </div>
                 </div>
                 <div class="form-outline mb-4">
-                    <label class="form-label col-sm-2 col-form-label col-form-label-lg">Buildingpercentage</label>
+                    <label class="form-label col-2 col-form-label col-form-label-lg"
+                        for="building">Buildingpercentage</label>
                     <div class="input-group">
                         <input type="number" id="building" class="form-control form-control-lg"
                             aria-label="Recipient's username" aria-describedby="basic-addon2">
@@ -57,8 +59,7 @@
                     </div>
 
                     <!-- Error Alert -->
-                    <div id="error-message"
-                        class="alert alert-danger alert-dismissible d-flex align-items-center fade show d-none">
+                    <div id="error-message" class="alert alert-danger alert-dismissible d-flex fade show d-none mt-2">
                         <i class="bi-exclamation-octagon-fill"></i>
                         <strong class="mx-2">Error!</strong> Please fill in all input fields.
                     </div>
@@ -72,7 +73,7 @@
 
                 <!-- Confirmation Modal -->
                 <div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
-                    <div class="modal-dialog justify-content-center  modal-dialog-centered " role="document">
+                    <div class="modal-dialog  modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h2 class="modal-title">Confirm order of trainingdata</h2>
@@ -97,7 +98,7 @@
 
                 <!-- Loading modal -->
                 <div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
-                    <div class="modal-dialog justify-content-center  modal-dialog-centered " role="document">
+                    <div class="modal-dialog justify-content-center modal-dialog-centered " role="document">
                         <div class="spinner-container">
                             <span class="fa fa-spinner fa-spin fa-3x " style="font-size:80px;color:#009dd3"></span>
                             <div class="loading">Downloading data</div>
