@@ -171,6 +171,7 @@ label, input {
 /* Button style */
 .btn {
   background: #009dd3 !important;
+  border: 0px !important;
 }
 
 /* Button hover style */
@@ -213,7 +214,12 @@ label, input {
 }
 
 /* Error message style */
-#error-message {
+.alert {
   padding: 0.3rem;
   font-size: 0.9rem;
+  max-height: fit-content;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  margin-top: 0.5rem;
+  display: flex;
 }

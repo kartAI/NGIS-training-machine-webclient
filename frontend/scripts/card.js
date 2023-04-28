@@ -8,12 +8,12 @@ const cardData = [
   {
     icon: 'fa-keyboard',
     text: 'Write coordinates',
-    link: 'coords.html'
+    link: 'coordinates.html'
   },
   {
     icon: 'fa-upload',
     text: 'Upload geoJSON-file',
-    link: 'upload.html'
+    link: 'uploadFile.html'
   }
 ];
 

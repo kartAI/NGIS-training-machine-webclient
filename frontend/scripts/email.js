@@ -55,7 +55,7 @@ function sendEmail() {
             console.error("An error occurred while deleting folders:", error);
           });
         setTimeout(() => {
-          window.location.href = "confirm.html";
+          window.location.href = "success.html";
         }, 2000);
           
       } else {
