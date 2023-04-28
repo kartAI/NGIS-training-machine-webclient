@@ -71,7 +71,7 @@ function startTraining() {
   $('#confirmationModal').modal('show');
 }
 
-// initiates a training process and redirects to next page
+// Initiates a training process and redirects to next page
 function confirmTraining() {
   fetch('/startTraining', {
     method: 'POST'
@@ -83,7 +83,7 @@ function confirmTraining() {
     // If request fails, log error
     .catch(error => console.error(error));
 }
-//loading screen function
+// Loading screen function
 function loadingModal() {
   $('.modal').modal('show');
 
