@@ -20,5 +20,3 @@ xhr.onload = function () {
 
 // Send the request to load the file
 xhr.send();
-
-console.log('JavaScript code executed.');

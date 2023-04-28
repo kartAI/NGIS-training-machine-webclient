@@ -1,18 +1,20 @@
+/* Import font-awesome icon library */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
 
-
-
+/* Center content vertically and horizontally */
 .content {
   align-items: center;
   justify-content: center;
   z-index: 0;
 }
 
+/* Header style */
 .header {
   z-index: 300;
   background-color: white;
 }
 
+/* Fixed header style */
 .myHeader {
   position: fixed;
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.2);
@@ -22,11 +24,13 @@
   z-index: 300;
 }
 
+/* Logo style */
 .logo {
   height: 10px;
   width: 10px;
 }
 
+/* Main container style */
 .main-container {
   height: inherit;
   display: flex;
@@ -38,17 +42,16 @@
   padding-top: 7rem;
 }
 
+/* Card container style */
 #card-container {
   display: flex;
-
   justify-content: center;
   align-items: stretch;
-  /* Stretch to fill the container 
   flex-wrap: wrap;
-  padding-top: 3rem;*/
-
+  padding-top: 3rem;
 }
 
+/* Card style */
 .card {
   align-items: center;
   text-align: center;
@@ -60,14 +63,13 @@
   justify-content: center;
   min-width: 200px !important;
   height: 280px;
-  /* Set a fixed height */
   margin: 30px;
   max-width: 25%;
   width: -webkit-fill-available !important;
   border: 1px solid #ccc;
-  /* Add a border for visualization */
 }
 
+/* Card icon style */
 .card .fas {
   font-variation-settings: 'FILL'0, 'wght'400, 'GRAD'0, 'opsz'48;
   font-size: 78px !important;
@@ -81,14 +83,11 @@
   align-items: center;
 }
 
+/* Card hover style */
 .card:hover .fas {
   color: #009dd3;
   background-color: white;
 }
-
-
-
-
 
 .card:hover {
   box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
@@ -99,15 +98,15 @@
   color: white;
 }
 
-
+/* Map style */
 #map {
   position: relative;
-  /*width: 100%;*/
   border-radius: 0.375rem;
   height: 65vh;
   z-index: 0 !important;
 }
 
+/* Drop container style */
 .drop-container {
   position: relative;
   display: flex;
@@ -125,11 +124,13 @@
   width: 100%;
 }
 
+/* Drop container hover style */
 .drop-container:hover {
   background: #009dd30a;
   border-color: #009dd3;
 }
 
+/* Drop container title style */
 .drop-container:hover .drop-title {
   color: #222;
 }
@@ -142,20 +143,22 @@
   transition: color .2s ease-in-out;
 }
 
+/* Form label and input style */
 label, input {
   margin-bottom: 10px;
 }
 
+/* Remove Bootstrap grid gutter */
 .container {
   --bs-gutter-x: 0 !important;
 }
 
-
+/* Form group margin */
 .form-group {
   margin-top: 3rem;
 }
 
-
+/* Button container style */
 .btn-container {
   display: flex;
   flex-wrap: nowrap;
@@ -165,15 +168,18 @@ label, input {
   padding-bottom: 1rem;
 }
 
-
+/* Button style */
 .btn {
   background: #009dd3 !important;
+  border: 0px !important;
 }
 
+/* Button hover style */
 .btn:hover {
   background: #006f95 !important;
 }
 
+/* Loading text style */
 .loading {
   color: white;
   font-size: 30px;
@@ -181,31 +187,39 @@ label, input {
   font-variation-settings: 'FILL'0, 'wght'400, 'GRAD'0, 'opsz'48;
 }
 
+/* Modal dialog style */
 .modal-dialog {
   display: flex;
   justify-content: center;
   width: 100%;
+  display: block;
 }
 
+/* Font-awesome icon style */
 .fa {
   font-size: 80px;
   color: #009dd3
 }
 
+/* Spinner container style */
 .spinner-container {
   text-align: center;
   margin: 0 auto;
-
   justify-content: center;
 }
 
+/* List group item background color */
 .list-group-item {
   background-color: #f8f9fa;
 }
 
-#error-message {
+/* Error message style */
+.alert {
   padding: 0.3rem;
-  /* adjust the padding as per your requirement */
   font-size: 0.9rem;
-  /* adjust the font size as per your requirement */
+  max-height: fit-content;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  margin-top: 0.5rem;
+  display: flex;
 }
