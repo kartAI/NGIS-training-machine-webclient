@@ -117,7 +117,7 @@ templates = Jinja2Templates(directory="frontend/pages")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("home.html", {"request": request})
 
 
 @app.get("/{page}.html", response_class=HTMLResponse)
