@@ -39,22 +39,11 @@
 
                     <!-- Selectfield -->
                     <label for="coordSys" class="col-sm-2 col-form-label col-form-label-lg">Coordinatesystem</label>
-                    <select id="coordSys" class="form-control form-control-lg">
+                    <select id="coordSys" class="form-control form-control-lg" onchange="logSelectedEpsg()">
                         <option selected>Choose coordinatesystem</option>
                         <option>EPSG:4326</option>
-                        <option>EPSG:25833</option>
-                        <option>EPSG:32632</option>
-                        <option>EPSG:32633</option>
-                        <option>EPSG:32634</option>
-                        <option>EPSG:32635</option>
-                        <option>EPSG:32636</option>
-                        <option>EPSG:25832</option>
-                        <option>EPSG:25833</option>
-                        <option>EPSG:25834</option>
-                        <option>EPSG:25835</option>
-                        <option>EPSG:25836</option>
                     </select>
-
+                    
                     <!-- Freetext-field -->
                     <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates</label>
                     <div class="input-group ">
@@ -72,7 +61,7 @@
 
                 <!-- Continue button -->
                 <div class="btn-container">
-                    <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3" onclick="return nav();">Go
+                    <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3" id="next-button" disabled onclick="return nav();">Go
                         to order</button>
                 </div>
             </div>
