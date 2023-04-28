@@ -3,7 +3,7 @@ async function getFiles() {
   const data = await response.json();
 
   if (data.folder_summary.length === 0) {
-    const noFilesMsg = "Ingen filer funnet!";
+    const noFilesMsg = "No files found!";
     document.getElementById("fileList").innerHTML = noFilesMsg;
   } else {
     const folderSummary = data.folder_summary;
@@ -18,7 +18,7 @@ window.onload = function () {
 function updateFileListSummary() {
   let selected_files = document.getElementById("fileInput").files;
   let file_count = selected_files.length;
-  document.getElementById("fileListHeader").textContent = `Følgende antall filer vil bli sendt: ${file_count}`;
+  document.getElementById("fileListHeader").textContent = `The following number of files will be sent: ${file_count}`;
 }
 
 function sendEmail() {
@@ -30,7 +30,7 @@ function sendEmail() {
   }
 
   document.getElementById("submitButton").disabled = true;
-  document.getElementById("filesPreview").innerHTML = "<p>Laster...</p>";
+  document.getElementById("filesPreview").innerHTML = "<p>Loading...</p>";
 
   fetch("/send_zip_file", {
     method: "POST",
@@ -41,30 +41,30 @@ function sendEmail() {
   })
     .then((response) => {
       if (response.ok) {
-        document.getElementById("filesPreview").innerHTML = "<p>E-posten ble sendt!</p>";
-        // Kjør delete_all_folders funksjonen ved å sende en forespørsel til /delete_folders
+        document.getElementById("filesPreview").innerHTML = "<p>Email sent successfully!</p>";
+        // runs the delete_all_folders function by sending request to /delete_folders
         fetch("/delete_folders", {
           method: "POST",
         })
           .then((response) => {
             if (!response.ok) {
-              console.error("En feil oppstod under sletting av mapper:", response.statusText);
+              console.error("An error occurred while deleting folders:", response.statusText);
             }
           })
           .catch((error) => {
-            console.error("En feil oppstod under sletting av mapper:", error);
+            console.error("An error occurred while deleting folders:", error);
           });
         setTimeout(() => {
           window.location.href = "confirm.html";
         }, 2000);
           
       } else {
-        document.getElementById("filesPreview").innerHTML = "<p>En feil har oppstått... prøv igjen senere.</p>";
+        document.getElementById("filesPreview").innerHTML = "<p>An error has occurred... please try again later.</p>";
         console.error(response.statusText);
       }
     })
     .catch((error) => {
-      document.getElementById("filesPreview").innerHTML = "<p>En feil har oppstått... prøv igjen senere.</p>";
+      document.getElementById("filesPreview").innerHTML = "<p>An error has occurred... please try again later.</p>";
       console.error(error);
     });
 }
