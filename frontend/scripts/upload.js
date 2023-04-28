@@ -50,3 +50,30 @@ document.getElementById('file-input').addEventListener('change', function () {
         return data;
     }
 });
+document.getElementById('file-input').addEventListener('change', function () {
+    console.log('File input changed');
+    var file = this.files[0];
+    var reader = new FileReader();
+    var nextBtn = document.getElementById('nextBtn'); // Get a reference to the "Next" button
+
+    // Disable the button
+    nextBtn.disabled = true;
+
+    reader.onload = function (e) {
+        // ...existing code...
+
+        // Enable the button when the file input's change event fires
+        nextBtn.disabled = false;
+    };
+
+    reader.readAsText(file);
+    // ...existing code...
+});
+
+document.getElementById('nextBtn').addEventListener('click', function () {
+    if (this.disabled) {
+        document.getElementById('fileUploadError').style.display = 'block';
+    } else {
+        // Continue to next step
+    }
+});
