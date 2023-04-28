@@ -5,11 +5,7 @@
 .content {
   align-items: center;
   justify-content: center;
-  /*height: 100vh;*/
-  padding: 4rem;
   z-index: 0;
-
-
 }
 
 .header {
@@ -37,18 +33,19 @@
   justify-content: center;
   flex-direction: column;
   background: white;
-  padding-top: 4rem;
-  padding-bottom: 8rem;
   z-index: 0;
+  align-items: center;
+  padding-top: 7rem;
 }
 
 #card-container {
   display: flex;
-  flex-wrap: wrap;
+
   justify-content: center;
   align-items: stretch;
-  /* Stretch to fill the container */
-  padding-top: 3rem;
+  /* Stretch to fill the container 
+  flex-wrap: wrap;
+  padding-top: 3rem;*/
 
 }
 
@@ -61,8 +58,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 340px !important;
-  height: 300px;
+  min-width: 200px !important;
+  height: 280px;
   /* Set a fixed height */
   margin: 30px;
   max-width: 25%;
@@ -105,10 +102,10 @@
 
 #map {
   position: relative;
-  width: 100%;
+  /*width: 100%;*/
   border-radius: 0.375rem;
   height: 65vh;
-  width: 75%;
+  z-index: 0 !important;
 }
 
 .drop-container {
@@ -158,11 +155,16 @@ label, input {
   margin-top: 3rem;
 }
 
+
 .btn-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
+  flex-direction: row;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
+
 
 .btn {
   background: #009dd3 !important;
