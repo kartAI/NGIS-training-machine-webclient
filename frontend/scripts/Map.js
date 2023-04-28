@@ -28,6 +28,9 @@ map.addControl(drawControl);
 // Binds listener to the event:created
 map.on("draw:created", function (c) {
 
+    // Enable the next button
+    document.getElementById("nextButton").disabled = false;
+
     // Retrieves drawn shape
     var layer = c.layer;
 
