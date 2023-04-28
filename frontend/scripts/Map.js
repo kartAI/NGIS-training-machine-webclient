@@ -1,5 +1,5 @@
 //map initialization
-var map = L.map('map', {crs: L.CRS.EPSG3857}).setView([58.146513160381325, 7.99581527709961], 14);
+var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([59.887537, 10.523083], 14);
 
 //Add OpenStreetMap Tiles
 var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=gBHYqk3cSCXUdQqICyH3', {
@@ -11,18 +11,15 @@ var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
 
-//adds drawcontrols
+//specifies controls to be displayed
 var drawControl = new L.Control.Draw({
     draw: {
         polyline: false,
         polygon: true,
         rectangle: true,
         circle: false,
-        marker: false
-    },
-    edit: {
-        featureGroup: drawnItems,
-        remove: false
+        marker: false,
+        edit: false
     }
 });
 
@@ -30,9 +27,7 @@ map.addControl(drawControl);
 
 //binds listener to the event:created
 map.on("draw:created", function (c) {
-    //retrieves the type of a shape drawn and sets the inner HTML of an element to display that type.
-    document.getElementById("shapeType").innerHTML = c.layerType;
-    
+
     //retrieves drawn shape
     var layer = c.layer;
     //adds shape to layergroup: drawnItems
@@ -47,65 +42,63 @@ map.on("draw:created", function (c) {
         //retrieves the bounding box of the rectangle
         coords = layer.getBounds();
     }
-    
 
-// convert the coordinates to an array
-var coordsArray = coords[0].map(function(coord) {
-    return [coord.lng, coord.lat];
-});
 
-// create a new array with unique coordinates
-var uniqueCoordsArray = [];
-var coordsMap = new Map();
-for (var i = 0; i < coordsArray.length; i++) {
-    var key = coordsArray[i].join(',');
-    if (!coordsMap.has(key)) {
-        uniqueCoordsArray.push(coordsArray[i]); 
-        coordsMap.set(key, true);
+    // convert the coordinates to an array
+    var coordsArray = coords[0].map(function (coord) {
+        return [coord.lng, coord.lat];
+    });
+
+    // create a new array with unique coordinates
+    var uniqueCoordsArray = [];
+    var coordsMap = new Map();
+    for (var i = 0; i < coordsArray.length; i++) {
+        var key = coordsArray[i].join(',');
+        if (!coordsMap.has(key)) {
+            uniqueCoordsArray.push(coordsArray[i]);
+            coordsMap.set(key, true);
+        }
     }
-}
 
-// Add the first coordinate again at the end of the array
-uniqueCoordsArray.push(uniqueCoordsArray[0]);
+    // Add the first coordinate again at the end of the array
+    uniqueCoordsArray.push(uniqueCoordsArray[0]);
 
-// Print the uniqueCoordsArray to console
-console.log(uniqueCoordsArray);
 
-// convert the unique coordinates back to Leaflet LatLng objects
-var uniqueCoords = uniqueCoordsArray.map(function(coord) {
-    return L.latLng(coord[0], coord[1]);
-});
+    // convert the unique coordinates back to Leaflet LatLng objects
+    var uniqueCoords = uniqueCoordsArray.map(function (coord) {
+        return L.latLng(coord[0], coord[1]);
+    });
 
-// update the HTML element with the unique coordinates
-var coordinatesElement = document.getElementById("coordinates");
-var coordinatesString = "";
-for (var i = 0; i < uniqueCoords.length; i++) {
-    var point = L.CRS.EPSG4326.project(uniqueCoords[i]);
-    coordinatesString += "<b>P" + (i+1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
-}
+    // update the HTML element with the unique coordinates
+    var coordinatesElement = document.getElementById("coordinates");
+    var coordinatesString = "";
+    for (var i = 0; i < uniqueCoords.length; i++) {
+        var point = L.CRS.EPSG4326.project(uniqueCoords[i]);
+        coordinatesString += "<b>P" + (i + 1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
+    }
 
-kartAIcoords4326 = uniqueCoordsArray;
+    kartAIcoords4326 = uniqueCoordsArray;
 
-// Define the source (EPSG:4326) and destination (EPSG:3857) projections
-const epsg4326 = 'EPSG:4326';
-const epsg3857 = 'EPSG:3857';
+    // Define the source (EPSG:4326) and destination (EPSG:3857) projections
+    const epsg4326 = 'EPSG:4326';
+    const epsg3857 = 'EPSG:3857';
 
-// Function to convert coordinates from EPSG:4326 to EPSG:3857
-function convertToEPSG3857(coordsArray) {
-  return coordsArray.map(coord => {
-    const [longitude, latitude] = coord;
-    const [x, y] = proj4(epsg4326, epsg3857, [longitude, latitude]);
-    return [x, y];
-  });
-}
+    // Function to convert coordinates from EPSG:4326 to EPSG:3857
+    function convertToEPSG3857(coordsArray) {
+        return coordsArray.map(coord => {
+            const [longitude, latitude] = coord;
+            const [x, y] = proj4(epsg4326, epsg3857, [longitude, latitude]);
+            return [x, y];
+        });
+    }
 
-// Convert the coordinates and store them in a new array
-const kartAIcoords = convertToEPSG3857(kartAIcoords4326);
+    // Convert the coordinates and store them in a new array
+    const kartAIcoords = convertToEPSG3857(kartAIcoords4326);
 
-console.log(kartAIcoords);
+    console.log(kartAIcoords);
 
-coordinatesElement.innerHTML = coordinatesString;
-updateCoordinates(kartAIcoords);
+    coordinatesElement.innerHTML = coordinatesString;
+    updateCoordinates(kartAIcoords);
 
 
 });
@@ -127,17 +120,17 @@ function saveCoordinates() {
 
 async function updateCoordinates(coordinates) {
     const response = await fetch('http://localhost:8000/update_coordinates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(coordinates),
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(coordinates),
     });
-  
+
     const data = await response.json();
     return data;
-  }
-  
+}
+
 
 function noScroll() {
     map.scrollWheelZoom.disable();
