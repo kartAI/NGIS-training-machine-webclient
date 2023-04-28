@@ -225,5 +225,5 @@ label, input {
 }
 
 .btn:disabled {
-  background-color: rgb(190, 190, 190) !important;
+  background-color: #009ed389 !important;
 }
