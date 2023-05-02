@@ -32,7 +32,7 @@
 
             <!-- Headline and info -->
             <h1 class="display-4 fw-normal">Upload geoJSON file</h1>
-            <p class=" text-muted">Choose and upload a geoJSON-file with coordinates
+            <p class=" text-muted fs-5">Choose and upload a geoJSON-file with coordinates
             </p>
 
             <div class="row w-75">
@@ -56,7 +56,8 @@
 
                 <!-- Next button container -->
                 <div class="btn-container">
-                    <button type=" button" class="btn btn-primary btn-lg col-3" onclick="return nav();">Next</button>
+                    <button type="button" id="nextBtn" class="btn btn-primary btn-lg col-3" onclick="return nav();"
+                        disabled>Next</button>
                 </div>
             </div>
 
@@ -74,7 +75,6 @@
             <script src="frontend/scripts/map.js"></script>
             <script src="frontend/scripts/upload.js"></script>
             <script src="frontend/scripts/script.js"></script>
-            <script src="frontend/scripts/header.js"></script>
 </body>
 
 </html>

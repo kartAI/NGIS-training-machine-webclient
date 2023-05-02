@@ -1,17 +1,17 @@
-//map initialization
+// Map initialization
 var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([59.887537, 10.523083], 14);
 
-//Add OpenStreetMap Tiles
+// Add OpenStreetMap Tiles
 var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=gBHYqk3cSCXUdQqICyH3', {
     attribution: '<a href=" https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a><a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
 }).addTo(map);
 
-//leaflet draw
+// Leaflet draw
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
 
-//specifies controls to be displayed
+// Specifies controls to be displayed
 var drawControl = new L.Control.Draw({
     draw: {
         polyline: false,
@@ -25,31 +25,36 @@ var drawControl = new L.Control.Draw({
 
 map.addControl(drawControl);
 
-//binds listener to the event:created
+// Binds listener to the event:created
 map.on("draw:created", function (c) {
 
-    //retrieves drawn shape
+    // Enable the next button
+    document.getElementById("nextButton").disabled = false;
+
+    // Retrieves drawn shape
     var layer = c.layer;
-    //adds shape to layergroup: drawnItems
+
+    // Adds shape to layergroup: drawnItems
     drawnItems.addLayer(layer);
     noScroll();
-    //retrieves the coordinates of the shape
+
+    // Retrieves the coordinates of the shape
     var coords;
     if (layer instanceof L.Polygon) {
-        //retrieves all the coordinates of the polygon
+        // Retrieves all the coordinates of the polygon
         coords = layer.getLatLngs();
     } else if (layer instanceof L.Rectangle) {
-        //retrieves the bounding box of the rectangle
+        // Retrieves the bounding box of the rectangle
         coords = layer.getBounds();
     }
 
 
-    // convert the coordinates to an array
+    // Convert the coordinates to an array
     var coordsArray = coords[0].map(function (coord) {
         return [coord.lng, coord.lat];
     });
 
-    // create a new array with unique coordinates
+    // Create a new array with unique coordinates
     var uniqueCoordsArray = [];
     var coordsMap = new Map();
     for (var i = 0; i < coordsArray.length; i++) {
@@ -64,12 +69,12 @@ map.on("draw:created", function (c) {
     uniqueCoordsArray.push(uniqueCoordsArray[0]);
 
 
-    // convert the unique coordinates back to Leaflet LatLng objects
+    // Convert the unique coordinates back to Leaflet LatLng objects
     var uniqueCoords = uniqueCoordsArray.map(function (coord) {
         return L.latLng(coord[0], coord[1]);
     });
 
-    // update the HTML element with the unique coordinates
+    // Update the HTML element with the unique coordinates
     var coordinatesElement = document.getElementById("coordinates");
     var coordinatesString = "";
     for (var i = 0; i < uniqueCoords.length; i++) {
@@ -103,6 +108,7 @@ map.on("draw:created", function (c) {
 
 });
 
+// Function saves coordinates entered by the user, converts them to latLng objects, and draws a red polygon on the map.
 function saveCoordinates() {
     var coordinatesInput = document.getElementById("coordi").value;
     console.log("coordinatesInput:", coordinatesInput);
@@ -118,6 +124,7 @@ function saveCoordinates() {
     map.fitBounds(polygon.getBounds());
 }
 
+// Updates the coordinates on the server.
 async function updateCoordinates(coordinates) {
     const response = await fetch('http://localhost:8000/update_coordinates', {
         method: 'POST',
@@ -131,7 +138,7 @@ async function updateCoordinates(coordinates) {
     return data;
 }
 
-
+// The function disables the scroll wheel zoom on the map.
 function noScroll() {
     map.scrollWheelZoom.disable();
-};
+}

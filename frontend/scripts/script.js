@@ -1,13 +1,26 @@
+//Header
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'header.html');
+xhr.responseType = 'text';
 
-// Creating map of URL suffixes to their corresponding target pages
+xhr.onload = function () {
+  if (xhr.status === 200) {
+    var headerDiv = document.getElementById('header');
+    headerDiv.innerHTML = xhr.response;
+  }
+};
+xhr.send();
+
+
+// Map of pages and their corresponding next pages
 const pageMap = {
-  'upload.html': 'constraints.html',
-  'map.html': 'constraints.html',
-  'coords.html': 'constraints.html',
-  'constraints.html': 'confirm.html'
+  'uploadFile.html': 'setConstraints.html',
+  'map.html': 'setConstraints.html',
+  'coordinates.html': 'setConstraints.html',
+  'setConstraints.html': 'success.html'
 };
 
-// Function to handle page navigation
+// Navigate to target page based on current page URL
 function nav() {
   const url = window.location.href;
   const urlSuffix = url.split('/').pop();
@@ -17,74 +30,79 @@ function nav() {
   }
 }
 
-let inputTraining = document.getElementById("training");
-let inputValidation = document.getElementById("validation");
-let inputBuilding = document.getElementById("building");
-let continueBtn = document.getElementById("continueBtn");
-const errorMessage = document.getElementById('error-message');
-
-// Function to check if all required fields have values
-function allFieldsFilled() {
-  return (
-    inputTraining.value !== '' &&
-    inputValidation.value !== '' &&
-    inputBuilding.value !== ''
-  );
+// Navigate to home page
+function home() {
+  var url = "frontend\pages\home.html";
+  window.location(url);
 }
 
-// Function to validate fields and start training
-function validateStart() {
-  if (allFieldsFilled()) {
-    // Hide the error message if it's visible
-    errorMessage.classList.add('d-none');
 
-    // Call your existing functions
+const inputTraining = document.getElementById("training");
+const inputValidation = document.getElementById("validation");
+const inputBuilding = document.getElementById("building");
+const continueBtn = document.getElementById("continueBtn");
+const errorMessage = document.getElementById('error-message');
+
+// Validate that all required fields are filled out before continuing
+function validateStart() {
+  const inputFields = ['training', 'validation', 'building'];
+  const errorMessages = ['Please fill out this field.', 'Please fill out this field.', 'Please fill out this field.'];
+
+  let allFieldsFilledFlag = true;
+
+  for (let i = 0; i < inputFields.length; i++) {
+    const inputField = document.getElementById(inputFields[i]);
+    const errorMessage = document.getElementById(`error-message-${inputFields[i]}`);
+
+    if (inputField.value === '') {
+      errorMessage.textContent = errorMessages[i];
+      errorMessage.classList.remove('d-none');
+      allFieldsFilledFlag = false;
+    } else {
+      errorMessage.textContent = '';
+      errorMessage.classList.add('d-none');
+    }
+  }
+
+  if (allFieldsFilledFlag) {
     updateValue();
     startTraining();
-  } else {
-    // Show the error message
-    errorMessage.classList.remove('d-none');
   }
 }
 
-//update the training data fractions on the server
+// Update the training data fractions on the server
 async function updateValue() {
-  let inputTraining = document.getElementById("training");
-  let inputValidation = document.getElementById("validation");
-  let inputBuilding = document.getElementById("building");
-  let training_fraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
+  const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
   const response = await fetch('http://localhost:8000/update_training', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(training_fraction),
+    body: JSON.stringify(trainingFraction),
   });
 
   const data = await response.json();
   return data;
 }
 
+// Display a confirmation modal
 function startTraining() {
-  // Show the modal
   $('#confirmationModal').modal('show');
 }
 
-// initiates a training process and redirects to next page
+// Initiate a training process and redirect to next page
 function confirmTraining() {
   fetch('/startTraining', {
     method: 'POST'
   })
     .then(() => {
-      // If request succeeds, redirect to next page
-      window.location.href = '/sendToEmail.html';
+      window.location.href = '/order.html';
     })
-    // If request fails, log error
     .catch(error => console.error(error));
 }
-//loading screen function
+
+// Display the loading modal
 function loadingModal() {
   $('.modal').modal('show');
-
 }
