@@ -1,0 +1,15 @@
+python-dotenv
+requests
+psycopg2-binary
+psycopg2
+matplotlib
+tensorflow
+azure-storage-blob
+imageio
+fastapi
+uvicorn
+sendgrid
+jinja2
+pyproj
+shapely
+scipy
