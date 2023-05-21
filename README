@@ -1,0 +1,61 @@
+To run this project locally follow these steps:
+
+1. Open Anaconda prompt and navigate to the root folder of this project.
+2. Paste this into anaconda prompt: conda create -n bachelor2023 python=3.7
+3. Paste this into anaconda prompt: conda activate bachelor2023
+4. Paste this into anaconda prompt: pip install -r requirements.txt
+5. Two of the packages would not install from the requirements.txt so you have to do it manually. Paste this in into anaconda prompt (one at a time):
+        pip install libgdal
+        pip install gdal
+You will be asked to downgrade the packages (y/n), write "y".
+
+6. Open the project in VSCode.
+7. Open the "ngisopenapi" folder in VSCode, and create a file in the folder that you name ".env".
+8. Paste this into the .env file:
+    NGISAPI_URL=
+    NGISAPI_USER=
+    NGISAPI_PASS=
+
+    db_host=
+    db_name=
+    db_user=
+    db_pass=
+
+    API_KEY=
+
+    f_path=
+
+9. You need to specify the user that you use to access NGISAPI, and the database that should be used to store the data that is collected from NGIS. The "API_KEY" needs to be filled out to be able to send training data to the users email (We used SendGrid to get the API_KEY). "f_path" needs to know where you want to store temp files (example "C:\Users\User1\temp\").
+
+10. Open the "kartAI" folder in VSCode, and create a file in the folder that you name "env_secrets.py".
+11. Paste this into the env_secrets.py file:
+    config = {
+    "AZURE_BYGG_POSTGRESQL_PSW": "",
+    "NK_WMS_API_KEY": "",
+    "AZURE_STORAGE_CONNECTION_STRING": "",
+            "NK_POSTGRESQL_PWD": "", 
+}
+def get_env_secret(variable): 
+    return config[variable]
+
+12. Fill in the data for each empty variable above.
+13. Open anaconda prompt again, make sure that the "bachelor2023" environment i activated, and that you are located in the rootfolder of the project.
+14. Paste this into anaconda prompt: uvicorn main:app --reload
+15. Click on the http link, and the project will open on a localhost on your computer.
+
+
+To run this project in Docker, you can follow these steps:
+
+1. Open the project in VSCode and make sure that the files ".env" and "env_secrets.py" are already setup successfully. If you havent already done that, follow the steps above.
+2. Open the start.py file in the root folder.
+3. Comment out the three first subprocess.call with a "#" (example "#subprocess.call"), this will stop the project from being able to run locally.
+4. Remove the "#" from the three last subprocess.call. This will make sure that the process for Docker will work.
+5. Open anaconda prompt, and navigate to the root folder of the project.
+6. Open the Docker program on your computer. Dont go to the next step before Docker is ready to use.
+7. Paste this into anaconda prompt: "docker build -t docker_env ." this will start building the Docker image.
+8. After the docker image is built successfully, 
+paste this command in the anaconda prompt: "docker run -p 8000:8000 docker_env".
+9. Open Docker again, and click on the port number on the running contaner.
+10. You will now be able to use the project through Docker.
+
+
