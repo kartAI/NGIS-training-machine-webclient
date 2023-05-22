@@ -8,6 +8,7 @@ import zipfile
 import base64
 import sendgrid
 import asyncio
+from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
@@ -208,7 +209,7 @@ async def send_zip_file(request: Request):
 
     # Send the email with the zip file as an attachment
     message = Mail(
-        from_email="no-reply-KartAI@hotmail.com",
+        from_email="KartAi-no-reply@hotmail.com",
         to_emails=email["email"],
         subject="Training data",
         html_content=f"<strong>The ordered training data is attached</strong>"
@@ -229,10 +230,15 @@ async def send_zip_file(request: Request):
 
     message.attachment = attachedFile
 
-    # Send the email using the SendGrid API
+    # Loads the .env-file
+    dotenv_path = os.path.join(os.path.dirname(__file__), 'ngisopenapi', '.env')
+    load_dotenv(dotenv_path)
+
+    # Collects the API_KEY from the .env-file
+    api_key = os.getenv('API_KEY')
+    # Send the email using SendGrid API
     try:
-        sg = sendgrid.SendGridAPIClient(
-            api_key='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')
+        sg = sendgrid.SendGridAPIClient(api_key=api_key)
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
