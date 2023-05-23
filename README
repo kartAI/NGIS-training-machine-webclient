@@ -5,8 +5,8 @@ To run this project locally follow these steps:
 3. Paste this into anaconda prompt: conda activate bachelor2023
 4. Paste this into anaconda prompt: pip install -r requirements.txt
 5. Two of the packages would not install from the requirements.txt so you have to do it manually. Paste this in into anaconda prompt (one at a time):
-        pip install libgdal
-        pip install gdal
+        conda install libgdal
+        conda install gdal
 You will be asked to downgrade the packages (y/n), write "y".
 
 6. Open the project in VSCode.
@@ -39,7 +39,7 @@ def get_env_secret(variable):
     return config[variable]
 
 12. Fill in the data for each empty variable above.
-13. Open anaconda prompt again, make sure that the "bachelor2023" environment i activated, and that you are located in the rootfolder of the project.
+13. Open anaconda prompt again, make sure that the "bachelor2023" environment is activated, and that you are located in the rootfolder of the project.
 14. Paste this into anaconda prompt: uvicorn main:app --reload
 15. Click on the http link, and the project will open on a localhost on your computer.
 
