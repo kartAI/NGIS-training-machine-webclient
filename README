@@ -1,4 +1,7 @@
-Once this project is set up correctly you will have the option to order training data for machine learning. It works so that you either mark an area on a map, write in coordinates yourself, or upload a GeoJSON file, and  then determine "train", "validation" and "building percentage". After this has been decided, the process that retrieves all training data will begin, and you will be given the opportunity to choose an email address where the training data will be sent.
+Once this project is set up correctly you will have the option to order training data for machine learning. 
+It works so that you either mark an area on a map, write in coordinates yourself, or upload a GeoJSON file, and  then determine 
+"train", "validation" and "building percentage". After this has been decided, the process that retrieves all training data will begin, 
+and you will be given the opportunity to choose an email address where the training data will be sent.
 
 To run this project locally follow these steps:
 
