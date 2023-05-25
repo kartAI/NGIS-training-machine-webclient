@@ -36,19 +36,19 @@ function home() {
   window.location(url);
 }
 
-
 const inputTraining = document.getElementById("training");
 const inputValidation = document.getElementById("validation");
 const inputBuilding = document.getElementById("building");
 const continueBtn = document.getElementById("continueBtn");
 const errorMessage = document.getElementById('error-message');
 
-// Validate that all required fields are filled out before continuing
 function validateStart() {
   const inputFields = ['training', 'validation', 'building'];
   const errorMessages = ['Please fill out this field.', 'Please fill out this field.', 'Please fill out this field.'];
+  const rangeErrorMessage = 'Please enter a value between 0 and 100.';
 
   let allFieldsFilledFlag = true;
+  let validRangeFlag = true;
 
   for (let i = 0; i < inputFields.length; i++) {
     const inputField = document.getElementById(inputFields[i]);
@@ -62,9 +62,16 @@ function validateStart() {
       errorMessage.textContent = '';
       errorMessage.classList.add('d-none');
     }
+
+    const inputValue = parseFloat(inputField.value);
+    if (isNaN(inputValue) || inputValue < 0 || inputValue > 100) {
+      errorMessage.textContent = rangeErrorMessage;
+      errorMessage.classList.remove('d-none');
+      validRangeFlag = false;
+    }
   }
 
-  if (allFieldsFilledFlag) {
+  if (allFieldsFilledFlag && validRangeFlag) {
     updateValue();
     startTraining();
   }
