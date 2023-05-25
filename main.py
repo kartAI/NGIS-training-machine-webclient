@@ -51,6 +51,8 @@ CONFIG_FILE = os.path.join(
     BASE_DIR, "kartAI", "config", "dataset", "kartai.json")
 
 # Code block for updating test/validation/building
+
+
 @app.post("/update_training")
 async def update_training(input: list):
     if len(input) != 3:
@@ -81,7 +83,9 @@ async def update_training(input: list):
 
     return {"status": "success"}
 
-# Code block for updating 
+# Code block for updating
+
+
 @app.post("/update_coord.js")
 async def update_coordinates(coords: Input):
     coordinates = coords.input
@@ -93,6 +97,8 @@ async def update_coordinates(coords: Input):
     return {"status": "success"}
 
 # Deletes the folders locally after email is sent
+
+
 @app.post("/delete_folders")
 async def delete_folders():
     delete_all_folders()
@@ -131,6 +137,8 @@ async def favicon():
     return Response(content="", media_type="image/x-icon")
 
 # Start the training script
+
+
 @app.post("/startTraining")
 async def start_training():
     try:
@@ -142,6 +150,8 @@ async def start_training():
     return {"message": "Training process started successfully"}
 
 # Collect and lists up files before sending the email
+
+
 @app.get("/get_files")
 async def get_files():
     folder_path = os.path.join(BASE_DIR, "kartAI", "training_data",
@@ -231,7 +241,8 @@ async def send_zip_file(request: Request):
     message.attachment = attachedFile
 
     # Loads the .env-file
-    dotenv_path = os.path.join(os.path.dirname(__file__), 'ngisopenapi', '.env')
+    dotenv_path = os.path.join(
+        os.path.dirname(__file__), 'ngisopenapi', '.env')
     load_dotenv(dotenv_path)
 
     # Collects the API_KEY from the .env-file
