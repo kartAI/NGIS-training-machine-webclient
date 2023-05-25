@@ -37,7 +37,7 @@
                 <div class="form-outline mb-4 col">
                     <label class="form-label col-2 col-form-label col-form-label-lg" for="training">Training*</label>
                     <div class="input-group">
-                        <input type="number" id="training" class="form-control form-control-lg">
+                        <input type="number" min="0" max="100" id="training" class="form-control form-control-lg">
                         <span class="input-group-text">%</span>
                     </div>
                     <div id="error-message-training" class="alert alert-danger alert-dismissible fade show d-none">
@@ -48,7 +48,7 @@
                     <label class="form-label col-2 col-form-label col-form-label-lg"
                         for="validation">Validation*</label>
                     <div class="input-group">
-                        <input type="number" id="validation" class="form-control form-control-lg">
+                        <input type="number" min="0" max="100" id="validation" class="form-control form-control-lg">
                         <span class="input-group-text">%</span>
                     </div>
                     <div id="error-message-validation" class="alert alert-danger alert-dismissible fade show d-none">
@@ -59,7 +59,7 @@
                     <label class="form-label col-2 col-form-label col-form-label-lg" for="building">Building
                         percentage</label>
                     <div class="input-group">
-                        <input type="number" id="building" class="form-control form-control-lg"
+                        <input type="number" min="0" max="100" id="building" class="form-control form-control-lg"
                             aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <span class="input-group-text">%</span>
                     </div>
@@ -70,7 +70,7 @@
                 <!-- Continue button -->
                 <div class="btn-container">
                     <button type="button" class="btn btn-primary btn-lg col-3 offset-3" onclick="validateStart()"
-                        id="continueBtn">Continue</button>
+                        id="continueBtn">Order</button>
                 </div>
 
                 <!-- Confirmation Modal -->
