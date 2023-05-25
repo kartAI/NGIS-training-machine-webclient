@@ -2,18 +2,18 @@
 const cardData = [
   {
     icon: 'fa-map-marker-alt',
-    text: 'Tegn utsnitt på kart',
+    text: 'Draw shape on map',
     link: 'map.html'
   },
   {
     icon: 'fa-keyboard',
-    text: 'Skriv inn koordinater',
-    link: 'coords.html'
+    text: 'Write coordinates',
+    link: 'coordinates.html'
   },
   {
     icon: 'fa-upload',
-    text: 'Last opp geoJSON-fil',
-    link: 'upload.html'
+    text: 'Upload geoJSON-file',
+    link: 'uploadFile.html'
   }
 ];
 

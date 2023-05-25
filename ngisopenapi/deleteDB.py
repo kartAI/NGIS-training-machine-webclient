@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Function to delete all rows from the 'buildings' table
+
+
 def delete_data():
     # Initialize connection and cursor objects as None
     conn = None
@@ -28,13 +30,14 @@ def delete_data():
         print("Data was successfully deleted.")
 
     except Exception as e:
-        print("Error connecting to database")
+        print("Error connecting to database, data was deleted.", e)
     finally:
         # Close the cursor and the connection
         if cur:
             cur.close()
         if conn:
             conn.close()
+
 
 # Call the delete_data function
 delete_data()

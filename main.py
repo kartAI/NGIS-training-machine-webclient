@@ -8,6 +8,7 @@ import zipfile
 import base64
 import sendgrid
 import asyncio
+from dotenv import load_dotenv
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
@@ -23,11 +24,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from deleteFolder import delete_all_folders
 
-class Coordinates(BaseModel):
-    coordinates: list
+# Class for the FastAPI. Will contain all our methods for updating values and starting scripts
 
+
+class Input(BaseModel):
+    input: list
+
+
+# Import and create instance of the FastAPI framework
 app = FastAPI()
 
+# Adds and sets permissions for middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,32 +43,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Paths to the relevant files and directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REGION_FILE = os.path.join(
     BASE_DIR, "kartAI", "training_data", "regions", "small_building_region.json")
 CONFIG_FILE = os.path.join(
     BASE_DIR, "kartAI", "config", "dataset", "kartai.json")
 
+# Code block for updating test/validation/building
+
+
 @app.post("/update_training")
-async def update_training(coordinates: list):
-    if len(coordinates) != 3:
-        return {"status": "error", "message": "coordinates must have exactly 3 elements"}
+async def update_training(input: list):
+    if len(input) != 3:
+        return {"status": "error", "message": "input must have exactly 3 elements"}
 
     with open(CONFIG_FILE, "r") as file:
         data = json.load(file)
 
+# Ensure that the "ProjectArguments" key exists in the JSON object
     if "ProjectArguments" not in data:
         data["ProjectArguments"] = {}
 
-    data["ProjectArguments"]["training_fraction"] = int(coordinates[0])
-    data["ProjectArguments"]["validation_fraction"] = int(coordinates[1])
+    # Updates training and validation with the first variables in the input list
+    data["ProjectArguments"]["training_fraction"] = int(input[0])
+    data["ProjectArguments"]["validation_fraction"] = int(input[1])
 
-    # Update the ImageSets part of the JSON with the third value in the coordinates list
+    # Update the ImageSets part of the JSON with the third value in the input list
     data["ImageSets"][1]["rules"] = [
         {
             "type": "PixelValueAreaFraction",
             "values": [1],
-            "more_than": float(coordinates[2])/100
+            "more_than": float(input[2])/100
         }
     ]
 
@@ -70,9 +83,12 @@ async def update_training(coordinates: list):
 
     return {"status": "success"}
 
+# Code block for updating
+
+
 @app.post("/update_coord.js")
-async def update_coordinates(coords: Coordinates):
-    coordinates = coords.coordinates
+async def update_coordinates(coords: Input):
+    coordinates = coords.input
     with open(REGION_FILE, "r") as file:
         data = json.load(file)
     data["coordinates"] = [coordinates]
@@ -80,16 +96,20 @@ async def update_coordinates(coords: Coordinates):
         json.dump(data, file)
     return {"status": "success"}
 
+# Deletes the folders locally after email is sent
+
+
 @app.post("/delete_folders")
 async def delete_folders():
     delete_all_folders()
-    return {"message": "Sletting av mapper fullført."}
+    return {"message": "Deletion of folders successful."}
+
 
 @app.post("/update_coordinates")
-async def update_coordinates(coordinates: list):
+async def update_coordinates(input: list):
     with open(REGION_FILE, "r") as file:
         data = json.load(file)
-    data["coordinates"] = [coordinates]
+    data["coordinates"] = [input]
     with open(REGION_FILE, "w") as file:
         json.dump(data, file)
     return {"status": "success"}
@@ -104,7 +124,7 @@ templates = Jinja2Templates(directory="frontend/pages")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("home.html", {"request": request})
 
 
 @app.get("/{page}.html", response_class=HTMLResponse)
@@ -116,6 +136,9 @@ async def read_page(request: Request, page: str):
 async def favicon():
     return Response(content="", media_type="image/x-icon")
 
+# Start the training script
+
+
 @app.post("/startTraining")
 async def start_training():
     try:
@@ -126,25 +149,30 @@ async def start_training():
 
     return {"message": "Training process started successfully"}
 
+# Collect and lists up files before sending the email
+
 
 @app.get("/get_files")
 async def get_files():
-    folder_path = os.path.join(BASE_DIR, "kartAI", "training_data", "Training_data", "3857_563000.0_6623000.0_100.0_100.0", "512")
-    files = [f for f in os.listdir(folder_path) if f.endswith(('.tif', '.json', '.vrt'))]
+    folder_path = os.path.join(BASE_DIR, "kartAI", "training_data",
+                               "Training_data", "3857_563000.0_6623000.0_100.0_100.0", "512")
+    files = [f for f in os.listdir(
+        folder_path) if f.endswith(('.tif', '.json', '.vrt'))]
     num_files = len(files)
     if num_files == 0:
-        folder_summary = "Ingen filer funnet!"
+        folder_summary = "No files found!"
     else:
-        folder_summary = f"{num_files} fil(er) valgt: <br><br> {', '.join(files)}"
+        folder_summary = f"{num_files} file(s) selected: <br><br> {', '.join(files)}"
     return {"folder_summary": folder_summary}
+
 
 def zip_folder(folder_path, zip_file, folder_prefix):
     for root, _, files in os.walk(folder_path):
         for file in files:
             file_path = os.path.join(root, file)
-            arcname = os.path.join(folder_prefix, os.path.relpath(file_path, folder_path))
+            arcname = os.path.join(
+                folder_prefix, os.path.relpath(file_path, folder_path))
             zip_file.write(file_path, arcname)
-
 
 
 @app.post("/send_zip_file")
@@ -159,11 +187,13 @@ async def send_zip_file(request: Request):
         return {"message": "No email specified"}
 
     # Get the absolute path of the training data folder
-    training_data_folder = os.path.join(BASE_DIR, "kartAI", "training_data", "Training_data")
-    folder_2 = os.path.join(BASE_DIR, "kartAI", "training_data", "created_datasets")
+    training_data_folder = os.path.join(
+        BASE_DIR, "kartAI", "training_data", "Training_data")
+    folder_2 = os.path.join(
+        BASE_DIR, "kartAI", "training_data", "created_datasets")
     folder_3 = os.path.join(BASE_DIR, "kartAI", "training_data", "OrtofotoWMS")
 
-
+    # Create a zip file containing the training data folders and their contents
     selected_files = []
     zipf = zipfile.ZipFile("All_Data.zip", "w", zipfile.ZIP_DEFLATED)
     zip_folder(training_data_folder, zipf, "Training_data")
@@ -172,15 +202,9 @@ async def send_zip_file(request: Request):
 
     zipf.close()
 
-    print(f"Size of the zip file before sending: {os.path.getsize('All_Data.zip')} bytes")
+    print(
+        f"Size of the zip file before sending: {os.path.getsize('All_Data.zip')} bytes")
 
-
-    message = Mail(
-        from_email="no-reply-KartAI@hotmail.com",
-        to_emails=email["email"],
-        subject="Training data",
-        html_content=f"<strong>Vedlagt ligger treningsdataen som er bestilt.</strong>"
-    )
     # Generate the summary of selected files
     num_files = len(selected_files)
     files_str = f"{num_files} files"
@@ -195,30 +219,37 @@ async def send_zip_file(request: Request):
 
     # Send the email with the zip file as an attachment
     message = Mail(
-        from_email="no-reply-KartAI@hotmail.com",
+        from_email="KartAi-no-reply@hotmail.com",
         to_emails=email["email"],
         subject="Training data",
-        html_content=f"<strong>Vedlagt ligger treningsdataen som er bestilt.</strong>"
+        html_content=f"<strong>The ordered training data is attached</strong>"
 
     )
 
-    with open("All_data.zip", "rb") as f:
+    with open("All_Data.zip", "rb") as f:
         attachment = f.read()
-
+    # Encode the attachment in base64 and attach it to the email message
     encoded_file = base64.b64encode(attachment).decode()
 
     attachedFile = Attachment(
         FileContent(encoded_file),
-        FileName('All_data.zip'),
+        FileName('All_Data.zip'),
         FileType('application/zip'),
         Disposition('attachment')
     )
 
     message.attachment = attachedFile
 
+    # Loads the .env-file
+    dotenv_path = os.path.join(
+        os.path.dirname(__file__), 'ngisopenapi', '.env')
+    load_dotenv(dotenv_path)
+
+    # Collects the API_KEY from the .env-file
+    api_key = os.getenv('API_KEY')
+    # Send the email using SendGrid API
     try:
-        sg = sendgrid.SendGridAPIClient(
-            api_key='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')
+        sg = sendgrid.SendGridAPIClient(api_key=api_key)
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
@@ -226,7 +257,7 @@ async def send_zip_file(request: Request):
     except Exception as e:
         print(e)
 
-    # Delete the zip file
-    os.remove("All_data.zip")
+    # Delete the zip file that is temporary stored
+    os.remove("All_Data.zip")
 
-    return {"message": "E-post ble sendt!"}
+    return {"message": "Email was sent successfully!"}
