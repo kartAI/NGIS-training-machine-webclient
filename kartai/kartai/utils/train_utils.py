@@ -1,11 +1,10 @@
 from pathlib import Path
 from azure import blobstorage
-import sys
 import os
 import env
 
 
-def check_for_existing_model(checkpoint_name):
+def check_for_existing_model(checkpoint_name: str):
 
     # If running tests, allow to overwrite
     if checkpoint_name == 'test_model' or "test_data_teacher" in checkpoint_name:
@@ -17,7 +16,7 @@ def check_for_existing_model(checkpoint_name):
             f'\n---ERROR: trained model with name {checkpoint_name} already exists')
 
 
-def get_dataset_dirs(dataset_name_input):
+def get_dataset_dirs(dataset_name_input: str):
     created_datasets_dirs = []
     for dataset_name in dataset_name_input:
         created_datasets_dir = os.path.join(env.get_env_variable(
@@ -27,7 +26,7 @@ def get_dataset_dirs(dataset_name_input):
 
 
 def get_existing_model_names():
-    existing_trained_models = blobstorage.getAvailableTrainedModels()
+    existing_trained_models = blobstorage.get_available_trained_models()
     existing_trained_model_names = [
         Path(modelname).stem for modelname in existing_trained_models]
 

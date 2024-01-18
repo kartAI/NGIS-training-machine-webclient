@@ -28,11 +28,11 @@ The repository allows you to easily create training data for any sort of vector 
   - [Train script](#train-script)
   - [Run multiple training processes](#run-multiple-training-processes)
 - [Evaluating the models](#evaluating-the-models)
-  - [IoU result table](#iou-result-table)
-  - [Building count result table](#building-count-result-table)
+  - [Result table](#result-table)
 - [Using the trained models](#using-the-trained-models)
   - [Predict](#predict)
   - [Create vectordata](#create-vectordata)
+  - [Create countour vectordata](#create-contour-vectordata)
 
 ## Prerequisites
 
@@ -42,13 +42,13 @@ In order to create the training data for building segmentation you need access t
 
 ### Conda environment
 
-To make sure you have correct versions of all packages we recommend using anaconda.
+To make sure you have correct versions of all packages we recommend using anaconda and their virtual environments. We use python 3.9.
 
-Create a conda environment with python 3.9 by running command below. Replace "env-name" with desired name for the environment
+This repo has an `env.yml` file to create the environment from (NB! This does not include `pandasgui`).
 
-`conda create -n "env-name" python=3.9`
+Run `conda env create -f env.yml` in order to install using the env file (remember to use python 3.9), and `conda activate kartai` to activate the environment.
 
-`conda activate "env-name"`
+Alternatively if you want to install all dependencies manually you can run `conda create -n env-name python=3.9` and then install dependencies as you want.
 
 ### Running scripts
 
@@ -235,10 +235,14 @@ Example of project arguments, that will affect production of the dataset.
 
 Once a dataset is created there will be several files generated.
 Labels area created and saved to `training_data/AzureByggDb/{tilegrid}/{tilesize}`.
-However, the WMSImageSource are not created yet, only information about how the can be downloaded. The actual data is downloaded once you start training a model with the given dataset.
 
+Default behaviour when creating a dataset is that we "lazy load" our data. This means that instead of downloading the actual images, we instead save the url used for fetching the data in the output data files. The actual data is downloaded once you start training a model with the given dataset.
+
+If you instead want the skip this lazy loading, and download the data immediately, you can pass `-eager True` to the script.
 
 ### Create Training Data Script
+
+`create_training_data`
 
 Arguments:
 
@@ -246,6 +250,7 @@ Arguments:
 | -------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | -n       | what to name the dataset                                                                                                                                                                         |
 | -c       | path to config file                                                                                                                                                                              |
+| -eager   | Option to download created data immediately, and not just the reference to the data (which is default behaviour, where data is downloaded the first time the data is used, i.e during training)  |
 | --region | Polygon or multipolygon describing data area with coordinates in same system as defined in config (i.e EPSG:25832), WKT or geojson (geometry) format, directly in a text string or as a filename |
 | --x_min  | x_min for bbox, alternative to --region                                                                                                                                                          |
 | --y_min  | y_min for bbox, alternative to --region                                                                                                                                                          |
@@ -324,7 +329,7 @@ Arguments:
 | -------- | :---------------------------------------------------------------------------------------------- | :------- | ----------------------------------------- |
 | -dn      | name of the dataset to train with (can pass several -dn arguments to train on several datasets) | Yes      |
 | -cn      | name of result model (checkpoint name)                                                          | Yes      |
-| -m       | name of model to train (see [the list of implemented models](#models))                                                                          | Yes      |
+| -m       | name of model to train (see [the list of implemented models](#models))                          | Yes      |
 | -c       | Path for data generator config file                                                             | No       | `config/ml_input_generator/ortofoto.json` |
 | -s       | Save trained model to azure                                                                     | No       | True                                      |
 | -f       | number of features                                                                              | No       | 32                                        |
@@ -340,7 +345,7 @@ Example:
 
 Single dataset:
 
-`./kai train -dn {dataset_name} -cn {checkpoint_name} -c{config/ml_input_generator/ortofoto.json} -m {model_name} -a {activation} -bs 4 -f 16 -e {epochs}`
+`./kai train -dn {dataset_name} -cn {checkpoint_name} -c {config/ml_input_generator/ortofoto.json} -m {model_name} -a {activation} -bs 4 -f 16 -e {epochs}`
 
 Several datasets:
 
@@ -364,20 +369,32 @@ In order to test lots of models and hyperparameters we can run the compare_model
 
 Unix:
 
-`./kai compare_models -dn {dataset_name}`
+`./kai compare_models`
 
 Windows:
 
-`kai.bat compare_models -dn {dataset_name}`
+`kai.bat compare_models`
 
 ## Evaluating the models
 
 We have created an automatic process for generating a result table that gives an overview of all the trained models performance.
 
+### Result table
 
-### IoU result table
+Get a complete view of performance of the different models.
+The script creates an excel file containing performance of models, and if the `visualize` flag is set, opens a GUI table in the browser to view the results.
 
-For a complete view of performance of the different models, run:
+By default the module shows an overview of IoU from validation during training.
+By passing a test_region we will run a prediction on the given region, and perform a comparison to a manually edited dataset with labels to see how the model actually performs.
+
+Arguments:
+
+| Argument         | Description                                                                                       | Required | Type                   | Default |
+| ---------------- | :------------------------------------------------------------------------------------------------ | -------- | ---------------------- | ------- |
+| -test_region     | Run test on a region, and get counts of detected buildings, missing buildings and false buildings | No       | "ksand" or "balsfjord" | None    |
+| -download_models | Downloading all trained models from azure                                                         | No       | bool                   | False   |
+| -preview         | Preview results so far                                                                            | No       | bool                   | False   |
+| -visualize       | Spin up a backend to visualize the model performance from a dataframe in a browser window         | No       | bool                   | False   |
 
 Unix:
 
@@ -386,20 +403,6 @@ Unix:
 Windows:
 
 `kai.bat results`
-
-The script opens a GUI table to view results, as well as an excel file.
-
-### [WIP] Building count result table
-
-By adding the parameter `-ksand true` you will instead get a full list of how each model is performing on the given test area for the project.
-
-Unix:
-
-`./kai results -ksand true`
-
-Windows:
-
-`kai.bat results -ksand true`
 
 ## Using the trained models
 
@@ -433,26 +436,63 @@ Windows:
 Create a vector dataset with predicted data from a chosen ML model, on a chosen region.
 Running creation of vectordata will download to wanted model from azure, before running prediction.
 
+This module will:
+
+- Create a dataset for the given region. Dataset is written to `training_data/created_datasets/for_prediction/{region_name}.json`
+- The chosen ML model (given with the -cn argument) will be used to run predictions on each of the images in the created dataset, and save the resulting grey-scale rasters to `results/{region_name}/{checkpoint_name}/rasters`
+- Finally gdal_polygonize is used to create vector geojson layers for batches of data. These layers area written to `results/{region_name}/{checkpoint_name}/vectors`
+
 Arguments:
 
-| Argument |Description  |  type |  required | default|                                                                                                                                                                                     |
-| -------- | :--------| -----| -----| -----| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| -n       | name of resulting dataset | string | yes                                                                                                                                                                        |
-| -cn      | name of the trained model used for prediction   | string | yes                                                                                                                                                 |
-| -c       | path to config file         | string | yes                                                                                                                                                                     |
-| --region | Polygon or MultiPolygon describing data area with coordinates in same system as defined in config (i.e EPSG:25832), WKT or geojson (geometry) format, directly in a text string or as a filename | WKT, jsontext, or filename | yes |
-| -mb      |Max batch size for creating mosaic of the predictions | string | No | 200
-| -c      |Data config path | string | yes
-| -raw      | Whether to create only raw predictions, or create tilbygg, frittliggende and existing buildings as well | bool | No | True
-| -p      | Whether to skip directly to postprocessing, and not look for needed downloaded data. Typically used if you have already run production of dataset for same area, but with different model | bool | No | False
-| -s      | Whether to save resulting vectordata to azure or locally. Options as 'local' or 'azure' | string | No | azure
+| Argument              | Description                                                                                                                                                                                      | type                       | required | default |     |
+| --------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | -------- | ------- | --- |
+| -rn --region_name     | region name, often set to the same as the name of the passed region. This name will match the result directory.                                                                                  | string                     | Yes      |
+| -cn --checkpoint_name | name of the trained model used for prediction                                                                                                                                                    | string                     | Yes      |
+| --region              | Polygon or MultiPolygon describing data area with coordinates in same system as defined in config (i.e EPSG:25832), WKT or geojson (geometry) format, directly in a text string or as a filename | WKT, jsontext, or filename | Yes      |
+| -c                    | Data config path                                                                                                                                                                                 | string                     | Yes      |
+| -mb                   | Max batch size for creating mosaic of the predictions                                                                                                                                            | int                        | No       | 200     |
+| -p                    | Whether to skip directly to postprocessing, and not look for needed downloaded data. Typically used if you have already run production of dataset for same area, but with different model        | bool                       | No       | False   |
+| -s                    | Whether to save resulting vectordata to azure or locally. Options as 'local' or 'azure'                                                                                                          | string                     | No       | azure   |
 
 Example:
 
 Unix:
 
-`./kai create_predicted_buildings_dataset -n exiting_dataset -cn unet_model --region training_data/karmoy.json`
+`./kai create_predicted_features_dataset -rn karmoy -cn unet_model --region training_data/karmoy.json -c config/dataset/bygg-no-rules.json`
 
 Windows:
 
-`kai.bat create_predicted_buildings_dataset -n exiting_dataset -cn unet_model --region training_data/karmoy.json`
+`kai.bat create_predicted_features_dataset -rn karmoy -cn unet_model --region training_data/karmoy.json -c config/dataset/bygg-no-rules.json`
+
+### Create contour vectordata
+
+Create a contour vector dataset with predicted data from a chosen ML model, on a chosen region.
+This module will:
+
+- Create a dataset for the given region. Dataset is written to `training_data/created_datasets/for_prediction/{region_name}.json`
+- The chosen ML model (given with the -cn argument) will be used to run predictions on each of the images in the created dataset, and save the resulting grey-scale rasters to `results/{region_name}/{checkpoint_name}/rasters`
+- Finally gdal_countour is used to create a contour geojson layer for the entire region (using a virtual raster layer produced in previous step). This layer is written to `results/{region_name}/{checkpoint_name}/contour`
+
+The script will download to wanted model from azure if it is not already downloaded, before running prediction.
+
+Arguments:
+
+| Argument              | Description                                                                                                                                                                                      | type                                           | required | default                             |     |
+| --------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | -------- | ----------------------------------- | --- |
+| -rn --region_name     | region name, often set to the same as the name of the passed region. This name will match the result directory.                                                                                  | string                                         | Yes      |
+| -cn --checkpoint_name | name of the trained model used for prediction                                                                                                                                                    | string                                         | Yes      |
+| --region              | Polygon or MultiPolygon describing data area with coordinates in same system as defined in config (i.e EPSG:25832), WKT or geojson (geometry) format, directly in a text string or as a filename | WKT, jsontext, or filename                     | Yes      |
+| -c                    | Data config path                                                                                                                                                                                 | string                                         | No       | "config/dataset/bygg-no-rules.json" |
+| -mb                   | Max batch size when running predictions                                                                                                                                                          | int                                            | No       | 200                                 |
+| -s                    | Whether to save resulting vectordata to azure or locally. Options as 'local' or 'azure'                                                                                                          | string                                         | No       | azure                               |
+| -l                    | The confidence levels to create contours for.                                                                                                                                                    | string - comma seperated list of float numbers | No       | "0.3, 0.4, 0.5, 0.6, 0.8, 0.9, 1"   |
+
+Example:
+
+Unix:
+
+`./kai create_predicted_buildings_contour -rn karmoy -cn unet_model --region training_data/karmoy.json -c config/dataset/bygg-no-rules.json`
+
+Windows:
+
+`kai.bat create_predicted_buildings_contour -rn karmoy -cn unet_model --region training_data/karmoy.json -c config/dataset/bygg-no-rules.json`

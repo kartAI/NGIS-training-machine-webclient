@@ -1,5 +1,5 @@
 # Use the osgeo/gdal base image
-FROM osgeo/gdal:ubuntu-small-latest
+FROM ghcr.io/osgeo/gdal:ubuntu-small-latest
 
 # Set the working directory
 WORKDIR /app
@@ -10,7 +10,7 @@ COPY . /app
 # Install the necessary packages using pip
 RUN apt-get update && \
     apt-get install -y python3-pip bash && \
-    pip3 install python-dotenv requests psycopg2-binary matplotlib tensorflow azure-storage-blob imageio fastapi uvicorn sendgrid jinja2 pyproj shapely
+    pip3 install python-dotenv requests psycopg2-binary matplotlib tensorflow azure-storage-blob imageio fastapi uvicorn sendgrid jinja2 pyproj shapely python-multipart
 
 # Make the kai script executable
 RUN chmod +x /app/kartAI/kai
