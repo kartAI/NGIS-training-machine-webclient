@@ -211,7 +211,7 @@ def decoder_block_catskip(input, skip_features, conv_block, features, block_name
     return x
 
 
-def get_model(img_size, num_classes, activation, conv_block, features, depth, model_name) -> Sequential:
+def get_model(img_size, num_classes, activation, conv_block, features, depth) -> Sequential:
     inputs = layers.Input(img_size)
 
     # An initial layer to get the number of channels right
@@ -238,11 +238,11 @@ def get_model(img_size, num_classes, activation, conv_block, features, depth, mo
     outputs = layers.Conv2D(
         num_classes, 1, padding="same", activation="sigmoid")(x)
 
-    model = keras.Model(inputs, outputs, name=model_name)
+    model = keras.Model(inputs, outputs, name="U-Net")
     return model
 
 
-def get_cross_model(img_size, num_classes, activation, conv_block, features, depth, model_name, use_CPP=False) -> Sequential:
+def get_cross_model(img_size, num_classes, activation, conv_block, features, depth, use_CPP=False) -> Sequential:
     """Cross Connected Convolutional Partitioning Segmentation Neural Network (CCCP - Net)"""
     inputs = layers.Input(img_size)
 
@@ -321,7 +321,7 @@ def get_cross_model(img_size, num_classes, activation, conv_block, features, dep
                             activation="sigmoid")(inp[0])
 
     # ...and create model
-    model = keras.Model(inputs, outputs, name=model_name)
+    model = keras.Model(inputs, outputs, name="U-Net")
     return model
 
 
@@ -378,35 +378,35 @@ def get_unet_twin_model(img_size, num_classes, activation, features, depth, heig
 
 
 def get_unet_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_model(img_size, num_classes, activation, simple_conv_block, features, depth, "unet")
+    return get_model(img_size, num_classes, activation, simple_conv_block, features, depth)
 
 
 def get_resnet_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_model(img_size, num_classes, activation, conv_res_block, features, depth, "resnet")
+    return get_model(img_size, num_classes, activation, conv_res_block, features, depth)
 
 
 def get_bottleneck_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_model(img_size, num_classes, activation, bottleneck_block, features, depth, "bottleneck")
+    return get_model(img_size, num_classes, activation, bottleneck_block, features, depth)
 
 
 def get_csp_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_model(img_size, num_classes, activation, CSPDense_block, features, depth, "CSP")
+    return get_model(img_size, num_classes, activation, CSPDense_block, features, depth)
 
 
 def get_bottleneck_cross_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_cross_model(img_size, num_classes, activation, bottleneck_block, features, depth, "bottleneck_cross_model")
+    return get_cross_model(img_size, num_classes, activation, bottleneck_block, features, depth)
 
 
 def get_bottleneck_cross_SPP_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_cross_model(img_size, num_classes, activation, bottleneck_block, features, depth, "bottleneck_cross_SPP", True)
+    return get_cross_model(img_size, num_classes, activation, bottleneck_block, features, depth, True)
 
 
 def gets_csp_cross_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_cross_model(img_size, num_classes, activation, CSPDense_block, features, depth, "CSP_cross")
+    return get_cross_model(img_size, num_classes, activation, CSPDense_block, features, depth)
 
 
 def gets_csp_cross_SPP_model(img_size, num_classes, activation, features, depth) -> Sequential:
-    return get_cross_model(img_size, num_classes, activation, CSPDense_block, features, depth, "CSP_cross_SPP", True)
+    return get_cross_model(img_size, num_classes, activation, CSPDense_block, features, depth, True)
 
 
 def mish(x):

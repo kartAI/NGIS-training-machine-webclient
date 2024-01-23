@@ -1,11 +1,8 @@
-from env_secrets import get_env_secret
+import os
 
 config = {
-    "AZURE_STORAGE_CONNECTION_STRING": get_env_secret('AZURE_STORAGE_CONNECTION_STRING'),
-    "AZURE_BYGG_POSTGRESQL_PSW": get_env_secret('AZURE_BYGG_POSTGRESQL_PSW'),
-    "NK_WMS_API_KEY": get_env_secret('NK_WMS_API_KEY'),
-    "OSM_DB_PWD": get_env_secret('OSM_DB_PWD'),
-    "OSM_ADMIN_DB_PWD": get_env_secret('OSM_ADMIN_DB_PWD'),
+    "NK_WMS_API_KEY": os.environ['NK_WMS_API_KEY'],
+    "OSM_DB_PWD": os.environ['OSM_DB_PWD'],
     "metadata_container_name": "modelsmetadata-v2",
     "models_container_name": "models-v2",
     "ksand_performances_container_name": "ksand-performances",
@@ -16,7 +13,6 @@ config = {
     "cached_data_directory": 'training_data',
     "created_datasets_directory": 'training_data/created_datasets/'
 }
-
 
 def get_env_variable(variable):
     return config[variable]

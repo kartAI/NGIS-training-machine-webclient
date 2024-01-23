@@ -9,7 +9,7 @@ import pandas as pd
 from azure import blobstorage
 import shutil
 import env
-import dtale
+from pandasgui import show
 from kartai.dataset.create_polygon_dataset import get_all_predicted_features_dataset, get_fkb_labels, run_ml_predictions
 from kartai.dataset.performance_count import get_new_buildings_fasit, get_performance_count_for_detected_buildings, get_true_labels
 from kartai.dataset.resultRegion import ResultRegion
@@ -30,11 +30,9 @@ def add_parser(subparser):
     parser.add_argument('-test_region', type=str, choices=ResultRegion.get_values(),
                         help='A test region to run prediction on', required=False)
     parser.add_argument('-preview', type=bool,
-                        help='Preview results so far', required=False, default=False)
+                        help='preview results so far', required=False, default=False)
     parser.add_argument('-download_models', type=bool,
                         help='Downloading existing trained models from azure', required=False, default=False)
-    parser.add_argument('-visualize', type=bool,
-                        help='Spin up a backend to visualize the model performance from a dataframe in a browser window', required=False, default=True)
 
     parser.set_defaults(func=main)
 
@@ -61,7 +59,7 @@ def download_all_models():
     return models
 
 
-def create_dataframe_result(models: list[Model], region_name: ResultRegion, visualize: bool = False):
+def create_dataframe_result(models: list[Model], region_name: ResultRegion):
     rows = []
     for model in models:
         model_name = Path(model).stem
@@ -89,16 +87,13 @@ def create_dataframe_result(models: list[Model], region_name: ResultRegion, visu
         df.sort_values('ksand_IoU', inplace=True, ascending=False)
 
     print(df)
+    show(df)
 
     df.to_excel(os.path.join(get_performance_output_dir(region_name),
                 f'report_{region_name}_performance.xlsx'), index=False)
-    
-    # This starts a backend that visualizes the dataframe in a browser
-    if visualize:
-        dtale.show(df, subprocess=False)
 
 
-def show_general_model_performance(models, visualize: bool = False):
+def show_general_model_performance(models):
     output_directory = env.get_env_variable('trained_models_directory')
     rows = []
 
@@ -129,13 +124,11 @@ def show_general_model_performance(models, visualize: bool = False):
     df = pd.DataFrame(rows)
     df.sort_values('Val IoU .5', inplace=True, ascending=False)
     print(df)
+    show(df)
 
     df.to_excel(os.path.join(output_directory,
                 'report_trained_models.xlsx'), index=False)
 
-    # This starts a backend that visualizes the dataframe in a browser
-    if visualize:
-        dtale.show(df, subprocess=False)
 
 def get_dataset_name_and_path(model_name: str, dataset_name: str):
     # TODO: add better check in order to find if model is height model and stack/twin model
@@ -358,7 +351,10 @@ def empty_folder(folder: str):
 def main(args):
 
     if args.download_models:
-        download_all_models()
+        download_data = input(
+            "Do you want to download model checkpoints from azure? \nDownload? Answer 'y' \nSkip? Answer 'n':\n ")
+        if download_data == 'y':
+            download_all_models()
 
     checkpoints_directory = env.get_env_variable('trained_models_directory')
 
@@ -376,10 +372,10 @@ def main(args):
     crs = "EPSG:25832"
     if args.preview is True:
         create_dataframe_result(
-            models, region_name=args.test_region, visualize=args.visualize)
+            models, region_name=args.test_region)
     elif args.test_region:
         region = get_test_region_avgrensning_dir(args.test_region)
         run_performance_tests(models, crs, region, region_name=args.test_region,
                               config_path="config/dataset/bygg_test.json")
     else:
-        show_general_model_performance(models, visualize=args.visualize)
+        show_general_model_performance(models)
