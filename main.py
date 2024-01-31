@@ -50,6 +50,7 @@ REGION_FILE = os.path.join(
 CONFIG_FILE = os.path.join(
     BASE_DIR, "kartAI", "config", "dataset", "kartai.json")
 
+
 # Code block for updating test/validation/building
 
 
@@ -103,6 +104,7 @@ async def update_coordinates(coords: Input):
 async def delete_folders():
     delete_all_folders()
     return {"message": "Deletion of folders successful."}
+
 
 
 @app.post("/update_coordinates")
