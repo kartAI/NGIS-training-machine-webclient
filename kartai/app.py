@@ -9,7 +9,8 @@ from flask_cors import CORS
 from osgeo import ogr, osr
 
 import env
-from kartai.dataset.create_building_dataset import create_predicted_buildings_dataset
+from kartai.dataset.create_polygon_dataset import create_predicted_features_dataset
+from kartai.utils.config_utils import read_config
 
 
 def transform(geom, inSpatialNum, outSpatialNum):
@@ -51,9 +52,9 @@ def predict_area(req):
 
     model_name = Path(checkpoint).stem
     config_path = "config/dataset/bygg-no-rules.json"
-
-    all_predicted_buildings_dataset = create_predicted_buildings_dataset(
-        geom, model_name, config_path)
+    config = read_config(config_path)
+    all_predicted_buildings_dataset = create_predicted_features_dataset(
+        geom, model_name, config, "app_test")
 
     # Transform geom to a coordinate system that corresponds to the file system structure used
     all_predicted_buildings_dataset = transform(
@@ -68,7 +69,7 @@ cors = CORS(app)
 
 @app.route("/Models",  methods=['GET'])
 def getModels():
-    models = blobstorage.getAvailableTrainedModels()
+    models = blobstorage.get_available_trained_models()
     return jsonify(models)
 
 

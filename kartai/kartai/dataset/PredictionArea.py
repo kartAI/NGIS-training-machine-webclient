@@ -1,17 +1,13 @@
 import json
-import os
-
 import env
-from kartai.datamodels_and_services.DatasetBuilder import DatasetBuilder
 from kartai.tools.create_training_data import (DatasetBuilder, Region,
                                                getImageSets, getTileGrid, getImageSources)
 from kartai.datamodels_and_services.ImageSourceServices import Tile
+from osgeo import ogr
 
 
-def fetch_data_to_predict(geom, config_path):
-    with open(config_path) as f:
-        config = json.load(f)
-
+def fetch_data_to_predict(geom: ogr.Geometry, config, output_path, num_processes=None):
+    """Download data to run prediction on"""
     tile_grid = getTileGrid(config)
     training_dataset_dir = env.get_env_variable("cached_data_directory")
 
@@ -21,17 +17,11 @@ def fetch_data_to_predict(geom, config_path):
     image_sets = getImageSets(
         config, image_sources)
 
-    dataset_builder = DatasetBuilder(image_sets)
-    if("ProjectArguments" in config):
-        dataset = list(dataset_builder.assemble_data(
-            Region(geom), config["ImageSources"], project_config=config["ProjectArguments"]), eager_load=True)
-    else:
-        dataset = list(dataset_builder.assemble_data(
-            Region(geom), config["ImageSources"]), eager_load=True)
+    project_config = config["ProjectArguments"] if "ProjectArguments" in config else None
+    dataset_builder = DatasetBuilder(image_sets, config["ImageSources"], project_config=project_config,
+                                     eager_load=True, num_processes=num_processes)
+    dataset = list(dataset_builder.assemble_data(Region(geom)))
 
     # Save file image references
-    data_path = env.get_env_variable('created_datasets_directory')
-    if not os.path.exists(data_path):
-        os.mkdir(data_path)
-    with open(data_path + "/prediction_set.json", "w") as file:
+    with open(output_path, "w") as file:
         json.dump(Tile.tileset_to_json(dataset), file)

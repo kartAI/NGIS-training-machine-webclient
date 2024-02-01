@@ -27,18 +27,21 @@ def add_parsers():
     elif tool == "download_models":
         from kartai.tools import download_models
         download_models.add_parser(subparser)
-    elif tool == "create_predicted_buildings_dataset":
-        from kartai.tools import create_predicted_buildings_dataset
-        create_predicted_buildings_dataset.add_parser(subparser)
+    elif tool == "create_predicted_features_dataset":
+        from kartai.tools import create_predicted_features_dataset
+        create_predicted_features_dataset.add_parser(subparser)
+    elif tool == "create_predicted_buildings_contour":
+        from kartai.tools import create_predicted_buildings_contour
+        create_predicted_buildings_contour.add_parser(subparser)
     elif tool == "data_teacher":
         from kartai.tools import data_teacher
         data_teacher.add_parser(subparser)
     elif tool == "upload_model":
         from kartai.tools import upload_model
         upload_model.add_parser(subparser)
-    elif tool == "full_analysis":
-        from kartai.tools import full_analysis
-        full_analysis.add_parser(subparser)
+    elif tool == "upload_files_in_dir":
+        from kartai.tools import upload_files_in_dir
+        upload_files_in_dir.add_parser(subparser)
 
     # We return the parsed arguments, but the sub-command parsers
     # are responsible for adding a function hook to their command.
@@ -66,7 +69,7 @@ def validate_existing_paths(args):
     args_obj = vars(args)
 
     for param in path_params:
-        if(param in args_obj and args_obj[param] and not os.path.exists(args_obj[param])):
+        if (param in args_obj and args_obj[param] and not os.path.exists(args_obj[param])):
             raise Exception(f"{param} does not exist in path", args_obj[param])
 
 

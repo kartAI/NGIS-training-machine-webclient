@@ -1,6 +1,7 @@
 from osgeo import gdal, ogr, osr
 import imageio
 import os
+import weakref
 import requests
 import sys
 import time
@@ -9,6 +10,7 @@ import numpy as np
 import math
 import scipy as sp
 import env
+from kartai.utils.request_utils import do_request
 
 # ogr.UseExceptions()
 # gdal.UseExceptions()
@@ -29,6 +31,17 @@ class TileGrid:
         self.dx = dx
         self.dy = dy if dy is not None else dx
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        del state['srs']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.srs = osr.SpatialReference()
+        self.srs.ImportFromEPSG(self.srid)
+
     def image_geom(self, i, j):
         """Return the extent if an image tile with grid index i, j as
         minx, miny, maxx, maxy"""
@@ -47,7 +60,7 @@ class TileGrid:
         minj = int(math.floor((region.miny - self.y0) / self.dy))
         maxi = int(math.ceil((region.maxx - self.x0) / self.dx))
         maxj = int(math.ceil((region.maxy - self.y0) / self.dy))
-        print(region)
+
         # Create ring, fill with zero
         ring = ogr.Geometry(ogr.wkbLinearRing)
         ring.AddPoint(0, 0)
@@ -60,7 +73,7 @@ class TileGrid:
         poly = ogr.Geometry(ogr.wkbPolygon)
         poly.AddGeometryDirectly(ring)
         poly.AssignSpatialReference(region.poly.GetSpatialReference())
-        
+
         j = minj
         while j <= maxj:
             i = mini
@@ -76,7 +89,7 @@ class TileGrid:
                     yield i, j
                 i += 1
             j += 1
-    
+
 
 class Tile:
     """
@@ -89,10 +102,20 @@ class Tile:
         self._i = i
         self._j = j
         self._tile_size = tile_size
-        self._array = None
+        self._array_ref = None
         self._srs_wkt = None
         self._geo_transform = None
-    
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        del state['_array_ref']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._array_ref = None
+
     @property
     def file_path(self):
         return self._image_source.image_path(self._i, self._j, self._tile_size)
@@ -100,19 +123,20 @@ class Tile:
     @property
     def array(self):
         """Return the image array, load if necessary"""
-        self._load()
-        return self._array
+        return self._load()
 
     @property
     def srs_wkt(self):
         """Return the image spatial reference system, load if necessary"""
-        self._load()
+        if not self._srs_wkt:
+            self._load()
         return self._srs_wkt
 
     @property
     def geo_transform(self):
         """Return the image geographic transform, load if necessary"""
-        self._load()
+        if not self._geo_transform:
+            self._load()
         return self._geo_transform
 
     def to_json(self):
@@ -161,7 +185,7 @@ class Tile:
         }
 
         return jn
-    
+
     @classmethod
     def tileset_from_json(cls, jn):
         tileset = []
@@ -187,24 +211,32 @@ class Tile:
         return tileset
 
     def _load(self):
-        if self._array is not None and self._srs_wkt and self._geo_transform:
-            return
-        file_path = self.file_path
-        if not file_path:
-            raise ValueError("No file_path?")
-        if self._image_source.cache_root is not None and os.path.exists(file_path):
-            data_source = gdal.Open(file_path)
-            self._geo_transform = data_source.GetGeoTransform()
-            self._srs_wkt = data_source.GetSpatialRef().ExportToWkt()
-            self._array = data_source.ReadAsArray()
-        else:
-            self._array, self._srs_wkt, self._geo_transform = \
-                self._image_source.load_tile(self._i, self._j, self._tile_size)
-            if self._image_source.cache_root is not None and not os.path.exists(file_path):
-                self._save()
+        array = None
+        if self._array_ref is not None and self._srs_wkt and self._geo_transform:
+            array = self._array_ref()
+        if array is None:
+            file_path = self.file_path
+            if not file_path:
+                raise ValueError("No file_path?")
+            if self._image_source.cache_root is not None and os.path.exists(file_path):
+                try:
+                    data_source = gdal.Open(file_path)
+                    self._geo_transform = data_source.GetGeoTransform()
+                    self._srs_wkt = data_source.GetSpatialRef().ExportToWkt()
+                    array = data_source.ReadAsArray()
+                except Exception:
+                    pass
+            if array is None:
+                array, self._srs_wkt, self._geo_transform = \
+                    self._image_source.load_tile(
+                        self._i, self._j, self._tile_size)
+                if self._image_source.cache_root is not None and not os.path.exists(file_path):
+                    self._save(array)
+            self._array_ref = weakref.ref(array)
+        return array
 
-    def _save(self):
-        if not (self._array is not None and self._srs_wkt and self._geo_transform):
+    def _save(self, array):
+        if not (array is not None and self._srs_wkt and self._geo_transform):
             raise ValueError("No data?")
 
         file_path = self.file_path
@@ -212,12 +244,12 @@ class Tile:
             raise ValueError("No file_path?")
 
         gdal_type = None
-        if self._array.dtype == np.single:
+        if array.dtype == np.single:
             gdal_type = gdal.GDT_Float32
-        elif self._array.dtype == np.double:
-            self._array = np.array(self._array, dtype=np.single)
+        elif array.dtype == np.double:
+            array = np.array(array, dtype=np.single)
             gdal_type = gdal.GDT_Float32
-        elif self._array.dtype == np.byte or self._array.dtype == np.ubyte:
+        elif array.dtype == np.byte or array.dtype == np.ubyte:
             gdal_type = gdal.GDT_Byte
 
         driver = None
@@ -228,14 +260,14 @@ class Tile:
 
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         data_source = driver.Create(file_path,
-                                    self._array.shape[0], self._array.shape[1],
-                                    self._array.shape[2] if len(
-                                        self._array.shape) > 2 else 1,
+                                    array.shape[0], array.shape[1],
+                                    array.shape[2] if len(
+                                        array.shape) > 2 else 1,
                                     gdal_type, gdal_options)
 
         data_source.SetGeoTransform(self._geo_transform)
         data_source.SetProjection(self._srs_wkt)
-        data_source.GetRasterBand(1).WriteArray(self._array)
+        data_source.GetRasterBand(1).WriteArray(array)
 
 
 class ImageSourceFactory:
@@ -328,7 +360,7 @@ class WMSImageSource(ImageSource):
         self.layers = layer_spec["layers"]
         self.styles = layer_spec["styles"] if "styles" in layer_spec else []
         self.api_key = layer_spec["api_key"] if "api_key" in layer_spec else None
-    
+
     def load_image(self, image_path, minx, miny, maxx, maxy, tile_size):
 
         params = {
@@ -339,44 +371,27 @@ class WMSImageSource(ImageSource):
             'width': tile_size,
             'height': tile_size,
             'srs': f'epsg:{self.tile_grid.srid}',
-            'crs': f'epsg:{self.tile_grid.srid}',
             'format': self.img_format,
             'bbox': f'{minx}, {miny}, {maxx}, {maxy}'
         }
 
-        # Do request
-        req = requests.get(self.base_url, stream=True, params=params,
-                           headers=None, timeout=None)
-        
-        # Handle response
-        if not req:
-            print("Something went very wrong in WMSImageSource", file=sys.stderr)
-        elif req.status_code == 200:
-            print("request status is 200")
-            if req.headers['content-type'] == self.img_format:
-                # If response is OK and an image, save image file
-                os.makedirs(os.path.dirname(image_path), exist_ok=True)
-                with open(image_path, 'wb') as out_file:
-                    shutil.copyfileobj(req.raw, out_file)
+        req = do_request(self.base_url, params)
 
-                data_source = gdal.Open(image_path)
-                return data_source.ReadAsArray(), data_source.GetSpatialRef().ExportToWkt(), data_source.GetGeoTransform()
-            else:
-                # If no image, print error to stdout
-                print("Content-type: ", req.headers['content-type'],
-                      " url: ", req.url, " Content: ", req.text, file=sys.stderr)
+        print("request status is 200")
+        if req.headers['content-type'] == self.img_format:
+            # If response is OK and an image, save image file
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
+            with open(image_path, 'wb') as out_file:
+                shutil.copyfileobj(req.raw, out_file)
 
-        # Use existing
-        elif req.status_code == 304:
             data_source = gdal.Open(image_path)
-            return data_source.ReadAsArray(), data_source.GetSpatialRef().ExportToWkt(), data_source.GetGeoTransform() 
+            return data_source.ReadAsArray(), data_source.GetSpatialRef().ExportToWkt(), data_source.GetGeoTransform()
 
-        # Handle error
         else:
-            print("Status: ", req.status_code,
-                  " url: ", req.url, file=sys.stderr)
-
-        return None, None, None
+            # If no image, print error to stdout
+            print("Content-type: ", req.headers['content-type'],
+                  " url: ", req.url, " Content: ", req.text, file=sys.stderr)
+            return None, None, None
 
 
 class WCSImageSource(ImageSource):
@@ -401,32 +416,8 @@ class WCSImageSource(ImageSource):
             'bbox': f'{minx}, {miny}, {maxx}, {maxy}'
         }
 
-        # Do request
-        req = None
-        wait = 1
-        for i in range(10):
-            try:
-                req = requests.get(self.base_url, stream=True, params=params,
-                                   headers=None, timeout=None)
-            except:
-                pass
-            if not req:
-                time.sleep(wait)
-                wait += 1
-            else:
-                if req.status_code == 200:
-                    break
-                else:
-                    time.sleep(wait)
-                    wait += 1
-
         # Handle response
-        if not req:
-            print("Something went very wrong in WCSImageSource", file=sys.stderr)
-            return None, None, None
-        elif req.status_code == 200:
-            print("request status is 200")
-
+        req = do_request(self.base_url, params)
         data = imageio.imread(req.content, ".tif")
 
         # If response is OK and an image, save image file
@@ -456,8 +447,9 @@ class OGRImageSource(ImageSource):
     def __init__(self, cache_root, tile_grid, layer_spec):
         super().__init__(cache_root, tile_grid, layer_spec)
 
-        # The layer
+        # OGR data
         self.layer = None
+        self.data_source = None
 
         # Setup attribute filter
         self.attribute_filter_json = layer_spec["attribute_filter"] if "attribute_filter" in layer_spec else None
@@ -469,6 +461,18 @@ class OGRImageSource(ImageSource):
                 self.attribute_filter = [self.attribute_filter_json]
         else:
             self.attribute_filter = [None]
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        del state['layer']
+        del state['data_source']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.layer = None
+        self.data_source = None
 
     def open(self):
         raise NotImplementedError(
@@ -546,7 +550,7 @@ class PostgresImageSource(OGRImageSource):
         # print('connecting to db')
         connectionPwd = env.get_env_variable(self.layer_spec['passwd'])
         connString = f"PG: host={self.layer_spec['host']} port={self.layer_spec['port']} dbname={self.layer_spec['database']} " + \
-                     f"user={self.layer_spec['user']} password={connectionPwd}"
+            f"user={self.layer_spec['user']} password={connectionPwd}"
         self.data_source = ogr.Open(connString)
         # print('created connection', self.conn)
 
@@ -584,12 +588,24 @@ class ImageFileImageSource(ImageSource):
     def __init__(self, cache_root, tile_grid, layer_spec):
         super().__init__(cache_root, tile_grid, layer_spec)
         self.file_path = layer_spec["file_path"]
-        self.data_source = gdal.Open(self.file_path)
+        self.data_source = None
         self.img_srs = {}
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # Remove the unpicklable entries.
+        del state['data_source']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.data_source = None
 
     def load_image(self, image_path, minx, miny, maxx, maxy, tile_size):
         """Load or generate an image with the geometry given by
         minx, miny, maxx, maxy, srid, tile_size from the image source and store into the image_path"""
+        os.makedirs(os.path.dirname(image_path), exist_ok=True)
+
         target_ds = gdal.GetDriverByName('GTiff').Create(
             str(image_path),
             tile_size, tile_size, self.data_source.RasterCount, gdal.GDT_Byte,
@@ -599,6 +615,9 @@ class ImageFileImageSource(ImageSource):
             maxy, 0, (miny - maxy) / tile_size,
         )
         target_ds.SetGeoTransform(geo_transform)
+
+        if self.data_source is None:
+            self.data_source = gdal.Open(self.file_path)
 
         srs_wkt = self.data_source.GetSpatialRef().ExportToWkt()
         target_ds.SetProjection(srs_wkt)
@@ -619,7 +638,7 @@ class Composition:
         raise NotImplementedError(
             f"Class {self.__class__.__name__}.get_tile is not implemented")
 
-    @staticmethod
+    @ staticmethod
     def create(config, image_sources):
         """Composition Factory"""
         scale = config["scale"] if "scale" in config else None
