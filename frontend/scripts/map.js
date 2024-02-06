@@ -1,10 +1,13 @@
 // Map initialization
-var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([59.887537, 10.523083], 14);
+var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([59.917075, 10.727720], 10);
 
 // Add OpenStreetMap Tiles
 var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=gBHYqk3cSCXUdQqICyH3', {
     attribution: '<a href=" https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a><a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
 }).addTo(map);
+
+// Søkefunksjon til leaflet maps
+L.Control.geocoder().addTo(map);
 
 // Leaflet draw
 var drawnItems = new L.FeatureGroup();
