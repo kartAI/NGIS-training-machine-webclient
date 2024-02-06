@@ -142,6 +142,7 @@ checkpoints copy
 checkpoints_complete_list
 
 env_secrets.py
+kv_secrets.py
 tensorflow_log
 
 #Exclude all training data, except subfolder regions and project areas
