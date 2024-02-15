@@ -12,11 +12,14 @@ api_key = os.getenv("NK_WMS_API_KEY")
 # Definerer WMS url
 wms_url = 'https://waapi.webatlas.no/wms-orto/'
 
-# Directory for lagrede bilder
+# Setter directory for lagring av bilde
 images_directory = "ortofoto_images"
 
-# Hele pathen til directory for bilder
+# Lager hele pathen i samme mappe 
 images_directory_path = os.path.join(os.path.dirname(__file__), images_directory)
+
+# Sjekker om filen eksisterer
+os.makedirs(images_directory_path, exist_ok=True)
 
 # Angi hvilke layers, bbox og hva enn du er interessert i
 params = {
@@ -35,14 +38,15 @@ params = {
 response = requests.get(wms_url, params=params)
 
 if response.status_code == 200:
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")  # Legger til tid og dato filen ble opprettet på for å gjøre den unik
+    # Genererer et filnavn basert på dato og tid bildet ble hentet på
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     file_name = f"output_{timestamp}.png"
     
-    # Hele pathen til bildefilen
+    # Hele fil pathen
     image_path = os.path.join(images_directory_path, file_name)
     
     with open(image_path, 'wb') as file:
         file.write(response.content)
-    print(f"Bildet ble lagret i {image_path}.") # Om det går feilfritt så blir denne kjørt
+    print(f"Bildet ble lagret i {image_path}.")
 else:
-    print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}") # Error, 403 er access denied, annet så må man søke seg opp.
+    print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
