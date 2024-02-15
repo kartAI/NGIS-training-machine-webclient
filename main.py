@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -263,3 +263,27 @@ async def send_zip_file(request: Request):
     os.remove("All_Data.zip")
 
     return {"message": "Email was sent successfully!"}
+
+
+'''
+    HER BEGYNNER WMS TING
+'''
+
+
+#Defines the filepaths for where the coordiantes and config will be stored
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+COORDINATE_FILE = os.path.join(
+    BASE_DIR, "WMS", "resources", "coordinates.json")
+CONFIG_FILE = os.path.join(
+    BASE_DIR, "WMS", "resources", "config.json")
+
+#Route for updating the coordinate file in the WMS/Resources folder
+@app.post("/updateWMSCoordinateFile")
+async def update_wms_coordinate_file(input: Input):
+    data = {"Coordinates": input.input}
+    try:
+        with open(COORDINATE_FILE, "w") as file:
+            json.dump(data, file)  
+    except Exception as e:
+      raise HTTPException(status_code=500, detail=f"Failed to write coordinates to json file: {str(e)}")
+    return {"Message": "Coordinates were updated successfully"}
