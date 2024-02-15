@@ -1,0 +1,1 @@
+#Dette scriptet genererer treningsdata
