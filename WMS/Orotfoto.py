@@ -8,7 +8,7 @@ import urllib.parse
 load_dotenv()
 
 # Laster API nøkkel
-api_key = "7BC67FFD-2C16-45A2-B5D3-889D639321AF"
+api_key = os.getenv("NK_WMS_API_KEY")
 
 # Definerer WMS url
 wms_url = 'https://waapi.webatlas.no/wms-orto/'
