@@ -1,1 +1,1 @@
-{"Her skal vi lagre koordinatene fra frontend": 0}
+{"Config": {"data_parameters": ["45", "10", "5"], "layers": ["Bygning", "Veg", "Vegetasjon"], "colors": ["#000000", "#ffff00", "#00ff00"]}}

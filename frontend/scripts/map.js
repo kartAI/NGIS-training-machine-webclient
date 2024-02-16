@@ -87,15 +87,19 @@ map.on("draw:created", function (c) {
 
     kartAIcoords4326 = uniqueCoordsArray;
 
+    //We need to add the new projection to the project
+    proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
+
     // Define the source (EPSG:4326) and destination (EPSG:3857) projections
     const epsg4326 = 'EPSG:4326';
     const epsg3857 = 'EPSG:3857';
+    const epsg25832 = 'EPSG:25832';
 
     // Function to convert coordinates from EPSG:4326 to EPSG:3857
     function convertToEPSG3857(coordsArray) {
         return coordsArray.map(coord => {
             const [longitude, latitude] = coord;
-            const [x, y] = proj4(epsg4326, epsg3857, [longitude, latitude]);
+            const [x, y] = proj4(epsg4326, epsg25832, [longitude, latitude]);
             return [x, y];
         });
     }
@@ -106,10 +110,40 @@ map.on("draw:created", function (c) {
     console.log(kartAIcoords);
 
     coordinatesElement.innerHTML = coordinatesString;
-    updateCoordinates(kartAIcoords);
+    updateWMSCoordinates(kartAIcoords);
 
 
 });
+
+
+// Updates the coordinates on the server for wms.
+async function updateWMSCoordinates(coordinates) {
+    //Make a POST Request to the server
+    const response = await fetch('http://localhost:8000/updateWMSCoordinateFile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"input": coordinates}),
+    });
+
+    const data = await response.json();
+    return data;
+}
+
+// Updates the coordinates on the server.
+async function updateCoordinates(coordinates) {
+    const response = await fetch('http://localhost:8000/update_coordinates', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"input": coordinates}),
+    });
+
+    const data = await response.json();
+    return data;
+}
 
 // Function saves coordinates entered by the user, converts them to latLng objects, and draws a red polygon on the map.
 function saveCoordinates() {
@@ -127,19 +161,7 @@ function saveCoordinates() {
     map.fitBounds(polygon.getBounds());
 }
 
-// Updates the coordinates on the server.
-async function updateCoordinates(coordinates) {
-    const response = await fetch('http://localhost:8000/update_coordinates', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(coordinates),
-    });
 
-    const data = await response.json();
-    return data;
-}
 
 // The function disables the scroll wheel zoom on the map.
 function noScroll() {

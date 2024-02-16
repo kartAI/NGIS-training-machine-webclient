@@ -30,6 +30,12 @@ from deleteFolder import delete_all_folders
 class Input(BaseModel):
     input: list
 
+class ConfigInput(BaseModel):
+    data_parameters: list
+    layers: list
+    colors: list
+
+
 
 # Import and create instance of the FastAPI framework
 app = FastAPI()
@@ -287,3 +293,18 @@ async def update_wms_coordinate_file(input: Input):
     except Exception as e:
       raise HTTPException(status_code=500, detail=f"Failed to write coordinates to json file: {str(e)}")
     return {"Message": "Coordinates were updated successfully"}
+
+#Route for updating the coordinate file in the WMS/Resources folder
+@app.post("/updateWMSConfigFile")
+async def update_wms_config_file(configInput: ConfigInput):
+    data = {"Config": {
+        "data_parameters": configInput.data_parameters,
+        "layers": configInput.layers,
+        "colors": configInput.colors
+    }}
+    try:
+        with open(CONFIG_FILE, "w") as file:
+            json.dump(data, file)  
+    except Exception as e:
+      raise HTTPException(status_code=500, detail=f"Failed to write config to json file: {str(e)}")
+    return {"Message": "Config was updated successfully"}
