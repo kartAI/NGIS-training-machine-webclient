@@ -72,10 +72,33 @@ function validateStart() {
   }
 
   if (allFieldsFilledFlag && validRangeFlag) {
-    updateValue();
+    updateWMSConfig();
     startTraining();
   }
 }
+
+// Updates the WMS config file on the server
+async function updateWMSConfig() {
+  //Hardcoder disse inn per nå
+  const layers = ["Bygning", "Veg", "Bru"]
+  const colors = ["#000000", "#ffff00", "#00ff00"]
+
+
+  const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
+
+  const response = await fetch('http://localhost:8000/updateWMSConfigFile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors}),
+  });
+
+  const data = await response.json();
+  return data;
+}
+
+
 
 // Update the training data fractions on the server
 async function updateValue() {
