@@ -15,4 +15,5 @@ shapely
 scipy
 python-multipart
 httpx
+pytest
 python-env

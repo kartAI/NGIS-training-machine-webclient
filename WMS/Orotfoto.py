@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import requests
 from datetime import datetime
+import urllib.parse
 
 # Laster inn environment fra .env filen
 load_dotenv()
@@ -23,17 +24,24 @@ os.makedirs(images_directory_path, exist_ok=True)
 
 # Angi hvilke layers, bbox og hva enn du er interessert i
 params = {
-    'service': 'WMS',
-    'request': 'GetMap',
-    'layers': 'bygning, veg, bru',
-    'bbox': '86862.34650433670322,6466039.970492540859,87579.68362640209671,6466748.95569468569',
-    'width': '800',
-    'height': '600',
-    'srs': 'EPSG:25832',
+    "api_key": api_key,
+    "request": "GetMap",
+    "width" : "1600",
+    "height": "1600",
+    "layers": "ortofoto",
+    "srs": "EPSG:25832",
     'format': 'image/png',  # Fil format
-    'apikey': api_key  # Henter API nøkkel
+    'bbox': '751773.690167,7456391.139281,751983.690167,7456601.139281',
 }
 
+encoded_params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
+
+# Build and print the full URL
+full_url = f"{wms_url}?{encoded_params}"
+print("Generated URL:")
+print(full_url)
+
+"""
 # Oppretter en get request til WMS serveren gjennom url og api nøkkel
 response = requests.get(wms_url, params=params)
 
@@ -50,3 +58,4 @@ if response.status_code == 200:
     print(f"Bildet ble lagret i {image_path}.")
 else:
     print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
+"""
