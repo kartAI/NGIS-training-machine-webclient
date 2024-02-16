@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 import urllib.parse
 from dotenv import load_dotenv
+import json
 
 # Finner path til .env filen som ligger i ngisopenapi mappen
 current_script_directory = os.path.dirname(os.path.abspath(__file__))
@@ -18,11 +19,24 @@ api_key = os.getenv('NK_WMS_API_KEY')
 # Definerer WMS url
 wms_url = 'https://waapi.webatlas.no/wms-orto/'
 
+# Leser inn koordinatene fra JSON-filen
+coordinates_file_path = os.path.join(current_script_directory, 'resources', 'coordinates.json')
+with open(coordinates_file_path, 'r') as file:
+    data = json.load(file)
+    coordinates = data['Coordinates']
+
+# Beregner bbox fra koordinatene gitt i applikasjonen
+min_x = min(coord[0] for coord in coordinates)
+min_y = min(coord[1] for coord in coordinates)
+max_x = max(coord[0] for coord in coordinates)
+max_y = max(coord[1] for coord in coordinates)
+bbox = f'{min_x},{min_y},{max_x},{max_y}'
+
 # Setter directory for lagring av bilde
 images_directory = "ortofoto_images"
 
 # Lager hele pathen i samme mappe
-images_directory_path = os.path.join(os.path.dirname(__file__), images_directory)
+images_directory_path = os.path.join(current_script_directory, images_directory)
 
 # Sjekker om filen eksisterer
 os.makedirs(images_directory_path, exist_ok=True)
@@ -36,7 +50,7 @@ params = {
     "layers": "ortofoto",
     "srs": "EPSG:25832",
     'format': 'image/png',  # Fil format
-    'bbox': '751773.690167,7456391.139281,751983.690167,7456601.139281',
+    'bbox': bbox,  # Oppdaterer bbox med de nye verdiene
 }
 
 encoded_params = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
