@@ -80,7 +80,7 @@ function validateStart() {
 // Updates the WMS config file on the server
 async function updateWMSConfig() {
   //Hardcoder disse inn per nå
-  const layers = ["Bygning", "Veg", "Vegetasjon"]
+  const layers = ["Bygning", "Veg", "Bru"]
   const colors = ["#000000", "#ffff00", "#00ff00"]
 
 
