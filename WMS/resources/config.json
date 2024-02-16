@@ -1,1 +1,1 @@
-{"Config": {"data_parameters": ["45", "10", "5"], "layers": ["Bygning", "Veg", "Vegetasjon"], "colors": ["#000000", "#ffff00", "#00ff00"]}}
+{"Config": {"data_parameters": ["45", "10", "5"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#000000", "#ffff00", "#00ff00"]}}
