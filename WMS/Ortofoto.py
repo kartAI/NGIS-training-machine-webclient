@@ -5,12 +5,12 @@ import urllib.parse
 from dotenv import load_dotenv
 import json
 
-def generate_orto():
+def generate_orto_picture():
     # Finner path til .env filen som ligger i ngisopenapi mappen
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(current_script_directory, '..', 'ngisopenapi'))
     env_file_path = os.path.join(project_root, '.env')
-
+    coordinates_file_path = os.path.join(current_script_directory, 'resources', 'coordinates.json')
     # Laster .env fra riktig path
     load_dotenv(env_file_path)
 
@@ -34,13 +34,13 @@ def generate_orto():
     bbox = f'{min_x},{min_y},{max_x},{max_y}'
 
     # Setter directory for lagring av bilde
-    images_directory = "ortofoto_images"
+    images_directory = "rawphotos"
 
     # Lager hele pathen i samme mappe
     images_directory_path = os.path.join(current_script_directory, images_directory)
 
     # Sjekker om filen eksisterer
-    os.makedirs(images_directory_path, exist_ok=True)
+    #os.makedirs(images_directory_path, exist_ok=True)
 
     # Angi hvilke layers, bbox og hva enn du er interessert i
     params = {
@@ -58,8 +58,6 @@ def generate_orto():
 
     # Build and print the full URL
     full_url = f"{wms_url}?{encoded_params}"
-    print("Generated URL:")
-    print(full_url)
 
     # Headers som legger en browser request
     headers = {
@@ -68,11 +66,11 @@ def generate_orto():
 
     # Oppretter en get request til WMS serveren gjennom url og api nøkkel
     response = requests.get(full_url, headers=headers)  # Ensure the request is made to `full_url`
-
+    print("HELLO");
     if response.status_code == 200:
         # Genererer et filnavn basert på dato og tid bildet ble hentet på
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        file_name = f"output_{timestamp}.png"
+        #timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        file_name = f"orto.png"
         
         # Hele fil pathen
         image_path = os.path.join(images_directory_path, file_name)

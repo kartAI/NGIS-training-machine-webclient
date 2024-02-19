@@ -51,7 +51,7 @@ def split_image(image_path, output_folder, tile_size):
             tile.save(f"{output_folder}/tile_{i}_{i}.png")
 
     #Return the amount of tiles created
-    return horizontal_tiles + vertical_tiles
+    return horizontal_tiles
 
 
 def split_files(image_path, output_folder, tiles, training_fraction, validation_fraction):
