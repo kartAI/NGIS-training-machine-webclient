@@ -27,13 +27,13 @@ def generate_wms_picture():
     bbox = f'{min_x},{min_y},{max_x},{max_y}'
 
     # Velger et sted å lagre bildene
-    images_directory = "Fasitfoto"
+    images_directory = "rawphotos"
 
     # Lagrer alt i mappen definert
-    images_directory_path = os.path.join(images_directory)
+    images_directory_path = os.path.join(current_script_directory, images_directory)
 
     # Sjekker om filen eksisterer
-    os.makedirs(images_directory_path, exist_ok=True)
+    #os.makedirs(images_directory_path, exist_ok=True)
 
     # WMS parametere, de tomme feltene blir definert videre i koden
     wms_params = {
@@ -54,8 +54,7 @@ def generate_wms_picture():
         'sld_body': ''
     }
 
-    # Spør som en input hvilket "Layers brukeren vil se"
-    layer_names = input("Enter LAYERS (layer names, comma-separated if multiple, Current layers are: veg,bru,bygning): ")
+    layer_names = "bygning"
     wms_params['LAYERS'] = layer_names
 
     # Starter SLD body
@@ -95,8 +94,6 @@ def generate_wms_picture():
 
     # Bygger og printer URLen med de riktige definerte WMS parameterene
     full_url = f"{base_url}?{encoded_params}"
-    print("Generated URL:")
-    print(full_url)
 
     # Headers som lager en browser request
     headers = {
@@ -104,11 +101,10 @@ def generate_wms_picture():
     }
 
     response = requests.get(full_url, headers=headers)
-
     if response.status_code == 200:
     # Genererer et filnavn basert på dato og tid bildet ble hentet på
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        file_name = f"output_{timestamp}.png"
+        #timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        file_name = f"fasit.png"
 
     # Hele fil pathen
         image_path = os.path.join(images_directory_path, file_name)
@@ -119,4 +115,3 @@ def generate_wms_picture():
     else:
         print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
         
-generate_wms_picture()
