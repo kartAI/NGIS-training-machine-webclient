@@ -5,6 +5,7 @@ import shutil
 import smtplib
 import ssl
 import zipfile
+from zipfile import ZipFile
 import base64
 import sendgrid
 import asyncio
@@ -38,8 +39,6 @@ class ConfigInput(BaseModel):
     data_parameters: list
     layers: list
     colors: list
-
-
 
 # Import and create instance of the FastAPI framework
 app = FastAPI()
@@ -329,6 +328,77 @@ async def generatePhotos():
     #Også må de riktige urlene plugges inn som image_path
     util.split_image("WMS/rawphotos/fasit.png", "WMS/tiles/fasit", 100)
     tiles = util.split_image("WMS/rawphotos/orto.png", "WMS/tiles/orto", 100)
-    print("TILES:" + str(tiles));
-    util.split_files("WMS/tiles", "WMS/email", tiles, config["data_parameters"][0], config["data_parameters"][1])
+    util.split_files("WMS/tiles", "email", tiles, config["data_parameters"][0], config["data_parameters"][1])
 
+# Her begynner fil zipping og epost sending for WMS/Fasit
+    
+# Finner path til .env filen som ligger i ngisopenapi mappen
+current_script_directory = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_script_directory, '..', 'ngisopenapi'))
+env_file_path = os.path.join(project_root, '.env')
+
+# Laster .env fra riktig path
+load_dotenv(env_file_path)
+
+    
+def send_email_with_attachment(to_emails, subject, content, attachment_path):
+    """Define email sending through SendGrid"""
+
+    if not os.path.exists(attachment_path):
+        raise FileNotFoundError(f"Attachment '{attachment_path}' not found.")
+
+    message = Mail(
+        from_email='victbakk@gmail.com', # Sender epost api
+        to_emails=to_emails, # Til epost som blir lagt inn, tror den er definert som "email" i koden.
+        subject=subject,
+        html_content=content
+    )
+
+    with open(attachment_path, 'rb') as f:
+        data = f.read()
+    encoded_file = base64.b64encode(data).decode()
+
+    attachedFile = Attachment(
+        FileContent(encoded_file),
+        FileName(os.path.basename(attachment_path)),
+        FileType('application/zip'),
+        Disposition('attachment')
+    )
+    message.attachment = attachedFile
+
+    try:
+        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))  # Henter API nøkkel
+        response = sg.send(message)
+        # Prints response below
+        print(f"Email sent. Status code: {response.status_code}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def zip_files(directory_path: str = 'WMS/email/', zip_name: str = 'attachments.zip'):
+    """Zip all files in the specified directory and save them to a zip file."""
+    with ZipFile(zip_name, 'w') as zipf:
+        for root, dirs, files in os.walk(directory_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zipf.write(file_path, arcname=os.path.relpath(file_path, directory_path))
+
+@app.post("/send-email/")
+async def send_zipped_files_email():
+    """Zip and send email to endpoint"""
+    zip_files()  # Zipper alle filer i WMS/email/
+    
+    send_email_with_attachment(
+        to_emails=["recipient@example.com"],
+        subject="Here are your zipped files",
+        content="<strong>Zip file holding the requested data.</strong>",
+        attachment_path="attachments.zip"
+    )
+    
+    # Sletter zip etter sending
+    os.remove("attachments.zip")
+    
+    return {"message": "Email sent successfully with zipped files."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

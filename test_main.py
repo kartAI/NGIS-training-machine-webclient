@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from main import app
+from unittest.mock import patch
 
 
 #Import test client
@@ -29,7 +30,3 @@ def test_update_wms_config_file():
     #Check that the responses are okay
     assert response.status_code == 200
     assert response.json() == {"Message": "Config was updated successfully"}
-
-
-
-    
