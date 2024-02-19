@@ -1,5 +1,7 @@
 #Import Pillow library for working with images
 from PIL import Image
+import os
+import shutil
 
 
 def split_image(image_path, output_folder, tile_size):
@@ -19,7 +21,7 @@ def split_image(image_path, output_folder, tile_size):
     print("done");
 
     #Checks if the file is of the correct type, otherwise raises an error
-    if(image_path.split(".")[2] not in acceptedFileTypes):
+    if(image_path.split(".")[1] not in acceptedFileTypes):
         return "Filetype not supported"
     
 
@@ -46,8 +48,65 @@ def split_image(image_path, output_folder, tile_size):
             tile = image.crop((left_top, left_bottom, right_top, right_bottom))
 
             #Save the tile to the output folder
-            tile.save(f"{output_folder}/tile_{i}_{j}.jpeg")
+            tile.save(f"{output_folder}/tile_{i}_{i}.png")
 
-    #Return the amount of tiles created to be used for testing purposes
+    #Return the amount of tiles created
     return horizontal_tiles + vertical_tiles
+
+
+def split_files(image_path, output_folder, tiles, training_fraction, validation_fraction):
+    '''
+    Splits a set of tiles and sorts them according to machine learning specifications
+    
+    Args:
+    image_path (str): The path to where the images are stored 
+    output_folder (str): The path to the output folder
+    tiles (int): The amount of tiles that need to be handled
+    training_fraction (int): The amount of tiles that will be used for training
+    validation (int): The amount of tiles that will be used for validation
+    
+    '''
+
+
+
+    try:
+         #Generate output folder
+        os.mkdir("WMS/" + output_folder + "/")
+
+        #Generate subfolders based on the standard
+        folders = ["train", "val", "/train/images", "/train/masks", "/val/images", "/val/masks"]
+        for folder in folders:
+            path = os.path.join("WMS/" + output_folder + "/" + folder)
+            os.mkdir(path)
+    except: 
+        print("Something went wrong with generating the folders...")
+
+
+    #Calculate the amount of files for each fraction
+    training_files = int(training_fraction)/100 * int(tiles)
+    validation_files = int(validation_fraction)/100 * int(tiles)
+
+    #Copy the files into the right places
+    for i in range(0, tiles - 1):
+        if(i > 0 and i < training_files):
+            try:
+                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", "WMS/" + output_folder + "/train/images")
+                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", "WMS/" + output_folder + "/train/masks")
+            except:
+                print("Something went wrong with copying...")
+        else:
+            try:
+                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", "WMS/" + output_folder + "/val/images")
+                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", "WMS/" + output_folder + "/val/masks")
+            except:
+                print("Something went wrong with copying...")
+
+    #Delete the files, we dont need them anymore
+    for i in range(0, tiles):
+        try:
+            os.remove(image_path + f"/orto/tile_{i}_{i}.png")
+            os.remove(image_path + f"/fasit/tile_{i}_{i}.png")
+        except:
+            print("Couldn't delete")
+
 
