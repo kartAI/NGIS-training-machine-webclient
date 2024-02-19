@@ -23,6 +23,7 @@ from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileT
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from deleteFolder import delete_all_folders
+from WMS import util
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
 
@@ -310,30 +311,23 @@ async def update_wms_config_file(configInput: ConfigInput):
     return {"Message": "Config was updated successfully"}
 
 
-@app.get("/generatePhotos")
+@app.post("/generatePhotos")
 async def generatePhotos():
-    #Read the coordinates from the file
-    file = open(COORDINATE_FILE)
-    data = json.load(file)
-    coordinates = data["Coordinates"];
 
     #Read config from the file
     file = open(CONFIG_FILE)
     data = json.load(file)
     config = data["Config"];
 
-    generate_wms_picture(coordinates[0], coordinates[1], coordinates[2], coordinates[3])
-    generate_wms_photo(coordinates, config)
 
-@app.get("/getAndZipWMSFiles")
-async def get_and_zip_  files():
-    folder_path = os.path.join(BASE_DIR, "kartAI", "training_data",
-                               "Training_data", "3857_563000.0_6623000.0_100.0_100.0", "512")
-    files = [f for f in os.listdir(
-        folder_path) if f.endswith(('.tif', '.json', '.vrt'))]
-    num_files = len(files)
-    if num_files == 0:
-        folder_summary = "No files found!"
-    else:
-        folder_summary = f"{num_files} file(s) selected: <br><br> {', '.join(files)}"
-    return {"folder_summary": folder_summary}
+    #Her må de forskjellige WMSene plugges inn
+    #generate_wms_picture(coordinates[0], coordinates[1], coordinates[2], coordinates[3])
+    #generate_wms_photo(coordinates, config)
+
+    #Også må de riktige urlene plugges inn som image_path
+    
+    util.split_image("WMS/rawphotos/fasit.png", "WMS/tiles/fasit", 100)
+    tiles = util.split_image("WMS/rawphotos/orto.png", "WMS/tiles/orto", 100)
+    util.split_files("WMS/tiles", "email", tiles, config["data_parameters"][0], config["data_parameters"][1])
+
+

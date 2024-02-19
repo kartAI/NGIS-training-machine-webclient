@@ -132,6 +132,17 @@ function confirmTraining() {
     .catch(error => console.error(error));
 }
 
+// Initiate a download process and redirect to next page
+function generatePhotos() {
+  fetch('/generatePhotos', {
+    method: 'POST'
+  })
+    .then(() => {
+      window.location.href = '/order.html';
+    })
+    .catch(error => console.error(error));
+}
+
 // Display the loading modal
 function loadingModal() {
   $('.modal').modal('show');
