@@ -5,6 +5,7 @@ import shutil
 import smtplib
 import ssl
 import zipfile
+from zipfile import ZipFile
 import base64
 import sendgrid
 import asyncio
@@ -330,4 +331,70 @@ async def generatePhotos():
     tiles = util.split_image("WMS/rawphotos/orto.png", "WMS/tiles/orto", 100)
     util.split_files("WMS/tiles", "email", tiles, config["data_parameters"][0], config["data_parameters"][1])
 
+# Her begynner fil zipping og epost sending for WMS/Fasit
+    
+    load_dotenv()
+    
+def zip_files(directory_path: str = 'WMS/email/', zip_name: str = 'attachments.zip'):
+    """Alle filene i spesifisert mappe."""
+    with ZipFile(zip_name, 'w') as zipf:
+        for root, dirs, files in os.walk(directory_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zipf.write(file_path, arcname=file)
 
+def send_email_with_attachment(to_emails, subject, content, attachment_path):
+    """Definerer gjennom via SendGrid"""
+
+if not os.path.exists(attachment_path):
+        raise FileNotFoundError(f"Attachment '{attachment_path}' not found.")
+
+message = Mail(
+        from_email='victbakk@gmail.com',
+        to_emails=to_emails,
+        subject=subject,
+        html_content=content
+    )
+
+# Enkoder all data i zippen til base64 
+with open(attachment_path, 'rb') as f:
+        data = f.read()
+encoded_file = base64.b64encode(data).decode()
+
+attachedFile = Attachment(
+        FileContent(encoded_file),
+        FileName(os.path.basename(attachment_path)),
+        FileType('application/zip'),
+        Disposition('attachment')
+    )
+message.attachment = attachedFile
+
+try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY) # Henter API nøkkel
+        response = sg.send(message) 
+        # Printer respons nedenfor
+        print(f"Email sent. Status code: {response.status_code}")
+except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+@app.post("/send-email/")
+async def send_zipped_files_email():
+    """Zipper, og sender epost til endepunktet"""
+    zip_files()  # Zipper alle filer i WMS/email/
+    
+    send_email_with_attachment(
+        to_emails=["recipient@example.com"],
+        subject="Here are your zipped files",
+        content="<strong>Zip file holding the requested data.</strong>",
+        attachment_path="attachments.zip"
+    )
+    
+    # Sletter attachments.zip etter sending, for å unngå unødvendig data
+    os.remove("attachments.zip")
+    
+    return {"message": "Email sent successfully with zipped files."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
