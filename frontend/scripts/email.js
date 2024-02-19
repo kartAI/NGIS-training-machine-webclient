@@ -14,7 +14,7 @@ async function getFiles() {
 
 // Calls the getFiles function when the page loads
 window.onload = function () {
-  getFiles();
+  //getFilaes();
 };
 
 // Updates the file list summary based on the files selected by the user
@@ -39,7 +39,7 @@ function sendEmail() {
   document.getElementById("filesPreview").innerHTML = "<p>Loading...</p>";
 
   // Sends a POST request to the server to send the email with the selected files attached
-  fetch("/send_zip_file", {
+  fetch("/sendEmail", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

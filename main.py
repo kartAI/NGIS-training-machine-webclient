@@ -328,7 +328,7 @@ async def generatePhotos():
     #Også må de riktige urlene plugges inn som image_path
     util.split_image("WMS/rawphotos/fasit.png", "WMS/tiles/fasit", 100)
     tiles = util.split_image("WMS/rawphotos/orto.png", "WMS/tiles/orto", 100)
-    util.split_files("WMS/tiles", "email", tiles, config["data_parameters"][0], config["data_parameters"][1])
+    util.split_files("WMS/tiles", "WMS/email", tiles, config["data_parameters"][0], config["data_parameters"][1])
 
 # Her begynner fil zipping og epost sending for WMS/Fasit
     
@@ -346,6 +346,7 @@ def send_email_with_attachment(to_emails, subject, content, attachment_path):
 
     if not os.path.exists(attachment_path):
         raise FileNotFoundError(f"Attachment '{attachment_path}' not found.")
+
 
     message = Mail(
         from_email='victbakk@gmail.com', # Sender epost api
@@ -367,7 +368,7 @@ def send_email_with_attachment(to_emails, subject, content, attachment_path):
     message.attachment = attachedFile
 
     try:
-        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))  # Henter API nøkkel
+        sg = SendGridAPIClient(api_key="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")  # Henter API nøkkel
         response = sg.send(message)
         # Prints response below
         print(f"Email sent. Status code: {response.status_code}")
@@ -382,13 +383,18 @@ def zip_files(directory_path: str = 'WMS/email/', zip_name: str = 'attachments.z
                 file_path = os.path.join(root, file)
                 zipf.write(file_path, arcname=os.path.relpath(file_path, directory_path))
 
-@app.post("/send-email/")
-async def send_zipped_files_email():
+@app.post("/sendEmail")
+async def send_zipped_files_email(request : Request):
+
+        # Extract email from request
+    email = {}
+    if request.body:
+        email = await request.json()
     """Zip and send email to endpoint"""
     zip_files()  # Zipper alle filer i WMS/email/
     
     send_email_with_attachment(
-        to_emails=["recipient@example.com"],
+        to_emails=email["email"],
         subject="Here are your zipped files",
         content="<strong>Zip file holding the requested data.</strong>",
         attachment_path="attachments.zip"
@@ -396,6 +402,8 @@ async def send_zipped_files_email():
     
     # Sletter zip etter sending
     os.remove("attachments.zip")
+    #Sletter også email mappa
+    shutil.rmtree("WMS/email")
     
     return {"message": "Email sent successfully with zipped files."}
 
