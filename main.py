@@ -319,8 +319,19 @@ async def generatePhotos():
     file = open(CONFIG_FILE)
     data = json.load(file)
     config = data["Config"];
+    if not os.path.exists("WMS/rawphotos"):
+        os.mkdir("WMS/rawphotos")
+    
+    if not os.path.exists("WMS/tiles"):
+        os.mkdir("WMS/tiles")
 
+    if not os.path.exists("WMS/tiles/fasit"):
+        os.mkdir("WMS/tiles/fasit")
 
+    if not os.path.exists("WMS/tiles/orto"):
+        os.mkdir("WMS/tiles/orto")
+
+    
     #Genererer bilder fra de forskjellige WMSene
     fasit_path = sanderscript.generate_wms_picture()
     orto_path = ortofoto.generate_orto_picture()
