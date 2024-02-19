@@ -24,6 +24,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from deleteFolder import delete_all_folders
 from WMS import util
+from WMS import Orotfoto
+
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
 
@@ -313,7 +315,6 @@ async def update_wms_config_file(configInput: ConfigInput):
 
 @app.post("/generatePhotos")
 async def generatePhotos():
-
     #Read config from the file
     file = open(CONFIG_FILE)
     data = json.load(file)
@@ -325,9 +326,8 @@ async def generatePhotos():
     #generate_wms_photo(coordinates, config)
 
     #Også må de riktige urlene plugges inn som image_path
-    
     util.split_image("WMS/rawphotos/fasit.png", "WMS/tiles/fasit", 100)
     tiles = util.split_image("WMS/rawphotos/orto.png", "WMS/tiles/orto", 100)
-    util.split_files("WMS/tiles", "email", tiles, config["data_parameters"][0], config["data_parameters"][1])
+    util.split_files("WMS/tiles", "WMS/email", tiles, config["data_parameters"][0], config["data_parameters"][1])
 
 

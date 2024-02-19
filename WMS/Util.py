@@ -67,16 +67,14 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
     
     '''
 
-
-
     try:
          #Generate output folder
-        os.mkdir("WMS/" + output_folder + "/")
+        os.mkdir(output_folder + "/")
 
         #Generate subfolders based on the standard
         folders = ["train", "val", "/train/images", "/train/masks", "/val/images", "/val/masks"]
         for folder in folders:
-            path = os.path.join("WMS/" + output_folder + "/" + folder)
+            path = os.path.join(output_folder + "/" + folder)
             os.mkdir(path)
     except: 
         print("Something went wrong with generating the folders...")
@@ -87,17 +85,17 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
     validation_files = int(validation_fraction)/100 * int(tiles)
 
     #Copy the files into the right places
-    for i in range(0, tiles - 1):
-        if(i > 0 and i < training_files):
+    for i in range(0, tiles):
+        if(i < training_files):
             try:
-                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", "WMS/" + output_folder + "/train/images")
-                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", "WMS/" + output_folder + "/train/masks")
+                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", output_folder + "/train/images")
+                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", output_folder + "/train/masks")
             except:
                 print("Something went wrong with copying...")
         else:
             try:
-                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", "WMS/" + output_folder + "/val/images")
-                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", "WMS/" + output_folder + "/val/masks")
+                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", output_folder + "/val/images")
+                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", output_folder + "/val/masks")
             except:
                 print("Something went wrong with copying...")
 
