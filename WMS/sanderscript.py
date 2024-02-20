@@ -115,3 +115,4 @@ def generate_wms_picture():
     else:
         print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
         
+#kjempetest
