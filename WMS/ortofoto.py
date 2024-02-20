@@ -66,7 +66,7 @@ def generate_orto_picture():
 
     # Oppretter en get request til WMS serveren gjennom url og api nøkkel
     response = requests.get(full_url, headers=headers)  # Ensure the request is made to `full_url`
-    print("HELLO");
+
     if response.status_code == 200:
         # Genererer et filnavn basert på dato og tid bildet ble hentet på
         #timestamp = datetime.now().strftime("%Y%m%d%H%M%S")

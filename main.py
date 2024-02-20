@@ -34,6 +34,7 @@ from WMS import sanderscript
 
 class Input(BaseModel):
     input: list
+    
 
 class ConfigInput(BaseModel):
     data_parameters: list
@@ -70,6 +71,7 @@ async def update_training(input: list):
 
     with open(CONFIG_FILE, "r") as file:
         data = json.load(file)
+    
 
 # Ensure that the "ProjectArguments" key exists in the JSON object
     if "ProjectArguments" not in data:
@@ -290,12 +292,8 @@ CONFIG_FILE = os.path.join(
 @app.post("/updateWMSCoordinateFile")
 async def update_wms_coordinate_file(input: Input):
     data = {"Coordinates": input.input}
-    try:
-        with open(COORDINATE_FILE, "w") as file:
-            json.dump(data, file)  
-    except Exception as e:
-      raise HTTPException(status_code=500, detail=f"Failed to write coordinates to json file: {str(e)}")
-    return {"Message": "Coordinates were updated successfully"}
+    if(util.write_file(COORDINATE_FILE, data)):
+        return {"Message": "Coordinates were updated successfully"}
 
 #Route for updating the coordinate file in the WMS/Resources folder
 @app.post("/updateWMSConfigFile")
@@ -305,47 +303,45 @@ async def update_wms_config_file(configInput: ConfigInput):
         "layers": configInput.layers,
         "colors": configInput.colors
     }}
-    try:
-        with open(CONFIG_FILE, "w") as file:
-            json.dump(data, file)  
-    except Exception as e:
-      raise HTTPException(status_code=500, detail=f"Failed to write config to json file: {str(e)}")
-    return {"Message": "Config was updated successfully"}
+    if(util.write_file(CONFIG_FILE, data)):
+        return {"Message": "Coordinates were updated successfully"}
 
 
 @app.post("/generatePhotos")
 async def generatePhotos():
+    #Slett de gamle mappene hvis de fortsatt er der.
+    util.teardown_WMS_folders()
+   
     #Read config from the file
-    file = open(CONFIG_FILE)
-    data = json.load(file)
-    config = data["Config"];
-
-
+    config = util.read_file(CONFIG_FILE)["Config"];
+   
+    #Genererer alle mappene for WMS 
+    util.setup_WMS_folders()
+   
     #Genererer bilder fra de forskjellige WMSene
-    fasit_path = sanderscript.generate_wms_picture()
-    orto_path = ortofoto.generate_orto_picture()
+    sanderscript.generate_wms_picture()
+    ortofoto.generate_orto_picture()
 
     #Også må de riktige urlene plugges inn som image_path
-    util.split_image("WMS/rawphotos/fasit.png", "WMS/tiles/fasit", 100)
-    tiles = util.split_image("WMS/rawphotos/orto.png", "WMS/tiles/orto", 100)
-    util.split_files("WMS/tiles", "email", tiles, config["data_parameters"][0], config["data_parameters"][1])
+    util.split_image(os.path.join("WMS", "rawphotos", "fasit.png"), os.path.join("WMS", "tiles", "fasit"), 100)
+    tiles = util.split_image(os.path.join("WMS", "rawphotos", "orto.png"), os.path.join("WMS", "tiles", "orto"), 100)
+    util.split_files(os.path.join("WMS", "tiles"), os.path.join("WMS/email"), tiles, config["data_parameters"][0], config["data_parameters"][1])
 
 # Her begynner fil zipping og epost sending for WMS/Fasit
     
 # Finner path til .env filen som ligger i ngisopenapi mappen
-current_script_directory = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(current_script_directory, '..', 'ngisopenapi'))
-env_file_path = os.path.join(project_root, '.env')
+env_file_path = os.path.join("ngisopenapi", ".env")
 
 # Laster .env fra riktig path
 load_dotenv(env_file_path)
-
+print(os.getenv("SENDGRID_API_KEY"))
     
 def send_email_with_attachment(to_emails, subject, content, attachment_path):
     """Define email sending through SendGrid"""
 
     if not os.path.exists(attachment_path):
         raise FileNotFoundError(f"Attachment '{attachment_path}' not found.")
+
 
     message = Mail(
         from_email='victbakk@gmail.com', # Sender epost api
@@ -367,14 +363,14 @@ def send_email_with_attachment(to_emails, subject, content, attachment_path):
     message.attachment = attachedFile
 
     try:
-        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))  # Henter API nøkkel
+        sg = SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))  # Henter API nøkkel
         response = sg.send(message)
         # Prints response below
         print(f"Email sent. Status code: {response.status_code}")
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def zip_files(directory_path: str = 'WMS/email/', zip_name: str = 'attachments.zip'):
+def zip_files(directory_path: str = os.path.join("WMS", "email/"), zip_name: str = 'attachments.zip'):
     """Zip all files in the specified directory and save them to a zip file."""
     with ZipFile(zip_name, 'w') as zipf:
         for root, dirs, files in os.walk(directory_path):
@@ -382,13 +378,18 @@ def zip_files(directory_path: str = 'WMS/email/', zip_name: str = 'attachments.z
                 file_path = os.path.join(root, file)
                 zipf.write(file_path, arcname=os.path.relpath(file_path, directory_path))
 
-@app.post("/send-email/")
-async def send_zipped_files_email():
+@app.post("/sendEmail")
+async def send_zipped_files_email(request : Request):
+
+        # Extract email from request
+    email = {}
+    if request.body:
+        email = await request.json()
     """Zip and send email to endpoint"""
     zip_files()  # Zipper alle filer i WMS/email/
     
     send_email_with_attachment(
-        to_emails=["recipient@example.com"],
+        to_emails=email["email"],
         subject="Here are your zipped files",
         content="<strong>Zip file holding the requested data.</strong>",
         attachment_path="attachments.zip"
@@ -396,9 +397,7 @@ async def send_zipped_files_email():
     
     # Sletter zip etter sending
     os.remove("attachments.zip")
+    #Sletter alle de midlertidige mappene for WMS
+    util.teardown_WMS_folders()
     
     return {"message": "Email sent successfully with zipped files."}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
