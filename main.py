@@ -334,6 +334,7 @@ env_file_path = os.path.join("ngisopenapi", ".env")
 
 # Laster .env fra riktig path
 load_dotenv(env_file_path)
+print(os.getenv("SENDGRID_API_KEY"))
     
 def send_email_with_attachment(to_emails, subject, content, attachment_path):
     """Define email sending through SendGrid"""
