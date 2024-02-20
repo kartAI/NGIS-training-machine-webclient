@@ -2,6 +2,8 @@
 from PIL import Image
 import os
 import shutil
+import json
+from fastapi import HTTPException
 
 
 def split_image(image_path, output_folder, tile_size):
@@ -67,19 +69,6 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
     
     '''
 
-    try:
-         #Generate output folder
-        os.mkdir(output_folder + "/")
-
-        #Generate subfolders based on the standard
-        folders = ["train", "val", "/train/images", "/train/masks", "/val/images", "/val/masks"]
-        for folder in folders:
-            path = os.path.join(output_folder + "/" + folder)
-            os.mkdir(path)
-    except: 
-        print("Something went wrong with generating the folders...")
-
-
     #Calculate the amount of files for each fraction
     training_files = int(training_fraction)/100 * int(tiles)
     validation_files = int(validation_fraction)/100 * int(tiles)
@@ -87,24 +76,54 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
     #Copy the files into the right places
     for i in range(0, tiles):
         if(i < training_files):
+            os.path.join(image_path, "orto", f"tile_{i}_{i}.png")
+            os.path.join(output_folder, "train", "images")
+            os.path.join(output_folder, "train", "mask")
             try:
-                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", output_folder + "/train/images")
-                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", output_folder + "/train/masks")
+                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "train", "images"))
+                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "train", "masks"))
             except:
                 print("Something went wrong with copying...")
         else:
             try:
-                shutil.copy2(image_path + f"/orto/tile_{i}_{i}.png", output_folder + "/val/images")
-                shutil.copy2(image_path + f"/fasit/tile_{i}_{i}.png", output_folder + "/val/masks")
+                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "val", "images"))
+                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "val", "masks"))
             except:
                 print("Something went wrong with copying...")
 
-    #Delete the files, we dont need them anymore
-    for i in range(0, tiles):
-        try:
-            os.remove(image_path + f"/orto/tile_{i}_{i}.png")
-            os.remove(image_path + f"/fasit/tile_{i}_{i}.png")
-        except:
-            print("Couldn't delete")
+
+def setup_WMS_folders():
+    folders_to_make = [os.path.join("WMS", "email", "train", "images"),
+    os.path.join("WMS", "email", "train", "masks"),
+    os.path.join("WMS", "email", "val", "images"),
+    os.path.join("WMS", "email", "val", "masks"),
+    os.path.join("WMS", "rawphotos"),
+    os.path.join("WMS", "tiles", "fasit"),
+    os.path.join("WMS", "tiles", "orto")]
+    for folder in folders_to_make:
+            os.makedirs(folder, exist_ok=True)
 
 
+def teardown_WMS_folders():
+    
+    try:
+        folders_to_delete = [os.path.join("WMS", "email"),
+    os.path.join("WMS", "rawphotos"),
+    os.path.join("WMS", "tiles")]
+        for folder in folders_to_delete:
+            shutil.rmtree(folder)
+    except:
+        print("Folders are already deleted!")
+
+
+def read_file(file_path):
+    file = open(file_path)
+    return json.load(file)
+
+def write_file(file_path, data):
+    try:
+        with open(file_path, "w") as file:
+            json.dump(data, file)  
+            return 1
+    except Exception as e:
+      raise HTTPException(status_code=500, detail=f"Failed to write config to json file: {str(e)}")
