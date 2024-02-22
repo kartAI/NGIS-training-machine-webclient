@@ -43,9 +43,6 @@ def test_generatePhotos():
     assert response.headers["content-type"] == "application/json"
     assert len(response.content) > 0 
 
-   # with open("NGIS-training-machine-webclient/WMS/rawphotos", "wb") as f:
-    #    f.write(response.content)
-
     #Check that the responses are okay
     assert response.status_code == 200
     util.teardown_WMS_folders()
