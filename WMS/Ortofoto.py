@@ -4,13 +4,14 @@ from datetime import datetime
 import urllib.parse
 from dotenv import load_dotenv
 import json
+from WMS import util
 
 def generate_orto_picture():
     # Finner path til .env filen som ligger i ngisopenapi mappen
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.abspath(os.path.join(current_script_directory, '..', 'ngisopenapi'))
-    env_file_path = os.path.join(project_root, '.env')
+    env_file_path = os.path.join(current_script_directory, "..", "ngisopenapi", ".env")
     coordinates_file_path = os.path.join(current_script_directory, 'resources', 'coordinates.json')
+    
     # Laster .env fra riktig path
     load_dotenv(env_file_path)
 
@@ -21,26 +22,16 @@ def generate_orto_picture():
     wms_url = 'https://waapi.webatlas.no/wms-orto/'
 
     # Leser inn koordinatene fra JSON-filen
-    
-    with open(coordinates_file_path, 'r') as file:
-        data = json.load(file)
-        coordinates = data['Coordinates']
+    coordinates = util.read_file(coordinates_file_path)['Coordinates']
 
     # Beregner bbox fra koordinatene gitt i applikasjonen
-    min_x = min(coord[0] for coord in coordinates)
-    min_y = min(coord[1] for coord in coordinates)
-    max_x = max(coord[0] for coord in coordinates)
-    max_y = max(coord[1] for coord in coordinates)
-    bbox = f'{min_x},{min_y},{max_x},{max_y}'
+    bbox = util.create_bbox(coordinates)
 
     # Setter directory for lagring av bilde
     images_directory = "rawphotos"
 
     # Lager hele pathen i samme mappe
     images_directory_path = os.path.join(current_script_directory, images_directory)
-
-    # Sjekker om filen eksisterer
-    #os.makedirs(images_directory_path, exist_ok=True)
 
     # Angi hvilke layers, bbox og hva enn du er interessert i
     params = {
@@ -67,15 +58,16 @@ def generate_orto_picture():
     # Oppretter en get request til WMS serveren gjennom url og api nøkkel
     response = requests.get(full_url, headers=headers)  # Ensure the request is made to `full_url`
     if response.status_code == 200:
-        # Genererer et filnavn basert på dato og tid bildet ble hentet på
-        #timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         file_name = f"orto.png"
         
         # Hele fil pathen
         image_path = os.path.join(images_directory_path, file_name)
-        
+
         with open(image_path, 'wb') as file:
             file.write(response.content)
         print(f"Bildet ble lagret i {image_path}.")
+        return 1
     else:
         print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
+        print(f"Error: {response.reason}" )
+        return 0
