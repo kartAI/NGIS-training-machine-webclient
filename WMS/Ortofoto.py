@@ -66,8 +66,8 @@ def generate_orto_picture():
         with open(image_path, 'wb') as file:
             file.write(response.content)
         print(f"Bildet ble lagret i {image_path}.")
-        return 1
+        return True
     else:
-        print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
-        print(f"Error: {response.reason}" )
-        return 0
+        print(f"Kunne ikke lagre ortofoto-bilde, statuskode: {response.status_code}")
+        print(f"Error in creating ortophoto: {response.reason}" )
+        return False

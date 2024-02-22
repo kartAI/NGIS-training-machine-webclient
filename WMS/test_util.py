@@ -116,9 +116,6 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(result, {'Test Content': 1})
     
 
-  #  def test_write_file(self):
-    
-
 
     if __name__ == "main":
         unittest.main()

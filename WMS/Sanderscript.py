@@ -102,9 +102,9 @@ def generate_wms_picture():
         with open(image_path, 'wb') as file:
             file.write(response.content)
         print(f"Bildet ble lagret i {image_path}.")
-        return 1
+        return True
     else:
-        print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
-        print(f"Error: {response.reason}" )
-        return 0
+        print(f"Kunne ikke lagre fasit-bilde, statuskode: {response.status_code}")
+        print(f"Error in creating validation photo: {response.reason}" )
+        return False
         
