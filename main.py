@@ -304,28 +304,32 @@ async def update_wms_config_file(configInput: ConfigInput):
         "colors": configInput.colors
     }}
     if(util.write_file(CONFIG_FILE, data)):
-        return {"Message": "Coordinates were updated successfully"}
+        return {"Message": "Config was updated successfully"}
 
 
 @app.post("/generatePhotos")
 async def generatePhotos():
-    #Slett de gamle mappene hvis de fortsatt er der.
-    util.teardown_WMS_folders()
-   
     #Read config from the file
     config = util.read_file(CONFIG_FILE)["Config"];
-   
-    #Genererer alle mappene for WMS 
+
+    #Fixes the folder structure for a WMS request
+    util.teardown_WMS_folders()   
     util.setup_WMS_folders()
    
-    #Genererer bilder fra de forskjellige WMSene
-    sanderscript.generate_wms_picture()
-    ortofoto.generate_orto_picture()
+    #Generates photos using the different WMSes
+    if sanderscript.generate_wms_picture() is not True or ortofoto.generate_orto_picture() is not True:
+        print("Something went wrong with generating photos")
+        return {"Message": "Something went wrong with generating photos"}
+    else:
+        util.split_image(os.path.join("WMS", "rawphotos", "fasit.png"), os.path.join("WMS", "tiles", "fasit"), 100)
+        tiles = util.split_image(os.path.join("WMS", "rawphotos", "orto.png"), os.path.join("WMS", "tiles", "orto"), 100)
+        util.split_files(os.path.join("WMS", "tiles"), os.path.join("WMS/email"), tiles, config["data_parameters"][0], config["data_parameters"][1])
+        print("Bildene ble laget!")
+        return {"Message": "Photos generated and split succcessfully"}
+    
+    
 
-    #Også må de riktige urlene plugges inn som image_path
-    util.split_image(os.path.join("WMS", "rawphotos", "fasit.png"), os.path.join("WMS", "tiles", "fasit"), 100)
-    tiles = util.split_image(os.path.join("WMS", "rawphotos", "orto.png"), os.path.join("WMS", "tiles", "orto"), 100)
-    util.split_files(os.path.join("WMS", "tiles"), os.path.join("WMS/email"), tiles, config["data_parameters"][0], config["data_parameters"][1])
+
 
 # Her begynner fil zipping og epost sending for WMS/Fasit
     
@@ -334,7 +338,6 @@ env_file_path = os.path.join("ngisopenapi", ".env")
 
 # Laster .env fra riktig path
 load_dotenv(env_file_path)
-print(os.getenv("SENDGRID_API_KEY"))
     
 def send_email_with_attachment(to_emails, subject, content, attachment_path):
     """Define email sending through SendGrid"""

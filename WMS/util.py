@@ -20,7 +20,6 @@ def split_image(image_path, output_folder, tile_size):
     '''
     #Defines the accepted (tested) filetypes that can be split
     acceptedFileTypes = ["jpeg", "jpg", "png", "tiff"]
-    print("done");
 
     #Checks if the file is of the correct type, otherwise raises an error
     if(image_path.split(".")[1] not in acceptedFileTypes):
@@ -52,7 +51,8 @@ def split_image(image_path, output_folder, tile_size):
             #Save the tile to the output folder
             tile.save(f"{output_folder}/tile_{i}_{i}.png")
 
-    #Return the amount of tiles created
+    #Return the amount of horizontal_tiles created
+    print(f"{image_path} split successfully, created {horizontal_tiles} tiles")
     return horizontal_tiles
 
 
@@ -84,15 +84,20 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
                 shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "train", "masks"))
             except:
                 print("Something went wrong with copying...")
+                return
         else:
             try:
                 shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "val", "images"))
                 shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "val", "masks"))
             except:
                 print("Something went wrong with copying...")
+                return
 
 
 def setup_WMS_folders():
+    '''
+    Sets up the folders to store image data for the WMS part of the application
+    '''
     folders_to_make = [os.path.join("WMS", "email", "train", "images"),
     os.path.join("WMS", "email", "train", "masks"),
     os.path.join("WMS", "email", "val", "images"),
@@ -104,8 +109,12 @@ def setup_WMS_folders():
             os.makedirs(folder, exist_ok=True)
 
 
+ 
+
 def teardown_WMS_folders():
-    
+    '''
+    Deletes the folders that are used for image storage by the WMS part of the application
+    '''
     try:
         folders_to_delete = [os.path.join("WMS", "email"),
     os.path.join("WMS", "rawphotos"),
@@ -117,13 +126,38 @@ def teardown_WMS_folders():
 
 
 def read_file(file_path):
+    '''
+    Reads a json file and returns the json contents
+    Args:
+    file_path (str): The path to the file that you want to read
+    '''
     file = open(file_path)
     return json.load(file)
 
 def write_file(file_path, data):
+    '''
+    Writes json to a file
+    Args:
+    file_path (str): The path to the file that you want to read
+    data: The data you want to write to the file, should be in json format.
+    '''
     try:
         with open(file_path, "w") as file:
             json.dump(data, file)  
             return 1
     except Exception as e:
       raise HTTPException(status_code=500, detail=f"Failed to write config to json file: {str(e)}")
+    
+def create_bbox(coordinates):
+    '''
+    Creates a bbox based on coordiantess
+    Args:
+    coordinates (array): An array of the coordinates you want to convert to bbox
+    Return:
+    The requested bbox 
+    '''
+    min_x = min(coord[0] for coord in coordinates)
+    min_y = min(coord[1] for coord in coordinates)
+    max_x = max(coord[0] for coord in coordinates)
+    max_y = max(coord[1] for coord in coordinates)
+    return f'{min_x},{min_y},{max_x},{max_y}'

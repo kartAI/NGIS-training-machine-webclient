@@ -69,7 +69,7 @@ window.onload = () => {
     enableNextButton();
 
     async function updateCoordinates(coordinates) {
-      const response = await fetch('http://localhost:8000/update_coordinates', {
+      const response = await fetch('/update_coordinates', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import urllib.parse
 import json
 import requests
 from datetime import datetime
+from WMS import util
 
 def generate_wms_picture():
 
@@ -15,25 +16,16 @@ def generate_wms_picture():
 
     # Leser koordinatene fra JSON-filen
     coordinates_file_path = os.path.join(current_script_directory, 'resources', 'coordinates.json')
-    with open(coordinates_file_path) as file:
-        data = json.load(file)
-        coordinates = data['Coordinates']
+    coordinates = util.read_file(coordinates_file_path)['Coordinates']
 
     # Beregner bbox fra koordinatene gitt i json fila
-    min_x = min(coord[0] for coord in coordinates)
-    min_y = min(coord[1] for coord in coordinates)
-    max_x = max(coord[0] for coord in coordinates)
-    max_y = max(coord[1] for coord in coordinates)
-    bbox = f'{min_x},{min_y},{max_x},{max_y}'
+    bbox = util.create_bbox(coordinates)
 
     # Velger et sted å lagre bildene
     images_directory = "rawphotos"
 
     # Lagrer alt i mappen definert
     images_directory_path = os.path.join(current_script_directory, images_directory)
-
-    # Sjekker om filen eksisterer
-    #os.makedirs(images_directory_path, exist_ok=True)
 
     # WMS parametere, de tomme feltene blir definert videre i koden
     wms_params = {
@@ -102,8 +94,6 @@ def generate_wms_picture():
 
     response = requests.get(full_url, headers=headers)
     if response.status_code == 200:
-    # Genererer et filnavn basert på dato og tid bildet ble hentet på
-        #timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         file_name = f"fasit.png"
 
     # Hele fil pathen
@@ -112,6 +102,9 @@ def generate_wms_picture():
         with open(image_path, 'wb') as file:
             file.write(response.content)
         print(f"Bildet ble lagret i {image_path}.")
+        return True
     else:
-        print(f"Kunne ikke lagre bilde, statuskode: {response.status_code}")
+        print(f"Kunne ikke lagre fasit-bilde, statuskode: {response.status_code}")
+        print(f"Error in creating validation photo: {response.reason}" )
+        return False
         

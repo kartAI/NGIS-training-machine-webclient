@@ -119,7 +119,7 @@ map.on("draw:created", function (c) {
 // Updates the coordinates on the server for wms.
 async function updateWMSCoordinates(coordinates) {
     //Make a POST Request to the server
-    const response = await fetch('http://localhost:8000/updateWMSCoordinateFile', {
+    const response = await fetch('/updateWMSCoordinateFile', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

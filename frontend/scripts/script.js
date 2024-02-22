@@ -86,7 +86,7 @@ async function updateWMSConfig() {
 
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
-  const response = await fetch('http://localhost:8000/updateWMSConfigFile', {
+  const response = await fetch('/updateWMSConfigFile', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ async function updateWMSConfig() {
 async function updateValue() {
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
-  const response = await fetch('http://localhost:8000/update_training', {
+  const response = await fetch('/update_training', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
