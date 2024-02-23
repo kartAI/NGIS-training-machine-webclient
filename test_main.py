@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 import os
 from WMS import util
-
+from main import zip_files
 
 #Import test client
 client = TestClient(app)
