@@ -2,7 +2,7 @@ import unittest
 import os
 import shutil
 from PIL import Image
-import util
+from WMS import util
 
 
 #Test class for the utilities library

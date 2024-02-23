@@ -291,6 +291,16 @@ CONFIG_FILE = os.path.join(
 #Route for updating the coordinate file in the WMS/Resources folder
 @app.post("/updateWMSCoordinateFile")
 async def update_wms_coordinate_file(input: Input):
+    '''
+    Updates the Coordinate file for WMS requests
+    
+    Args:
+    input (Input): An object of the Input class with the required fields. 
+    
+    Returns:
+    A message if the coordinates were updated successfully
+    '''
+
     data = {"Coordinates": input.input}
     if(util.write_file(COORDINATE_FILE, data)):
         return {"Message": "Coordinates were updated successfully"}
@@ -298,6 +308,15 @@ async def update_wms_coordinate_file(input: Input):
 #Route for updating the coordinate file in the WMS/Resources folder
 @app.post("/updateWMSConfigFile")
 async def update_wms_config_file(configInput: ConfigInput):
+    '''
+    Updates the Config file for WMS requests
+    
+    Args:
+    configInput (ConfigInput): An object of the ConfigInput class with the required fields. 
+    
+    Returns:
+    A message if the config was updated successfully
+    '''
     data = {"Config": {
         "data_parameters": configInput.data_parameters,
         "layers": configInput.layers,
@@ -309,6 +328,13 @@ async def update_wms_config_file(configInput: ConfigInput):
 
 @app.post("/generatePhotos")
 async def generatePhotos():
+    '''
+    Makes requests to the WMSes and splits the resulting images into a valid configuration for machine learning
+    
+    Returns:
+    A message informing if there was an error or if everything went successfully
+    '''
+
     #Read config from the file
     config = util.read_file(CONFIG_FILE)["Config"];
 
@@ -321,6 +347,7 @@ async def generatePhotos():
         print("Something went wrong with generating photos")
         return {"Message": "Something went wrong with generating photos"}
     else:
+        #If the images were generated successfully it splits the images into tiles and distributes the tiles in the right folders. 
         util.split_image(os.path.join("WMS", "rawphotos", "fasit.png"), os.path.join("WMS", "tiles", "fasit"), 100)
         tiles = util.split_image(os.path.join("WMS", "rawphotos", "orto.png"), os.path.join("WMS", "tiles", "orto"), 100)
         util.split_files(os.path.join("WMS", "tiles"), os.path.join("WMS/email"), tiles, config["data_parameters"][0], config["data_parameters"][1])
