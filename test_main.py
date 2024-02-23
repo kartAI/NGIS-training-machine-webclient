@@ -1,8 +1,10 @@
 from fastapi.testclient import TestClient
 from main import app
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, mock_open
 import tempfile
 import zipfile
+from main import zip_files
+from main import send_email_with_attachment
 from pathlib import Path
 import pytest
 import os
@@ -42,9 +44,6 @@ def test_generatePhotos():
     response = client.post("/generatePhotos")
     assert response.headers["content-type"] == "application/json"
     assert len(response.content) > 0 
-
-   # with open("NGIS-training-machine-webclient/WMS/rawphotos", "wb") as f:
-    #    f.write(response.content)
 
     #Check that the responses are okay
     assert response.status_code == 200
@@ -119,3 +118,35 @@ def test_zip_files(temp_dir_with_files):
         # Verify all expected files are in the zipped file
         for expected_file in expected_files:
             assert expected_file in zipped_files
+
+  # Send email with attachment mock test
+
+@patch('builtins.open', mock_open(read_data=b"data"))
+@patch('os.path.exists', return_value=True)
+@patch('main.SendGridAPIClient')
+def test_send_email_with_attachment(mock_sendgrid_client, mock_exists):
+    # Mock the os.path.exists to always return True
+    mock_exists.return_value = True
+
+    # Mock SendGridAPIClient's behavior
+    mock_sendgrid_response = MagicMock()
+    mock_sendgrid_response.status_code = 202  # SendGrid returns 202 for successful sends
+    mock_sendgrid_client.return_value.send.return_value = mock_sendgrid_response
+
+    # Parameters for send_email_with_attachment
+    to_emails = "test@example.com"
+    subject = "Test Subject"
+    content = "Test Content"
+    attachment_path = "path/to/test_attachment.zip"
+
+    # Call the function to be tested
+    send_email_with_attachment(to_emails, subject, content, attachment_path)
+
+    # Assert: Check that os.path.exists was called with the attachment path
+    mock_exists.assert_called_once_with(attachment_path)
+
+    # Verify SendGridAPIClient was instantiated with the dummy API key
+    mock_sendgrid_client.assert_called_once()
+
+    # Verify the send method was called on the SendGrid client
+    assert mock_sendgrid_client.return_value.send.called

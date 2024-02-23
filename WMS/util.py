@@ -4,6 +4,8 @@ import os
 import shutil
 import json
 from fastapi import HTTPException
+import sys
+print(sys.path)
 
 
 def split_image(image_path, output_folder, tile_size):

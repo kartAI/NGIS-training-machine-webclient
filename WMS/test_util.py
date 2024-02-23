@@ -2,8 +2,11 @@ import unittest
 import os
 import shutil
 from PIL import Image
-from WMS import util
-
+import util
+from util import write_file
+from fastapi.exceptions import HTTPException
+from unittest.mock import mock_open, patch
+import json
 
 #Test class for the utilities library
 class TestUtil(unittest.TestCase):
@@ -119,3 +122,31 @@ class TestUtil(unittest.TestCase):
 
     if __name__ == "main":
         unittest.main()
+
+        # Write file test 
+
+class TestWriteFile(unittest.TestCase):
+    @patch("util.open", new_callable=mock_open)
+    @patch("util.json.dump")
+    def test_write_file_success(self, mock_dump, mock_file):
+        """Test successful JSON write to file."""
+        data = {"key": "value"}
+        file_path = "test.json"
+        result = write_file(file_path, data)
+        mock_file.assert_called_once_with(file_path, "w")
+        mock_dump.assert_called_once_with(data, mock_file())
+        self.assertEqual(result, 1)
+
+    @patch("util.open", mock_open(), create=True)
+    @patch("util.json.dump", side_effect=Exception("Mock exception"))
+    def test_write_file_exception(self, mock_dump):
+        """Test handling of exceptions during file write."""
+        data = {"key": "value"}
+        file_path = "test.json"
+        with self.assertRaises(HTTPException) as context:
+            write_file(file_path, data)
+        self.assertEqual(context.exception.status_code, 500)
+        self.assertTrue("Failed to write config to json file:" in str(context.exception.detail))
+
+if __name__ == '__main__':
+    unittest.main()
