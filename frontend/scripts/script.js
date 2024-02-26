@@ -1,4 +1,4 @@
-//Header
+  //Header
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'header.html');
 xhr.responseType = 'text';
@@ -39,6 +39,14 @@ function home() {
 const inputTraining = document.getElementById("training");
 const inputValidation = document.getElementById("validation");
 const inputBuilding = document.getElementById("building");
+const inputBuildingLayer = document.getElementById("buildingCheck");
+const inputRoadLayer = document.getElementById("roadCheck");
+const inputBridgeLayer = document.getElementById("bridgeCheck");
+const inputBuildingColor = document.getElementById("buildingColor");
+const inputRoadColor = document.getElementById("roadColor");
+const inputBridgeColor = document.getElementById("bridgeColor");
+const inputTileSize = document.getElementById("tileSize");
+const inputResolution = document.getElementById("imageResolution");
 const continueBtn = document.getElementById("continueBtn");
 const errorMessage = document.getElementById('error-message');
 
@@ -71,6 +79,8 @@ function validateStart() {
     }
   }
 
+
+
   if (allFieldsFilledFlag && validRangeFlag) {
     updateWMSConfig();
     startTraining();
@@ -79,10 +89,26 @@ function validateStart() {
 
 // Updates the WMS config file on the server
 async function updateWMSConfig() {
-  //Hardcoder disse inn per nå
-  const layers = ["Bygning", "Veg", "Bru"]
-  const colors = ["#000000", "#ffff00", "#00ff00"]
+  //Define the arrays
+  const layers = [];
+  const colors = [];
 
+
+  //Checks each checkbox to see if the box is checked, if it is then add the data to the array.
+  if(inputBuildingLayer.checked){
+    layers.push("Bygning")
+    colors.push(inputBuildingColor.value)
+  }
+
+  if(inputRoadLayer.checked){
+    layers.push("Veg")
+    colors.push(inputRoadColor.value)
+  }
+
+  if(inputBridgeLayer.checked){
+    layers.push("Bru")
+    colors.push(inputBridgeColor.value)
+  }
 
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
@@ -91,7 +117,7 @@ async function updateWMSConfig() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors}),
+    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors, "tile_size": inputTileSize.value, "image_resolution": inputResolution.value}),
   });
 
   const data = await response.json();

@@ -40,6 +40,8 @@ class ConfigInput(BaseModel):
     data_parameters: list
     layers: list
     colors: list
+    tile_size: int
+    image_resolution: float
 
 # Import and create instance of the FastAPI framework
 app = FastAPI()
@@ -320,7 +322,9 @@ async def update_wms_config_file(configInput: ConfigInput):
     data = {"Config": {
         "data_parameters": configInput.data_parameters,
         "layers": configInput.layers,
-        "colors": configInput.colors
+        "colors": configInput.colors,
+        "tile_size": configInput.tile_size,
+        "image_resolution": configInput.image_resolution
     }}
     if(util.write_file(CONFIG_FILE, data)):
         return {"Message": "Config was updated successfully"}
