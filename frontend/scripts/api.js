@@ -53,14 +53,14 @@ async function updateCoordinates(coordinates) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ coordinates }),
     };
-    const response = await fetch('http://localhost:8000/update-coordinates', requestOptions);
+    const response = await fetch('/update-coordinates', requestOptions);
     const data = await response.json();
     console.log(data.message);
 }
 
 // This function updates the training data in the database by sending a POST request to a web service
 export async function updateTraining(training) {
-    const response = await fetch('http://localhost:8000/update_coordinates', {
+    const response = await fetch('/update_coordinates', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

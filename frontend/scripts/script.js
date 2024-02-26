@@ -72,16 +72,39 @@ function validateStart() {
   }
 
   if (allFieldsFilledFlag && validRangeFlag) {
-    updateValue();
+    updateWMSConfig();
     startTraining();
   }
 }
+
+// Updates the WMS config file on the server
+async function updateWMSConfig() {
+  //Hardcoder disse inn per nå
+  const layers = ["Bygning", "Veg", "Bru"]
+  const colors = ["#000000", "#ffff00", "#00ff00"]
+
+
+  const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
+
+  const response = await fetch('/updateWMSConfigFile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors}),
+  });
+
+  const data = await response.json();
+  return data;
+}
+
+
 
 // Update the training data fractions on the server
 async function updateValue() {
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
-  const response = await fetch('http://localhost:8000/update_training', {
+  const response = await fetch('/update_training', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -101,6 +124,17 @@ function startTraining() {
 // Initiate a training process and redirect to next page
 function confirmTraining() {
   fetch('/startTraining', {
+    method: 'POST'
+  })
+    .then(() => {
+      window.location.href = '/order.html';
+    })
+    .catch(error => console.error(error));
+}
+
+// Initiate a download process and redirect to next page
+function generatePhotos() {
+  fetch('/generatePhotos', {
     method: 'POST'
   })
     .then(() => {
