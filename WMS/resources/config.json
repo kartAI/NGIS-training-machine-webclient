@@ -1,1 +1,1 @@
-{"Config": {"data_parameters": [0.4, 0.6, 1], "layers": ["Bygning"], "colors": ["#000000"]}}
+{"Config": {"data_parameters": ["20", "80", "1"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#400040", "#0000ff", "#ff0080"], "tile_size": 200, "image_resolution": 1000.0}}
