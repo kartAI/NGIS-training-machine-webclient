@@ -25,8 +25,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from deleteFolder import delete_all_folders
 from WMS import util
-from WMS import ortofoto
-from WMS import sanderscript
+from WMS import ortoPhotoWMS
+from WMS import labelPhotoWMS
 
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
@@ -345,22 +345,25 @@ async def generatePhotos():
     #Fixes the folder structure for a WMS request
     util.teardown_WMS_folders()   
     util.setup_WMS_folders()
-   
-    #Generates photos using the different WMSes
-    if sanderscript.generate_wms_picture() is not True or ortofoto.generate_orto_picture() is not True:
-        print("Something went wrong with generating photos")
-        return {"Message": "Something went wrong with generating photos"}
+
+    if labelPhotoWMS.generate_label_data() is not True or ortoPhotoWMS.generate_training_data() is not True or labelPhotoWMS.generate_label_data_colorized() is not True:
+        print("Something went wrong with generating the data")
+        return {"Message": "Something went wrong with generating the data"}
     else:
-        #If the images were generated successfully it splits the images into tiles and distributes the tiles in the right folders. 
-        util.split_image(os.path.join("WMS", "rawphotos", "fasit.png"), os.path.join("WMS", "tiles", "fasit"), 100)
-        tiles = util.split_image(os.path.join("WMS", "rawphotos", "orto.png"), os.path.join("WMS", "tiles", "orto"), 100)
-        util.split_files(os.path.join("WMS", "tiles"), os.path.join("WMS/email"), tiles, config["data_parameters"][0], config["data_parameters"][1])
-        print("Bildene ble laget!")
-        return {"Message": "Photos generated and split succcessfully"}
-    
-    
+        labelTiles = 0
+        for path in os.listdir(os.path.join("WMS","tiles", "fasit")):
+            if os.path.isfile(os.path.join("WMS","tiles", "fasit", path)):
+                labelTiles += 1
+        trainingTiles = 0
+        for path in os.listdir(os.path.join("WMS","tiles", "orto")):
+            if os.path.isfile(os.path.join("WMS","tiles", "orto", path)):
+                trainingTiles += 1
 
-
+        if(labelTiles != trainingTiles):
+            return {"Message": "Amount of tiles do not match, please try again"}
+        
+        util.split_files(os.path.join("WMS", "tiles"), os.path.join("WMS/email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
+        return 0
 
 # Her begynner fil zipping og epost sending for WMS/Fasit
     

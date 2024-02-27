@@ -32,7 +32,7 @@ def test_update_wms_config_file():
     response = client.post(
         "/updateWMSConfigFile",
         headers = {'Content-Type': 'application/json'},
-        json={"data_parameters": [0.4, 0.6, 1], "layers": ["Bygning"], "colors": ["#000000"]}
+        json={"data_parameters": ["90", "10", "5"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#67e08e", "#ff0080", "#c0c0c0"], "tile_size": 100, "image_resolution": 0.2}
     )
 
     #Check that the responses are okay
