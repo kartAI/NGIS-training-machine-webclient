@@ -38,7 +38,7 @@ document.getElementById('file-input').addEventListener('change', function () {
     reader.readAsText(file);
     // Sends a POST request with converted coordinates toserver and returns server's response
     async function updateCoordinates(coords) {
-        const response = await fetch('/update_coordinates', {
+        const response = await fetch('/updateWMSCoordinateFile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
