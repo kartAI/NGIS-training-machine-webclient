@@ -22,7 +22,8 @@ var drawControl = new L.Control.Draw({
         rectangle: true,
         circle: false,
         marker: false,
-        edit: false
+        edit: false,
+        remove: true
     }
 });
 
@@ -40,6 +41,13 @@ map.on("draw:created", function (c) {
     // Adds shape to layergroup: drawnItems
     drawnItems.addLayer(layer);
     noScroll();
+
+    if (drawControl.options.draw.remove) {
+        // Bind click event to the drawn shape for removal
+        layer.on('click', function () {
+            drawnItems.removeLayer(layer);
+        });
+    }
 
     // Retrieves the coordinates of the shape
     var coords;
