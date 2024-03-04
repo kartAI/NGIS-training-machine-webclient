@@ -105,7 +105,7 @@ async function updateWMSConfig() {
     colors.push(inputRoadColor.value)
   }
 
-  if(inputBridgeLayer.checked){
+  if(inputBridgeLayer .checked){
     layers.push("Bru")
     colors.push(inputBridgeColor.value)
   }

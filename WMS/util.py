@@ -82,15 +82,15 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
             os.path.join(output_folder, "train", "images")
             os.path.join(output_folder, "train", "mask")
             try:
-                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "train", "images"))
-                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "train", "masks"))
+                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}.png"),   os.path.join(output_folder, "train", "images"))
+                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}.png"),   os.path.join(output_folder, "train", "masks"))
             except:
                 print("Something went wrong with copying...")
                 return
         else:
             try:
-                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "val", "images"))
-                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}_{i}.png"),   os.path.join(output_folder, "val", "masks"))
+                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}.png"),   os.path.join(output_folder, "val", "images"))
+                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}.png"),   os.path.join(output_folder, "val", "masks"))
             except:
                 print("Something went wrong with copying...")
                 return
@@ -163,3 +163,31 @@ def create_bbox(coordinates):
     max_x = max(coord[0] for coord in coordinates)
     max_y = max(coord[1] for coord in coordinates)
     return f'{min_x},{min_y},{max_x},{max_y}'
+
+def create_bbox_array(coordinates, config):
+    min_x = min(coord[0] for coord in coordinates)
+    min_y = min(coord[1] for coord in coordinates)
+    max_x = max(coord[0] for coord in coordinates)
+    max_y = max(coord[1] for coord in coordinates)
+
+    starting_point = [min_x, min_y]
+    ending_point = [max_x, max_y]
+
+    preferred_image_size = [config["tile_size"], config["tile_size"]]
+    resolution = config["image_resolution"] # meters per pixel
+    bbox_size = [preferred_image_size[0]*resolution, preferred_image_size[1]*resolution]
+    # Get the number of images needed to cover the area
+    num_images_x = int((ending_point[0] - starting_point[0]) / bbox_size[0])
+    num_images_y = int((ending_point[1] - starting_point[1]) / bbox_size[1])
+    
+    
+    bboxes = []
+    for x in range(num_images_x):
+        for y in range(num_images_y):
+            x0 = starting_point[0] + (x * bbox_size[0])
+            y0 = starting_point[1] + (y * bbox_size[1])
+            x1 = starting_point[0] + ((x + 1) * bbox_size[0])
+            y1 = starting_point[1] + ((y + 1) * bbox_size[1])
+            
+            bboxes.append([x0, y0, x1, y1])
+    return bboxes
