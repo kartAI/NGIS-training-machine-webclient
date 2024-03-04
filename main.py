@@ -73,7 +73,7 @@ app.add_middleware(
 def set_session_cookie(response: Response, session_id: str = None): # Sets session ID in cookie
     if session_id is None:
         session_id = str(random.randint(0, 1000000000000000))
-    response.set_cookie(key="session_id", value=session_id, httponly=True, samesite='Lax') # httponly=True is done for security reasons, unaccessable to javascript.
+    response.set_cookie(key="session_id", value=session_id, samesite='Lax') # httponly=True is done for security reasons, unaccessable to javascript.
     return {"Hello": "world"}
 
 def get_session_id(request: Request): # Returns session ID
@@ -324,8 +324,6 @@ def get_paths(session_id : int):
 
 @app.post("/setupUserSessionFolders")
 async def setup_session_folders(request: Request, response : Response):
-    set_session_cookie(response)
-    time.sleep(1)
     '''
     Sets up the folders to be used for storing images and etc for this user for this session
     '''
@@ -372,8 +370,8 @@ async def update_wms_config_file(configInput: ConfigInput, request: Request):
         "image_resolution": configInput.image_resolution
     }}
     session_id = request.cookies.get("session_id", None)
-    coordinate_path = get_paths(session_id)["coordinates"]
-    if(util.write_file(coordinate_path, data)):
+    config_path = get_paths(session_id)["config"]
+    if(util.write_file(config_path, data)):
         return {"Message": "Config was updated successfully"}
 
 
