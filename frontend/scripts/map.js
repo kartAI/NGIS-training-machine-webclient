@@ -29,6 +29,8 @@ var drawControl = new L.Control.Draw({
 
 map.addControl(drawControl);
 
+var cornerCircles = [];
+
 // Binds listener to the event:created
 map.on("draw:created", function (c) {
 
@@ -42,10 +44,41 @@ map.on("draw:created", function (c) {
     drawnItems.addLayer(layer);
     noScroll();
 
+    // Add small circles at the corners of the rectangle to show the coordinate points
+    if (layer instanceof L.Rectangle) {
+        var bounds = layer.getBounds();
+        var corners = [
+            bounds.getNorthWest(),
+            bounds.getNorthEast(),
+            bounds.getSouthEast(),
+            bounds.getSouthWest()
+        ];
+//defining the size of the circles
+        corners.forEach(function (corner, index) {
+            var circle = L.circle(corner, { radius: 250 }).addTo(map);
+
+            // Add tooltip to the circle to display coordinate point
+            circle.bindTooltip("P" + (index + 1));
+            circle.openTooltip();
+        setTimeout(function () {
+            circle.closeTooltip();
+        }, 3000);
+        cornerCircles.push(circle); //stores the circle reference inside the array
+
+            
+        });
+    }
+
     if (drawControl.options.draw.remove) {
         // Bind click event to the drawn shape for removal
         layer.on('click', function () {
             drawnItems.removeLayer(layer);
+            // Remove corner circles when rectangle is removed
+            cornerCircles.forEach(function (circle) {
+                map.removeLayer(circle);
+            });
+            // Clear the array
+            
         });
     }
 
