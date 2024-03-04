@@ -42,6 +42,13 @@ map.on("draw:created", function (c) {
     drawnItems.addLayer(layer);
     noScroll();
 
+    if (drawControl.options.draw.remove) {
+        // Bind click event to the drawn shape for removal
+        layer.on('click', function () {
+            drawnItems.removeLayer(layer);
+        });
+    }
+
     // Retrieves the coordinates of the shape
     var coords;
     if (layer instanceof L.Polygon) {
