@@ -36,6 +36,7 @@ from fastapi_sessions.frontends.implementations import SessionCookie, CookiePara
 import random
 import time
 import uuid
+from fastapi.responses import FileResponse
 
 
 
@@ -69,23 +70,24 @@ app.add_middleware(
 '''
  SESSION MANAGEMENT SYSTEM
 '''
-
+@app.post("/setCookie")
 def set_session_cookie(response: Response, session_id: str = None): # Sets session ID in cookie
     if session_id is None:
         session_id = str(random.randint(0, 1000000000000000))
-    response.set_cookie(key="session_id", value=session_id, samesite='Lax') # httponly=True is done for security reasons, unaccessable to javascript.
-    return {"Hello": "world"}
+    response.set_cookie(key="session_id", value=session_id,httponly=True, samesite='Lax') # httponly=True is done for security reasons, unaccessable to javascript.
+    return {"Session_id": session_id}
 
 def get_session_id(request: Request): # Returns session ID
     return request.cookies.get("session_id", None)
 
-@app.get("/cookies")
+@app.post("/cookies")
 def read_main(request: Request, response: Response):
     session_id = get_session_id(request)  # Corrected function call
+    print(session_id)
     if not session_id:
         set_session_cookie(response)
-        return {"message": "New session created"}
-    return {"message": "Existing session", "session_id": session_id}
+        return {"message": True}
+    return {"message": False}
 
 # Paths to the relevant files and directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -316,19 +318,25 @@ async def send_zip_file(request: Request):
 
 
 #Defines the filepaths for where the coordiantes and config will be stored
-def get_paths(session_id : int):
+def get_paths(session_id):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     return {"coordinates": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id), "coordinates.json")), "config": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id), "config.json")), "root": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id)))}
 
 
 
 @app.post("/setupUserSessionFolders")
-async def setup_session_folders(request: Request, response : Response):
+async def setup_session_folders(request: Request, response: Response):
     '''
     Sets up the folders to be used for storing images and etc for this user for this session
     '''
-    session_id = request.cookies.get("session_id", None)
-    util.setup_user_session_folders(session_id)
+    session_id = get_session_id(request);
+    if session_id == None:
+        set_session_cookie(response, None)
+        return FileResponse(os.path.join("frontend", "pages", "home.html"))
+    else:
+        print(f"Existing session, session_id: {session_id}")
+        session_id = request.cookies.get("session_id", None)
+        util.setup_user_session_folders(session_id)
 
 
 

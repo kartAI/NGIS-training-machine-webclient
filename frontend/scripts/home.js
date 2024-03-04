@@ -32,36 +32,18 @@ cardData.forEach(card => {
 });
 
 
-document.onreadystatechange = function(e)
-{
-    if (document.readyState === 'complete')
-    {
-      setup_cookies()
-    }
-};
+window.onload = () => {
+  setup_cookies()
+}
 
 async function setup_cookies(){
   const response = await fetch('/cookies', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-}
-
-window.onload = () => {
-  setup_folders()
-
-}
-
-async function setup_folders(){
-  const response = await fetch('/setupUserSessionFolders', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
   });
-
-  const data = await response.json();
-  return data;
+  const data = response.json()
+  console.log(data)
+  return data
 }

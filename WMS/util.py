@@ -50,11 +50,14 @@ def setup_user_session_folders(session_id):
         os.mkdir("datasets")
     #Setup the main folder 
     main_folder_name = "dataset_" + str(session_id)
-    os.mkdir(os.path.join("datasets", main_folder_name))
-    coordinates_file = open(os.path.join("datasets", main_folder_name, "coordinates.json"), "x")
-    config_file = open(os.path.join("datasets", main_folder_name,"config.json"), "x")
+    os.makedirs(os.path.join("datasets", main_folder_name), exist_ok=True)
+    coordinates_path = os.path.join("datasets", main_folder_name, "coordinates.json")
+    config_path = os.path.join("datasets", main_folder_name, "config.json")
+    if not os.path.exists(coordinates_path):
+        open(coordinates_path, "x")
+    if not os.path.exists(config_path):
+        open(config_path, "x")
     setup_WMS_folders(os.path.join("datasets", main_folder_name))
-
 
 
 def setup_WMS_folders(file_path):
@@ -73,8 +76,8 @@ def setup_WMS_folders(file_path):
             os.makedirs(folder, exist_ok=True)
 
 
-def teardown_user_session_folders(session_id : int):
-    shutil.rmtree("dataset_" + str(session_id))
+def teardown_user_session_folders(session_id):
+    shutil.rmtree(os.path.join("datasets", "dataset_" + str(session_id)))
  
 
 
