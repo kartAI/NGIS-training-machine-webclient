@@ -27,6 +27,16 @@ from deleteFolder import delete_all_folders
 from WMS import util
 from WMS import ortoPhotoWMS
 from WMS import labelPhotoWMS
+from pydantic import BaseModel
+from fastapi import HTTPException, FastAPI, Response, Depends
+from uuid import UUID, uuid4
+from fastapi_sessions.backends.implementations import InMemoryBackend
+from fastapi_sessions.session_verifier import SessionVerifier
+from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
+import random
+import time
+import uuid
+
 
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
@@ -54,6 +64,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+'''
+ SESSION MANAGEMENT SYSTEM
+'''
+
+def set_session_cookie(response: Response, session_id: str = None): # Sets session ID in cookie
+    if session_id is None:
+        session_id = str(random.randint(0, 1000000000000000))
+    response.set_cookie(key="session_id", value=session_id, httponly=True, samesite='Lax') # httponly=True is done for security reasons, unaccessable to javascript.
+    return {"Hello": "world"}
+
+def get_session_id(request: Request): # Returns session ID
+    return request.cookies.get("session_id", None)
+
+@app.get("/cookies")
+def read_main(request: Request, response: Response):
+    session_id = get_session_id(request)  # Corrected function call
+    if not session_id:
+        set_session_cookie(response)
+        return {"message": "New session created"}
+    return {"message": "Existing session", "session_id": session_id}
 
 # Paths to the relevant files and directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -284,15 +316,27 @@ async def send_zip_file(request: Request):
 
 
 #Defines the filepaths for where the coordiantes and config will be stored
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-COORDINATE_FILE = os.path.join(
-    BASE_DIR, "WMS", "resources", "coordinates.json")
-CONFIG_FILE = os.path.join(
-    BASE_DIR, "WMS", "resources", "config.json")
+def get_paths(session_id : int):
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    return {"coordinates": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id), "coordinates.json")), "config": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id), "config.json")), "root": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id)))}
+
+
+
+@app.post("/setupUserSessionFolders")
+async def setup_session_folders(request: Request, response : Response):
+    set_session_cookie(response)
+    time.sleep(1)
+    '''
+    Sets up the folders to be used for storing images and etc for this user for this session
+    '''
+    session_id = request.cookies.get("session_id", None)
+    util.setup_user_session_folders(session_id)
+
+
 
 #Route for updating the coordinate file in the WMS/Resources folder
 @app.post("/updateWMSCoordinateFile")
-async def update_wms_coordinate_file(input: Input):
+async def update_wms_coordinate_file(input: Input, request: Request):
     '''
     Updates the Coordinate file for WMS requests
     
@@ -302,14 +346,15 @@ async def update_wms_coordinate_file(input: Input):
     Returns:
     A message if the coordinates were updated successfully
     '''
-
+    session_id = request.cookies.get("session_id", None)
+    coordinate_path = get_paths(session_id)["coordinates"]
     data = {"Coordinates": input.input}
-    if(util.write_file(COORDINATE_FILE, data)):
+    if(util.write_file(coordinate_path, data)):
         return {"Message": "Coordinates were updated successfully"}
 
 #Route for updating the coordinate file in the WMS/Resources folder
 @app.post("/updateWMSConfigFile")
-async def update_wms_config_file(configInput: ConfigInput):
+async def update_wms_config_file(configInput: ConfigInput, request: Request):
     '''
     Updates the Config file for WMS requests
     
@@ -326,12 +371,14 @@ async def update_wms_config_file(configInput: ConfigInput):
         "tile_size": configInput.tile_size,
         "image_resolution": configInput.image_resolution
     }}
-    if(util.write_file(CONFIG_FILE, data)):
+    session_id = request.cookies.get("session_id", None)
+    coordinate_path = get_paths(session_id)["coordinates"]
+    if(util.write_file(coordinate_path, data)):
         return {"Message": "Config was updated successfully"}
 
 
 @app.post("/generatePhotos")
-async def generatePhotos():
+async def generatePhotos(request: Request):
     '''
     Makes requests to the WMSes and splits the resulting images into a valid configuration for machine learning
     
@@ -340,29 +387,27 @@ async def generatePhotos():
     '''
 
     #Read config from the file
-    config = util.read_file(CONFIG_FILE)["Config"];
+    session_id = request.cookies.get("session_id", None)
+    paths = get_paths(session_id)
+    config = util.read_file(paths["config"])["Config"];
 
-    #Fixes the folder structure for a WMS request
-    util.teardown_WMS_folders()   
-    util.setup_WMS_folders()
-
-    if labelPhotoWMS.generate_label_data() is not True or ortoPhotoWMS.generate_training_data() is not True or labelPhotoWMS.generate_label_data_colorized() is not True:
+    if labelPhotoWMS.generate_label_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
         print("Something went wrong with generating the data")
         return {"Message": "Something went wrong with generating the data"}
     else:
         labelTiles = 0
-        for path in os.listdir(os.path.join("WMS","tiles", "fasit")):
-            if os.path.isfile(os.path.join("WMS","tiles", "fasit", path)):
+        for path in os.listdir(os.path.join(paths["root"],"tiles", "fasit")):
+            if os.path.isfile(os.path.join(paths["root"],"tiles", "fasit", path)):
                 labelTiles += 1
         trainingTiles = 0
-        for path in os.listdir(os.path.join("WMS","tiles", "orto")):
-            if os.path.isfile(os.path.join("WMS","tiles", "orto", path)):
+        for path in os.listdir(os.path.join(paths["root"],"tiles", "orto")):
+            if os.path.isfile(os.path.join(paths["root"],"tiles", "orto", path)):
                 trainingTiles += 1
 
         if(labelTiles != trainingTiles):
             return {"Message": "Amount of tiles do not match, please try again"}
         
-        util.split_files(os.path.join("WMS", "tiles"), os.path.join("WMS/email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
+        util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
         return 0
 
 # Her begynner fil zipping og epost sending for WMS/Fasit

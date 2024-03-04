@@ -6,7 +6,7 @@ import urllib.parse
 import requests
 from WMS import util
 
-def generate_label_data():
+def generate_label_data(file_paths):
     '''
     This function is used to generate label photos for machine learning
     Returns: 
@@ -15,8 +15,8 @@ def generate_label_data():
     
     #Finds the path to the coordinates file
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
-    coordinates_file_path = os.path.join(current_script_directory, 'resources', 'coordinates.json')
-    config_file_path = os.path.join(current_script_directory, "resources", "config.json")
+    coordinates_file_path = file_paths["coordinates"]
+    config_file_path = file_paths["config"]
 
     #Reads the coordinates from the coordinates-JSON file
     coordinates = util.read_file(coordinates_file_path)['Coordinates']
@@ -24,7 +24,7 @@ def generate_label_data():
 
     #Directory where the image will be saved
     images_directory = "fasit"
-    images_directory_path = os.path.join(current_script_directory, "tiles", images_directory)
+    images_directory_path = os.path.join(file_paths["root"], "tiles", images_directory)
 
     #Calculates the preferred image size for each call and the array of bboxes to be used to making the calls
     preferred_image_size = [config["tile_size"], config["tile_size"]]
@@ -64,7 +64,7 @@ def generate_label_data():
         
 
 
-def generate_label_data_colorized():
+def generate_label_data_colorized(file_paths):
     '''
     This function is used to generate label photos for machine learning
     Returns: 
@@ -73,8 +73,9 @@ def generate_label_data_colorized():
     
     #Finds the path to the coordinates file
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
-    coordinates_file_path = os.path.join(current_script_directory, 'resources', 'coordinates.json')
-    config_file_path = os.path.join(current_script_directory, "resources", "config.json")
+    coordinates_file_path = file_paths["coordinates"]
+    config_file_path = file_paths["config"]
+
 
     #Reads the coordinates from the coordinates-JSON file
     coordinates = util.read_file(coordinates_file_path)['Coordinates']
@@ -83,7 +84,7 @@ def generate_label_data_colorized():
     #Directory where the image will be saved
     images_directory = "colorized"
     os.makedirs(os.path.join("WMS", "email", images_directory))
-    images_directory_path = os.path.join(current_script_directory, "email", images_directory)
+    images_directory_path = os.path.join(file_paths["root"], "email", images_directory)
 
     #Calculates the preferred image size for each call and the array of bboxes to be used to making the calls
     preferred_image_size = [config["tile_size"], config["tile_size"]]
