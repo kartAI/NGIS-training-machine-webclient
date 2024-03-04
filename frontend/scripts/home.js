@@ -30,3 +30,20 @@ cardData.forEach(card => {
   `;
   cardContainer.innerHTML += cardHtml;
 });
+
+
+window.onload = () => {
+  setup_cookies()
+}
+
+async function setup_cookies(){
+  const response = await fetch('/cookies', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const data = response.json()
+  console.log(data)
+  return data
+}
