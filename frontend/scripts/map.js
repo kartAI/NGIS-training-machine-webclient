@@ -22,7 +22,8 @@ var drawControl = new L.Control.Draw({
         rectangle: true,
         circle: false,
         marker: false,
-        edit: false
+        edit: false,
+        remove: true
     }
 });
 
