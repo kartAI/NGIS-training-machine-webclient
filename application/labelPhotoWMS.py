@@ -4,7 +4,7 @@ import requests
 import os
 import urllib.parse
 import requests
-from WMS import util
+from application import util
 
 def generate_label_data(file_paths):
     '''
@@ -83,7 +83,6 @@ def generate_label_data_colorized(file_paths):
 
     #Directory where the image will be saved
     images_directory = "colorized"
-    os.makedirs(os.path.join("WMS", "email", images_directory))
     images_directory_path = os.path.join(file_paths["root"], "email", images_directory)
 
     #Calculates the preferred image size for each call and the array of bboxes to be used to making the calls
@@ -103,6 +102,9 @@ def generate_label_data_colorized(file_paths):
 
         #Uses the request library to make a request to the url
         response = requests.get(label_url, headers=headers)
+        print(f"Called get_label_url with layers: {config['layers']}, colors: {config['colors']}, "
+        f"coordinates: [{x0}, {y0}, {x1}, {y1}], and preferred_image_size: {preferred_image_size}. "
+        f"Resulting label_url: {label_url}")
         #Check if the response from the server was OK
         if response.status_code == 200:
             #Define the file name and path for the image

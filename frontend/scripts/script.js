@@ -82,13 +82,13 @@ function validateStart() {
 
 
   if (allFieldsFilledFlag && validRangeFlag) {
-    updateWMSConfig();
+    updateConfig();
     startTraining();
   }
 }
 
 // Updates the WMS config file on the server
-async function updateWMSConfig() {
+async function updateConfig() {
   //Define the arrays
   const layers = [];
   const colors = [];
@@ -112,7 +112,7 @@ async function updateWMSConfig() {
 
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
-  const response = await fetch('/updateWMSConfigFile', {
+  const response = await fetch('/updateConfigFile', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

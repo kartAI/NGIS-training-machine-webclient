@@ -3,7 +3,7 @@ import requests
 import os
 import urllib.parse
 import requests
-from WMS import util
+from application import util
 from dotenv import load_dotenv
 
 def generate_training_data(file_paths):
