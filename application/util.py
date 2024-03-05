@@ -16,7 +16,6 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
     tiles (int): The amount of tiles that need to be handled
     training_fraction (int): The amount of tiles that will be used for training
     validation (int): The amount of tiles that will be used for validation
-    
     '''
 
     #Calculate the amount of files for each fraction
@@ -46,34 +45,39 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
 
 def setup_user_session_folders(session_id):
     '''Sets up folders for a new user session'''
+    #If the datasets folder does not exist, create a new one
     if not os.path.exists("datasets"):
         os.mkdir("datasets")
     #Setup the main folder 
     main_folder_name = "dataset_" + str(session_id)
     os.makedirs(os.path.join("datasets", main_folder_name), exist_ok=True)
+    #Setup the files for coordinates and config for each user session
     coordinates_path = os.path.join("datasets", main_folder_name, "coordinates.json")
     config_path = os.path.join("datasets", main_folder_name, "config.json")
+
     if not os.path.exists(coordinates_path):
         open(coordinates_path, "x")
     if not os.path.exists(config_path):
         open(config_path, "x")
-    setup_WMS_folders(os.path.join("datasets", main_folder_name))
 
-
-def setup_WMS_folders(file_path):
-    '''
-    Sets up the folders to store image data for the WMS part of the application
-    '''
-    folders_to_make = [os.path.join(file_path, "email", "train", "images"),
-    os.path.join(file_path, "email", "train", "masks"),
-    os.path.join(file_path, "email", "val", "images"),
-    os.path.join(file_path, "email", "val", "masks"),
-    os.path.join(file_path, "email", "colorized"),
-    os.path.join(file_path, "rawphotos"),
-    os.path.join(file_path, "tiles", "fasit"),
-    os.path.join(file_path, "tiles", "orto")]
+    #Setup the files that will contain images and etc
+    folders_to_make = [os.path.join("datasets", main_folder_name, "email", "train", "images"),
+    os.path.join("datasets", main_folder_name, "email", "train", "masks"),
+    os.path.join("datasets", main_folder_name, "email", "val", "images"),
+    os.path.join("datasets", main_folder_name, "email", "val", "masks"),
+    os.path.join("datasets", main_folder_name, "email", "colorized"),
+    os.path.join("datasets", main_folder_name, "tiles", "fasit"),
+    os.path.join("datasets", main_folder_name, "tiles", "orto")]
+    
     for folder in folders_to_make:
             os.makedirs(folder, exist_ok=True)
+    
+    allCreated = True
+    for folder in folders_to_make:
+        if not os.path.exists(folder):
+            allCreated = False
+
+    return allCreated
 
 
 def teardown_user_session_folders(session_id):
@@ -104,7 +108,8 @@ def write_file(file_path, data):
     except Exception as e:
       raise HTTPException(status_code=500, detail=f"Failed to write config to json file: {str(e)}")
     
-def create_bbox(coordinates):
+def create_bbox_array(coordinates, config):
+
     '''
     Creates a bbox based on coordiantess
     Args:
@@ -112,13 +117,6 @@ def create_bbox(coordinates):
     Return:
     The requested bbox 
     '''
-    min_x = min(coord[0] for coord in coordinates)
-    min_y = min(coord[1] for coord in coordinates)
-    max_x = max(coord[0] for coord in coordinates)
-    max_y = max(coord[1] for coord in coordinates)
-    return f'{min_x},{min_y},{max_x},{max_y}'
-
-def create_bbox_array(coordinates, config):
     min_x = min(coord[0] for coord in coordinates)
     min_y = min(coord[1] for coord in coordinates)
     max_x = max(coord[0] for coord in coordinates)

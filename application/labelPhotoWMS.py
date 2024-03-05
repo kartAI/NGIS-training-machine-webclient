@@ -4,7 +4,7 @@ import requests
 import os
 import urllib.parse
 import requests
-from WMS import util
+from application import util
 
 def generate_label_data(file_paths):
     '''

@@ -110,16 +110,16 @@ map.on("draw:created", function (c) {
     console.log(kartAIcoords);
 
     coordinatesElement.innerHTML = coordinatesString;
-    updateWMSCoordinates(kartAIcoords);
+    updateCoordinateFile(kartAIcoords);
 
 
 });
 
 
 // Updates the coordinates on the server for wms.
-async function updateWMSCoordinates(coordinates) {
+async function updateCoordinateFile(coordinates) {
     //Make a POST Request to the server
-    const response = await fetch('/updateWMSCoordinateFile', {
+    const response = await fetch('/updateCoordinateFile', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

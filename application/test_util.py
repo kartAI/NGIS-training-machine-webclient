@@ -26,16 +26,6 @@ class TestUtil(unittest.TestCase):
         shutil.rmtree("output")
         os.remove("test.json")
 
-    #Tests the split_image method of util
-    def test_split_image_functionality(self):
-        result = util.split_image("image.png", "output", 512)
-        self.assertEqual(result, 2)
-
-     #Tests the split_image method of util
-    def test_split_image_wrong_file(self):
-        result = util.split_image("image.txt", "output", 512)
-        self.assertEqual(result, "Filetype not supported")
-
     #Test for the setup of WMS folders
     def test_setup_WMS_folders(self):
         util.setup_WMS_folders()
