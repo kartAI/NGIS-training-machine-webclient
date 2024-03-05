@@ -414,7 +414,23 @@ async def generatePhotos(request: Request):
             return {"Message": "Amount of tiles do not match, please try again"}
         
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
+        
+        zip_files(os.path.join(paths["root"]), f"Dataset_{session_id}.zip")
         return 0
+    
+
+@app.get("/downloadFile")
+async def download_file(request: Request):
+    session_id = request.cookies.get("session_id", None)
+    paths = get_paths(session_id)
+    headers = {'Content-Disposition': f'attachment; filename="Dataset_{session_id}.zip"'}
+    return FileResponse(os.path.join(paths["root"], f"Dataset_{session_id}.zip") ,headers= headers)
+
+@app.post("/deleteFile")
+async def delete_files(request: Request):
+    session_id = request.cookies.get("session_id", None)
+    util.teardown_user_session_folders(session_id)
+
 
 # Her begynner fil zipping og epost sending for WMS/Fasit
     
@@ -458,13 +474,13 @@ def send_email_with_attachment(to_emails, subject, content, attachment_path):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def zip_files(directory_path: str = os.path.join("WMS", "email/"), zip_name: str = 'attachments.zip'):
+def zip_files(directory_path: str, zip_name: str = 'attachments.zip'):
     """Zip all files in the specified directory and save them to a zip file."""
-    with ZipFile(zip_name, 'w') as zipf:
-        for root, dirs, files in os.walk(directory_path):
+    with ZipFile(os.path.join(directory_path, zip_name), 'w') as zipf:
+        for root, dirs, files in os.walk(os.path.join(directory_path, "email")):
             for file in files:
                 file_path = os.path.join(root, file)
-                zipf.write(file_path, arcname=os.path.relpath(file_path, directory_path))
+                zipf.write(file_path, arcname=os.path.relpath(file_path, os.path.join(directory_path, "email")))
 
 @app.post("/sendEmail")
 async def send_zipped_files_email(request : Request):
