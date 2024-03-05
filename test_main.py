@@ -8,7 +8,7 @@ from main import send_email_with_attachment
 from pathlib import Path
 import pytest
 import os
-from Application import util
+from WMS import util
 from main import zip_files
 
 #Import test client

@@ -1,79 +1,61 @@
+// Listen for changes in the file input element
 document.getElementById('file-input').addEventListener('change', function () {
+    // Retrieve the first file selected by the user
     var file = this.files[0];
-    var reader = new FileReader();
 
-    // Reads the contents of the file and converts it to a JSON object
-    reader.onload = function (e) {
-        var data = JSON.parse(e.target.result);
-
-        // Creates a new Leaflet GeoJSON layer and adds it to the map
-        var geojsonLayer = L.geoJSON(data, {
-            onEachFeature: function (feature, layer) {
-                var coordinates4326 = feature.geometry.coordinates[0]; // Access the first nested array
-                var coordinates3857 = [];
-                var latLongCoordinates = coordinates4326.map(function (coord) {
-
-                    // Convert from EPSG 4326 (lat-long) to EPSG 3857 (Web Mercator)
-                    var point = proj4('EPSG:4326', 'EPSG:3857', [coord[0], coord[1]]);
-
-                    // Adds the converted point to the 3857 array
-                    coordinates3857.push(point);
-
-                    // Return the original point in lat-long format
-                    return [coord[0], coord[1]];
-                });
-
-                // Creates a string with the lat-long coordinates and displays it
-                var output = '';
-                for (var i = 0; i < latLongCoordinates.length; i++) {
-                    output += '<b>P' + (i + 1) + ':</b> ' + latLongCoordinates[i] + '<br>';
-                }
-                document.getElementById('coordinates').innerHTML = output;
-                updateCoordinates(coordinates3857);
-            }
-        });
-        geojsonLayer.addTo(map);
-        map.fitBounds(geojsonLayer.getBounds());
-    };
-    reader.readAsText(file);
-    // Sends a POST request with converted coordinates toserver and returns server's response
-    async function updateCoordinates(coords) {
-        const response = await fetch('/update_coordinates', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(coords),
-        });
-
-        const data = await response.json();
-        return data;
+    // Define the allowed MIME types for GeoJSON and JSON file upload
+    var allowedTypes = ['application/json', 'application/geo+json'];
+    
+    // Check if the uploaded file type is among the allowed types
+    if (!allowedTypes.includes(file.type)) {
+        // Alert the user if the file type is not allowed and stop further processing
+        alert('Only GeoJSON and JSON files are allowed.');
+        return; // Exit the function early
     }
-});
-document.getElementById('file-input').addEventListener('change', function () {
-    console.log('File input changed');
-    var file = this.files[0];
+
+    // Initialize FileReader to read the content of the file
     var reader = new FileReader();
-    var nextBtn = document.getElementById('nextBtn'); // Get a reference to the "Next" button
 
-    // Disable the button
-    nextBtn.disabled = true;
-
+    // Function to be called when the file is successfully read
     reader.onload = function (e) {
-        // ...existing code...
+        // Attempt to parse the file content as JSON
+        try {
+            var data = JSON.parse(e.target.result);
 
-        // Enable the button when the file input's change event fires
+            // Process the JSON data (assuming GeoJSON structure for map visualization)
+            var geojsonLayer = L.geoJSON(data, {
+                onEachFeature: function (feature, layer) {
+                    // Example processing for each feature in the GeoJSON object
+                    // This could include converting coordinates, adding to a map layer, etc.
+                }
+            });
+            // Add the processed layer to the map and adjust the map's view accordingly
+            geojsonLayer.addTo(map);
+            map.fitBounds(geojsonLayer.getBounds());
+        } catch (error) {
+            // Alert the user in case of an error parsing the JSON file
+            alert('Error parsing the JSON file: ' + error);
+        }
+    };
+
+    // Function to be called when the file has finished loading
+    reader.onloadend = function () {
+        // Ensure the "Next" button is enabled after the file is loaded
+        var nextBtn = document.getElementById('nextBtn');
         nextBtn.disabled = false;
     };
 
+    // Start reading the file as text; suitable for JSON and GeoJSON files
     reader.readAsText(file);
-    // ...existing code...
 });
 
+// Event listener for the "Next" button click action
 document.getElementById('nextBtn').addEventListener('click', function () {
+    // Check if the "Next" button is disabled and display an error message if so
     if (this.disabled) {
         document.getElementById('fileUploadError').style.display = 'block';
     } else {
-        // Continue to next step
+    // Continue to next step if the button is enabled
+
     }
 });
