@@ -58,7 +58,11 @@ map.on("draw:created", function (c) {
             var circle = L.circle(corner, { radius: 250 }).addTo(map);
 
             // Add tooltip to the circle to display coordinate point
-            circle.bindTooltip("P" + (index + 1));
+            var labelText = (index === 0 || index === 4) ? "P1,P5" : "P" + (index + 1);
+            circle.bindTooltip(labelText);
+            
+
+            
             circle.openTooltip();
         setTimeout(function () {
             circle.closeTooltip();
