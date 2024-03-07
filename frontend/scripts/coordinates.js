@@ -31,11 +31,11 @@ window.onload = () => {
 
     //Example of code for adding more EPSG
     if (coordSysValue === 'EPSG:5972') {
-      proj4.defs(coordSysValue, '+proj=utm +zone=33 +ellps=WGS84 +units=m +no_defs');
+      proj4.defs(coordSysValue, '+proj=utm +zone=32 +ellps=GRS80 +units=m +vunits=m +no_defs +type=crs');
     }
     
     // Get the input value and split it by commas
-    const inputCoordinates = input.value.split(",");
+    const inputCoordinates = input.value.split(", ");
 
     // Loop through the inputCoordinates and create objects
     for (let i = 0; i < inputCoordinates.length; i += 2) {
@@ -62,24 +62,8 @@ window.onload = () => {
     const polygon = L.polygon(convertedCoordsArray, { color: "red" }).addTo(map);
     map.fitBounds(polygon.getBounds());
 
-    // Send the coordinates to the server
-    updateCoordinates(convertedCoordsArray);
-
     // Enable the next button
     enableNextButton();
-
-    async function updateCoordinates(coordinates) {
-      const response = await fetch('/update_coordinates', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(coordinates),
-      });
-    
-      const data = await response.json();
-      return data;
-    }
   });
 }
 
