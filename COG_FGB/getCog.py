@@ -3,8 +3,9 @@ import os
 import matplotlib.pyplot as plt
 import rasterio
 import imageio
+import numpy as np
 
-#Loads hidden values in script
+# Loads hidden values in script
 current_script_directory = os.path.dirname(os.path.abspath(__file__))
 env_file_path = os.path.join(current_script_directory, "..", "ngisopenapi", ".env")
 
@@ -25,18 +26,25 @@ cog_url = f"/vsiaz/{container_name}/{file_name}"
 output_folder = os.path.join(current_script_directory, "cogFolder")
 os.makedirs(output_folder, exist_ok=True)
 
-# Open and visualize the COG file using rasterio and matplotlib
+# Open and visualize the COG file using rasterio
 with rasterio.open(cog_url) as src:
-    # Assume the COG file is single-band; modify accordingly for multi-band images
-    band1 = src.read(1)
-    
-    # Utilize matplotlib to display the image
-    plt.imshow(band1, cmap='gray')
-    # Save the figure
-    figure_path = os.path.join(output_folder, "visualized_cog_image.png")
-    plt.savefig(figure_path)
+    # Mapping colour
+    red = src.read(1)  
+    green = src.read(2)  
+    blue = src.read(3)  
+
+    # Stack bands
+    rgb = np.dstack((red, green, blue))
+
+    # Utilize matplotlib to display the RGB image
+    plt.imshow(rgb)
+    plt.axis('off')  # Remove axis
     plt.show()
 
-    # Save the image data directly (need to close popup in order for generation to work)
-    data_path = os.path.join(output_folder, "cog_image_data.tif")
-    imageio.imwrite(data_path, band1)
+    # Save the figure as an RGB image
+    figure_path = os.path.join(output_folder, "rgb_cog_image.png")
+    plt.imsave(figure_path, rgb)
+
+    # This function can be used to save raw RGB data
+    # data_path = os.path.join(output_folder, "rgb_cog_image_data.tif")
+    # imageio.imwrite(data_path, (rgb * 255).astype(np.uint8))
