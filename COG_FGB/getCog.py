@@ -1,27 +1,42 @@
-import os
-from datetime import datetime, timedelta
-from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
-
-# More imports inc...
-
 from dotenv import load_dotenv
+import os
+import matplotlib.pyplot as plt
+import rasterio
+import imageio
 
 #Loads hidden values in script
 current_script_directory = os.path.dirname(os.path.abspath(__file__))
 env_file_path = os.path.join(current_script_directory, "..", "ngisopenapi", ".env")
 
-load_dotenv(env_file_path) # Retrives hidden values
+# Utilize dotenv to load necessary environment variables, if not already configured in the environment
+load_dotenv(env_file_path)
 
-# Retrieves login information from azure web
-account_name = 'cogurl'
-account_key = os.getenv('AZURE_STORAGE_KEY')
-container_name = 'cogurl2024'
+# Set GDAL environment variables for Azure Blob Storage access using values stored in environment variables
+os.environ['AZURE_STORAGE_ACCOUNT'] = os.getenv('AZURE_STORAGE_ACCOUNT_NAME')
+os.environ['AZURE_STORAGE_ACCESS_KEY'] = os.getenv('AZURE_STORAGE_ACCESS_KEY')
 
-#Client interaction with blob storage
-connect_str = 'DefaultEndpointsProtocol=https;AccountName=' + account_name + ';AccountKey=' + account_key + ';EndpointSuffix=core.windows.net'
-blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+# Construct the URL for the COG file within Azure Blob Storage using GDAL's virtual file system handler for Azure
+storage_account_name = "cogurl"
+container_name = "cogurl2024"
+file_name = "agdertelemarkmosaictif.tif"
+cog_url = f"/vsiaz/{container_name}/{file_name}"
 
-#Connect to blob storage
-container_client = blob_service_client.get_container_client(container_name)
+# Ensure cogFolder exists
+output_folder = os.path.join(current_script_directory, "cogFolder")
+os.makedirs(output_folder, exist_ok=True)
 
-# SAS (shared access signature) connection for future
+# Open and visualize the COG file using rasterio and matplotlib
+with rasterio.open(cog_url) as src:
+    # Assume the COG file is single-band; modify accordingly for multi-band images
+    band1 = src.read(1)
+    
+    # Utilize matplotlib to display the image
+    plt.imshow(band1, cmap='gray')
+    # Save the figure
+    figure_path = os.path.join(output_folder, "visualized_cog_image.png")
+    plt.savefig(figure_path)
+    plt.show()
+
+    # Save the image data directly (need to close popup in order for generation to work)
+    data_path = os.path.join(output_folder, "cog_image_data.tif")
+    imageio.imwrite(data_path, band1)
