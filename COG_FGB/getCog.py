@@ -45,6 +45,6 @@ with rasterio.open(cog_url) as src:
     figure_path = os.path.join(output_folder, "rgb_cog_image.png")
     plt.imsave(figure_path, rgb)
 
-    # This function can be used to save raw RGB data
-    # data_path = os.path.join(output_folder, "rgb_cog_image_data.tif")
-    # imageio.imwrite(data_path, (rgb * 255).astype(np.uint8))
+    # This function can be used to save raw RGB data, tif files to make them easier to handle (example qgis)
+    data_path = os.path.join(output_folder, "rgb_cog_image_data.tif")
+    imageio.imwrite(data_path, (rgb * 255).astype(np.uint8))
