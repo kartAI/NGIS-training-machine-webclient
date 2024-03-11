@@ -17,3 +17,5 @@ python-multipart
 httpx
 pytest
 python-env
+imageio
+rasterio
