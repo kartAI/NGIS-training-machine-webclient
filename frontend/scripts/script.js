@@ -49,7 +49,8 @@ const inputTileSize = document.getElementById("tileSize");
 const inputResolution = document.getElementById("imageResolution");
 const continueBtn = document.getElementById("continueBtn");
 const errorMessage = document.getElementById('error-message');
-const labelWMS = documents.getElementById("labelWMS");
+const labelWMS = document.getElementById("labelWMS");
+const labelOrto = document.getElementById("labelOrto")
 
 function validateStart() {
   const inputFields = ['training', 'validation', 'building'];
@@ -118,7 +119,7 @@ async function updateConfig() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors, "tile_size": inputTileSize.value, "image_resolution": inputResolution.value, "labelWMS": labelWMS}),
+    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors, "tile_size": inputTileSize.value, "image_resolution": inputResolution.value, "labelWMS": labelWMS, "labelOrto": labelOrto}),
   });
 
   const data = await response.json();
