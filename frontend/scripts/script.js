@@ -107,7 +107,7 @@ async function updateConfig() {
     colors.push(inputRoadColor.value)
   }
 
-  if(inputBridgeLayer .checked){
+  if(inputBridgeLayer.checked){
     layers.push("Bru")
     colors.push(inputBridgeColor.value)
   }
