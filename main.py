@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from application import util
 from application import ortoPhotoWMS
 from application import labelPhotoWMS
+from application import ortoCOG
 from pydantic import BaseModel
 from uuid import UUID, uuid4
 import random
@@ -228,7 +229,7 @@ async def generatePhotos(request: Request):
     paths = get_paths(session_id)
     config = util.read_file(paths["config"])["Config"];
 
-    if labelPhotoWMS.generate_label_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
+    if labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
         print("Something went wrong with generating the data")
         return {"Message": "Something went wrong with generating the data"}
     else:
