@@ -204,7 +204,7 @@ async def update_config_file(configInput: ConfigInput, request: Request):
         "colors": configInput.colors,
         "tile_size": configInput.tile_size,
         "image_resolution": configInput.image_resolution,
-        "lablePhotoWMS": configInput.labelPhotoWMS,
+        "labelWMS": configInput.labelWMS,
     }}
     session_id = request.cookies.get("session_id", None)
     config_path = get_paths(session_id)["config"]
