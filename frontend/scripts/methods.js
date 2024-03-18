@@ -30,7 +30,7 @@ const cardData = [
 const cardContainer = document.getElementById('card-container');
 cardData.forEach(card => {
   const cardHtml = `
-    <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm">
+    <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm onClick="updateImageSources()">
       <div class="card-body">
         <span class="fas ${card.icon}"></span>
       </div>
@@ -55,4 +55,51 @@ async function setup_cookies(){
   const data = response.json()
   console.log(data)
   return data
+}
+
+let ngis_layer = document.getElementById("ngis-layer")
+let wms_layer = document.getElementById("wms-layer")
+let fgb_layer = document.getElementById("fgb-layer")
+let wms_orto = document.getElementById("wms-ortofoto")
+let cog_orto = document.getElementById("cog-ortofoto")
+async function updateImageSources(){
+  console.log("AA")
+  let labelSource = ""
+  let ortoSource = ""
+  let filled = true
+  if(ngis_layer.checked){
+    labelSource = "NGIS"
+  }else if(wms_layer.checked){
+    labelSource = "WMS"
+  }else if(fgb_layer.checked){
+    labelSource = "FGB"
+  }else{
+    filled = false
+    console.log("No label source selected")
+  }
+
+  if(wms_orto.checked){
+    ortoSource = "WMS"
+  }else if(cog_orto.checked){
+    ortoSource = "COG"
+  }else{
+    filled = false
+    console.log("No Orto source selected")
+  }
+
+  if(filled){
+    console.log("Calling..")
+    const response = await fetch('/updateDataSources', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({"label_source": labelSource, "orto_source": ortoSource}),
+    });
+    
+    const data = await response.json();
+    return data;
+  }else{
+    document.getElementById("Error").innerHTML = "Please select data sources"
+  }
 }

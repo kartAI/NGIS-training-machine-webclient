@@ -38,6 +38,11 @@ class ConfigInput(BaseModel):
     tile_size: int
     image_resolution: float
 
+#Class for datasource input
+class DataSourceInput(BaseModel):
+    label_source: str
+    orto_source: str
+
 # Import and create instance of the FastAPI framework
 app = FastAPI()
 
@@ -185,6 +190,35 @@ async def update_coordinate_file(input: Input, request: Request):
     data = {"Coordinates": input.input}
     if(util.write_file(coordinate_path, data)):
         return {"Message": "Coordinates were updated successfully"}
+    
+#Route for updating the config file with the data source choices
+@app.post("/updateDataSources")
+async def update_data_source(dataSourceInput: DataSourceInput, request: Request):
+    '''
+    Updates the Config file with data sources
+    
+    Args:
+    dataSourceInput (DataSourceInput): An object of the DataSourceInput class with the required fields. 
+    request (Request): The request object that the cookie is attached to, this is handled by FastAPI
+    
+    Returns:
+    A message if the config was updated successfully
+    '''
+
+    data = {"Config": {
+        "label_source": dataSourceInput.label_source,
+        "orto_source": dataSourceInput.orto_source,
+        "data_parameters": "",
+        "layers": "",
+        "colors": "",
+        "tile_size": "",
+        "image_resolution": ""
+    }}
+    session_id = request.cookies.get("session_id", None)
+    config_path = get_paths(session_id)["config"]
+    if(util.write_file(config_path, data)):
+        return {"Message": "Config was updated successfully"}
+
 
 #Route for updating the coordinate file in the WMS/Resources folder
 @app.post("/updateConfigFile")
@@ -199,15 +233,21 @@ async def update_config_file(configInput: ConfigInput, request: Request):
     Returns:
     A message if the config was updated successfully
     '''
+    session_id = request.cookies.get("session_id", None)
+    config_path = get_paths(session_id)["config"]
+    label_source = util.read_file(config_path)["Config"]["label_source"]
+    orto_source = util.read_file(config_path)["Config"]["orto_source"]
+
     data = {"Config": {
+        "label_source": label_source, 
+        "orto_source": orto_source,
         "data_parameters": configInput.data_parameters,
         "layers": configInput.layers,
         "colors": configInput.colors,
         "tile_size": configInput.tile_size,
         "image_resolution": configInput.image_resolution
     }}
-    session_id = request.cookies.get("session_id", None)
-    config_path = get_paths(session_id)["config"]
+   
     if(util.write_file(config_path, data)):
         return {"Message": "Config was updated successfully"}
 
@@ -228,8 +268,10 @@ async def generatePhotos(request: Request):
     session_id = request.cookies.get("session_id", None)
     paths = get_paths(session_id)
     config = util.read_file(paths["config"])["Config"];
+    label_source = config["label_source"]
+    orto_source = config["orto_source"]
 
-    if generateTrainingData(paths) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
+    if generateTrainingData(paths, label_source, orto_source) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
         print("Something went wrong with generating the data")
         return {"Message": "Something went wrong with generating the data"}
     else:
@@ -250,20 +292,25 @@ async def generatePhotos(request: Request):
         zip_files(os.path.join(paths["root"]), f"Dataset_{session_id}.zip")
         return 0
     
-def generateTrainingData(paths):
+def generateTrainingData(paths, label_source, orto_source):
     all_ran = True
-    if labelPhotoWMS.generate_label_data(paths) is not True:
-        print("Label photo (Non-colorized) failed")
-        all_ran = False
-    if ortoCOG.generate_cog_data(paths) is not True:
-        print("COG photo  failed")
-        all_ran = False
-    if ortoPhotoWMS.generate_training_data(paths) is not True:
-        print("Ortophoto failed")
-        all_ran = False
-    if labelPhotoWMS.generate_label_data_colorized(paths) is not True:
-        print("Label photo (Colorized) failed")
-        all_ran = False
+    if(label_source == "WMS"):
+        if labelPhotoWMS.generate_label_data(paths) is not True:
+            print("Label photo (Non-colorized) failed")
+            all_ran = False
+        if labelPhotoWMS.generate_label_data_colorized(paths) is not True:
+            print("Label photo (Colorized) failed")
+            all_ran = False
+    if(orto_source == "WMS"):
+        if ortoPhotoWMS.generate_training_data(paths) is not True:
+            print("Ortophoto failed")
+            all_ran = False
+ 
+    elif(orto_source == "COG"):
+        if ortoCOG.generate_cog_data(paths) is not True:
+            print("COG photo  failed")
+            all_ran = False
+
     
     return all_ran
 

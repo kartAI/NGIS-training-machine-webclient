@@ -126,6 +126,7 @@ async function updateConfig() {
 
 
 
+
 // Update the training data fractions on the server
 async function updateValue() {
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
@@ -167,6 +168,10 @@ function generatePhotos() {
       window.location.href = '/order.html';
     })
     .catch(error => console.error(error));
+}
+
+function cancelModal(){
+  
 }
 
 // Display the loading modal
