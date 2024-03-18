@@ -229,7 +229,7 @@ async def generatePhotos(request: Request):
     paths = get_paths(session_id)
     config = util.read_file(paths["config"])["Config"];
 
-    if labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
+    if generateTrainingData(paths) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
         print("Something went wrong with generating the data")
         return {"Message": "Something went wrong with generating the data"}
     else:
@@ -249,6 +249,24 @@ async def generatePhotos(request: Request):
         
         zip_files(os.path.join(paths["root"]), f"Dataset_{session_id}.zip")
         return 0
+    
+def generateTrainingData(paths):
+    all_ran = True
+    if labelPhotoWMS.generate_label_data(paths) is not True:
+        print("Label photo (Non-colorized) failed")
+        all_ran = False
+    if ortoCOG.generate_cog_data(paths) is not True:
+        print("COG photo  failed")
+        all_ran = False
+    if ortoPhotoWMS.generate_training_data(paths) is not True:
+        print("Ortophoto failed")
+        all_ran = False
+    if labelPhotoWMS.generate_label_data_colorized(paths) is not True:
+        print("Label photo (Colorized) failed")
+        all_ran = False
+    
+    return all_ran
+
     
 
 @app.get("/downloadFile")

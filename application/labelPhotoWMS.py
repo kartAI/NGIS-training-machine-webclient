@@ -13,6 +13,7 @@ def generate_label_data(file_paths):
     bool: True if generation of photos was successful, false otherwise
     '''
     
+
     #Finds the path to the coordinates file
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
     coordinates_file_path = file_paths["coordinates"]
@@ -21,10 +22,13 @@ def generate_label_data(file_paths):
     #Reads the coordinates from the coordinates-JSON file
     coordinates = util.read_file(coordinates_file_path)['Coordinates']
     config = util.read_file(config_file_path)["Config"]
+    print("Starting the process of generating label photos with coordinates: " + str(coordinates) + " and config settings: " + str(config))
 
     #Directory where the image will be saved
     images_directory = "fasit"
     images_directory_path = os.path.join(file_paths["root"], "tiles", images_directory)
+
+    print("Images will be saved to: " + str(images_directory_path))
 
     #Calculates the preferred image size for each call and the array of bboxes to be used to making the calls
     preferred_image_size = [config["tile_size"], config["tile_size"]]
@@ -52,13 +56,14 @@ def generate_label_data(file_paths):
             #Save the image
             with open(image_path, 'wb') as file:
                 file.write(response.content)
-            print(f"Bildet ble lagret i {image_path}.")
+            print(f"Image tile_{i} was saved to {image_path}.")
             i += 1
             if(i == amountToMake):
+                print("Generated all the label images and saved them to " + images_directory_path)
                 return True
         else:
             #If something went wrong, print the status code and explanation
-            print(f"Kunne ikke lagre fasit-bilde, statuskode: {response.status_code}")
+            print(f"Could not save the image, statuscode: {response.status_code}")
             print(f"Error in creating validation photo: {response.reason}" )
             return False
         
@@ -80,10 +85,12 @@ def generate_label_data_colorized(file_paths):
     #Reads the coordinates from the coordinates-JSON file
     coordinates = util.read_file(coordinates_file_path)['Coordinates']
     config = util.read_file(config_file_path)["Config"]
+    print("Starting the process of generating label photos with coordinates: " + str(coordinates) + " and config settings: " + str(config))
 
     #Directory where the image will be saved
     images_directory = "colorized"
     images_directory_path = os.path.join(file_paths["root"], "email", images_directory)
+    print("Images will be saved to: " + str(images_directory_path))
 
     #Calculates the preferred image size for each call and the array of bboxes to be used to making the calls
     preferred_image_size = [config["tile_size"], config["tile_size"]]
@@ -102,9 +109,6 @@ def generate_label_data_colorized(file_paths):
 
         #Uses the request library to make a request to the url
         response = requests.get(label_url, headers=headers)
-        print(f"Called get_label_url with layers: {config['layers']}, colors: {config['colors']}, "
-        f"coordinates: [{x0}, {y0}, {x1}, {y1}], and preferred_image_size: {preferred_image_size}. "
-        f"Resulting label_url: {label_url}")
         #Check if the response from the server was OK
         if response.status_code == 200:
             #Define the file name and path for the image
@@ -114,13 +118,14 @@ def generate_label_data_colorized(file_paths):
             #Save the image
             with open(image_path, 'wb') as file:
                 file.write(response.content)
-            print(f"Bildet ble lagret i {image_path}.")
+            print(f"Image tile_{i} was saved to {image_path}.")
             i += 1
             if(i == amountToMake):
+                print("Generated all the label images (Colorized) and saved them to " + images_directory_path)
                 return True
         else:
             #If something went wrong, print the status code and explanation
-            print(f"Kunne ikke lagre fasit-bilde, statuskode: {response.status_code}")
+            print(f"Could not save the image, statuscode: {response.status_code}")
             print(f"Error in creating validation photo: {response.reason}" )
             return False
         
