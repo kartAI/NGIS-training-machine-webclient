@@ -40,12 +40,12 @@
         <div class="text-center">
           <h1 class="display-4 fw-normal">Choose method</h1>
           <p class="fs-5 text-muted">Choose method for input of coordinates</p>
-
+          
           <div class="choices-container">
             <h6 class="display-6 fw-noprmal">Choose database</h6>
 
             <div class="choices">
-              <form>
+              <form id="labelForm">
                 <h5>
                   Choose label source
                   <span class="question-mark" onclick="showLayerInfo()"
@@ -72,7 +72,8 @@
                     id="wms-layer"
                     name="mapDatabase"
                     value="WMS"
-                  />
+                    checked
+                    />
                   <label for="wms"
                     >WMS<span class="question-mark"
                       >?
@@ -95,7 +96,7 @@
                 </div>
               </form>
 
-              <form>
+              <form id="ortoForm">
                 <h5>
                   Choose Ortofoto
                   <span class="question-mark" onclick="showOrtofotoInfo()"
@@ -107,9 +108,9 @@
                   <input
                     type="radio"
                     id="wms-ortofoto"
-                    name="mapDatabase"
+                    name="ortoDatabase"
                     value="WMS"
-                  />
+                  checked/>
                   <label for="wms"
                     >WMS<span class="question-mark"
                       >?
@@ -120,7 +121,7 @@
                   <input
                     type="radio"
                     id="cog-ortofoto"
-                    name="mapDatabase"
+                    name="ortoDatabase"
                     value="WMS"
                   />
                   <label for="wms"
@@ -134,12 +135,15 @@
             </div>
           </div>
         </div>
+        <button type="button" class="btn btn-primary btn-lg px-4 gap-3" onclick="updateImageSources()">Lagre valg!</button>
+        <p id="Error" style="color: red; font-size: 2rem;""></p>
+
 
         <!-- Cards -->
         <div id="card-container"></div>
       </div>
      </div>
-    </div>
+    </div> 
 
     <!-- Custom Scripts -->
     <script src="frontend/scripts/script.js"></script>

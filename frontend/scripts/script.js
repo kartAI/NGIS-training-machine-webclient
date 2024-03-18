@@ -126,6 +126,7 @@ async function updateConfig() {
 
 
 
+
 // Update the training data fractions on the server
 async function updateValue() {
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
