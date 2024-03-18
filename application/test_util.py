@@ -101,7 +101,7 @@ class TestUtil(unittest.TestCase):
         
         self.assertEqual(allDeleted, True)
 
-        shutil.rmtree("WMS")
+        shutil.rmtree("WMS") 
 
     #Test for the readfile function
     def test_read_file(self):
