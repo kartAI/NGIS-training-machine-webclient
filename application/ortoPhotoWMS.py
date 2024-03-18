@@ -25,15 +25,17 @@ def generate_training_data(file_paths):
     #Reads the coordinates and config from the files
     coordinates = util.read_file(coordinates_file_path)['Coordinates']
     config = util.read_file(config_file_path)["Config"]
+    print("Starting the process of generating label photos with coordinates: " + str(coordinates) + " and config settings: " + str(config))
 
     #Directory where the image will be saved
     images_directory = "orto"
     images_directory_path = os.path.join(file_paths["root"], "tiles", images_directory)
 
+    print("Images will be saved to: " + str(images_directory_path))
+
     #Calculates the preferred image size for each call and the array of bboxes to be used to making the calls
     preferred_image_size = [config["tile_size"], config["tile_size"]]
     bboxes = util.create_bbox_array(coordinates, config)
-
     # Get the bounding boxes for each image
     i = 0
     amountToMake = len(bboxes)
@@ -56,13 +58,14 @@ def generate_training_data(file_paths):
             #Save the image
             with open(image_path, 'wb') as file:
                 file.write(response.content)
-            print(f"Bildet ble lagret i {image_path}.")
+            print(f"Image tile_{i} was saved to {image_path}.")
             i += 1
             if(i == amountToMake):
+                print("Generated all the label images and saved them to " + images_directory_path)
                 return True
         else:
             #If something went wrong, print the status code and explanation
-            print(f"Kunne ikke lagre orto-bilde, statuskode: {response.status_code}")
+            print(f"Could not save the image, statuscode: {response.status_code}")
             print(f"Error in creating orto photo: {response.reason}" )
             return False
 
