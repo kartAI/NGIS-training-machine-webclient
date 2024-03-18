@@ -170,6 +170,10 @@ function generatePhotos() {
     .catch(error => console.error(error));
 }
 
+function cancelModal(){
+  
+}
+
 // Display the loading modal
 function loadingModal() {
   $('.modal').modal('show');
