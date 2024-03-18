@@ -15,7 +15,24 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="frontend/style.css">
+    <Style>
+        .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px; 
+        }
 
+        .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px; 
+        margin-bottom: 30px;
+        }
+
+        .cancel-button-container {
+        margin-top: 20px; 
+        }
+    </Style>
 </head>
 
 <body>
@@ -31,8 +48,8 @@
 
             <!-- Headline and info -->
             <div class="pricing-header pb-md-4 mx-auto text-center">
-                <h1 class="display-4 fw-normal">Order data to email</h1>
-                <p class=" text-muted"> Add your email-adress to recieve the data</p>
+                <h1 class="display-4 fw-normal">Order data</h1>
+                <p class=" text-muted"> Add your email-adress to recieve the data to your mail or download the data</p>
 
             </div>
             <div class="row w-75">
@@ -55,13 +72,42 @@
                         </span>
                     </div>
 
-                    <!-- continuet button -->
+                    <!-- order button -->
                     <div class="btn-container">
-                        <button type="button" class="btn btn-primary btn-lg col-3" onclick="sendEmail()"
-                            id="submitButton">Order</button>
+                        <button type="button" class="btn btn-primary btn-lg" onclick="sendEmail()" id="submitButton">Order</button>
                     </div>
                 </form>
-                <h1 id="temp"><a href="#">CLICK HERE TO DOWNLOAD YOUR FILES :-)</a></h1>
+                <div class="text-center">
+                    <h1 id="downloadText" style="font-size: 1.25rem; font-weight: 400; color: #212529;">Click the download button to download the training data to your computer</h1>
+                </div>
+                <div class="button-container text-center">
+                    <button type="button" class="btn btn-primary btn-lg" id="downloadButton">Download</button>
+                </div>
+
+                <!-- Cancel Button and Modal Trigger -->
+                <br>
+                <div class="d-flex justify-content-center mb-5">
+                    <button type="button" class="btn btn-lg cancel-button" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+                </div>
+
+                <!-- Cancel Confirmation Modal -->
+                <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cancelModalLabel">Cancel Confirmation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to cancel?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <button type="button" class="btn btn-primary">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -108,6 +154,7 @@
 
     <!-- Custom JS -->
     <script src="frontend/scripts/email.js"></script>
+    <script src="frontend/scripts/order.js"></script>
 </body>
 
 </html>

@@ -29,8 +29,9 @@
             <!-- Headline and info -->
             <div class="text-center">
                 <h1 class="display-4 fw-normal">Coordinates</h1>
-                <p class="fs-5 text-muted">Choose coordinatesystem, enter coordinates in field and push done.
-                </p>
+                <p class="fs-5">1. Choose coordinate system</p>
+                <p class="fs-5">2. Enter coordinates in the field and click "Done"</p>
+                <p class="fs-5">3. Review the area on the map of the coordinates and then click "Next"</p>
             </div>
 
             <!-- Form -->
@@ -38,14 +39,20 @@
                 <div class="form-group pb-3" id="form-container">
 
                     <!-- Selectfield -->
-                    <label for="coordSys" class="col-sm-2 col-form-label col-form-label-lg">Coordinatesystem</label>
+                    <label for="coordSys" class="col-sm-2 col-form-label col-form-label-lg">Coordinatesystem <span class="question-mark" onclick="showCoordinateSystemInfo()">?
+                        <span class="tooltip-text">Info about the coordinate system</span>
+                      </span>
+                    </label>
                     <select id="coordSys" class="form-control form-control-lg" onchange="logSelectedEpsg()">
                         <option selected>Choose coordinatesystem</option>
                         <option>EPSG:4326</option>
                     </select>
                     
                     <!-- Freetext-field -->
-                    <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates</label>
+                    <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates <span class="question-mark" onclick="showCoordinatesInfo()">?
+                        <span class="tooltip-text">Info about how to enter coordinates</span>
+                      </span>
+                    </label>
                     <div class="input-group ">
                         <textarea id="coordinates-input" class="form-control form-control-lg"
                             aria-describedby="coordinateHelp" rows="3"
