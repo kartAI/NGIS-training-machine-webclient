@@ -18,12 +18,13 @@ document.getElementById("downloadButton").addEventListener("click", function() {
     xhr.send();
 });
 
-//Fetch header
-<script>
-    fetch('header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header').innerHTML = data;
-        })
-        .catch(error => console.error('Error loading the header:', error));
-</script>
+fetch('header.html')
+    .then(function(response) {
+        return response.text();
+    })
+    .then(function(data) {
+        document.getElementById('header').innerHTML = data;
+    })
+    .catch(function(error) {
+        console.error('Error loading the header:', error);
+    });
