@@ -350,3 +350,8 @@ margin-right: 20px; /* Increase this value to add more space */
 #customCancelBtn:hover {
   background-color: #8b0000 !important; /* Darker red on hover */
 }
+
+.footerimg{
+  height: 100%;
+  width:  8rem;
+}
