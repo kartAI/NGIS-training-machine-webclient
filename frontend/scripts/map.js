@@ -55,7 +55,7 @@ map.on("draw:created", function (c) {
         ];
 //defining the size of the circles
         corners.forEach(function (corner, index) {
-            var circle = L.circle(corner, { radius: 250 }).addTo(map);
+            var circle = L.circle(corner, { radius: 5 }).addTo(map);
 
             // Add tooltip to the circle to display coordinate point
             var labelText = (index === 0 || index === 4) ? "P1,P5" : "P" + (index + 1);

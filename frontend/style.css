@@ -1,6 +1,16 @@
 /* Import font-awesome icon library */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
 
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.d-grid {
+  margin-bottom: 50px; /* Adjust this value as needed to create more space */
+}
+
 /* Center content vertically and horizontally */
 .content {
   align-items: center;
@@ -40,6 +50,7 @@
   z-index: 0;
   align-items: center;
   padding-top: 7rem;
+  padding-bottom: 100px;
 }
 
 /* Card container style */
@@ -49,9 +60,9 @@
   align-items: stretch;
   flex-wrap: wrap;
   padding-top: 3rem;
-  margin-top: 20px;  /* Adjust this value to ensure cards are visible */
-  max-height: 70vh;  /* Adjust based on your needs to prevent scrolling */
-  overflow-y: auto;  /* Allows scrolling within the card container if necessary */
+  margin-top: 20px;  
+  max-height: 70vh;  
+  overflow-y: auto;  
 }
 
 /* Card style */
@@ -238,7 +249,7 @@ label, input {
 .choices {
   display: flex;
   flex-direction: column;
-  margin-left: 30px; /* Adjust based on your design */
+  margin-left: 30px; 
 }
 
 .btn:disabled {
@@ -247,7 +258,7 @@ label, input {
 
 .radio-group {
   display: inline-block;
-  margin-right: 40px; /* Adjust this value to increase or decrease the space between groups */
+  margin-right: 40px; 
 }
 
 .question-mark {
@@ -256,7 +267,7 @@ width: 20px;
 height: 20px;
 line-height: 20px;
 border-radius: 50%;
-background-color: #007bff; /* Bootstrap primary color, you can change it as you like */
+background-color: #007bff; /* Bootstrap primary color */
 color: white;
 text-align: center;
 display: inline-block;
@@ -306,8 +317,8 @@ margin-right: 20px; /* Increase this value to add more space */
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: #FFFAFA ; /* Adjust the color as needed */
-  color: #000000; /* Adjust the text color as needed */
+  background-color: #FFFAFA ; 
+  color: #000000; 
 }
 
 .footer-logos img {
@@ -319,7 +330,7 @@ margin-right: 20px; /* Increase this value to add more space */
   position: fixed;
   right: 10px;
   bottom: 10px;
-  width: 300px; /* Adjust the width as needed */
+  width: 300px; 
   background-color: #FFFFFF;
   box-shadow: 0 4px 6px rgba(14, 12, 12, 0.1);
   padding: 15px;
@@ -356,4 +367,21 @@ margin-right: 20px; /* Increase this value to add more space */
   height: 100%;
   width:  8rem;
 
+}
+
+#cookiePolicyPopup {
+  display: none; /* Initially hidden until triggered */
+  position: fixed; /* Or 'absolute' if you want it to scroll with the page */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%; /* You can adjust this as needed */
+  max-width: 800px; /* You can adjust this as needed */
+  height: auto; /* Adjust the height to fit the content */
+  max-height: 90vh; /* You can adjust this as needed */
+  overflow-y: auto; /* Allows scrolling inside the popup if the content is too long */
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  z-index: 1050; /* Make sure it's above other items on the page */
 }
