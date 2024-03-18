@@ -23,3 +23,4 @@ window.onload = () => {
     console.log(data)
     return data
   }
+
