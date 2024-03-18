@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Trainingdata Generator</title>
+    <title>Training Data Generator</title>
 
     <!-- Bootstrap stylesheet -->
     <link
@@ -14,6 +14,7 @@
 
     <!-- Custom stylesheet -->
     <link rel="stylesheet" href="frontend/style.css" />
+
   </head>
 
   <body>
@@ -36,11 +37,9 @@
         <!-- Form-->
         <div class="row w-75">
           <div class="form-outline mb-4 col">
-            <label
-              class="form-label col-2 col-form-label col-form-label-lg"
-              for="training"
-              >Training*</label
-            >
+            <label class="form-label col-2 col-form-label col-form-label-lg" for="training">
+              Training<span class="question-mark" onclick="showTrainingInfo()">?<span class="tooltip-text">Info about training data percentage</span></span>
+            </label>
             <div class="input-group">
               <input
                 type="number"
@@ -61,7 +60,9 @@
             <label
               class="form-label col-2 col-form-label col-form-label-lg"
               for="validation"
-              >Validation*</label
+              >Validation<span class="question-mark" onclick="showValidationInfo()">?
+                <span class="tooltip-text">Info about validation data percentage</span>
+              </span></label
             >
             <div class="input-group">
               <input
@@ -83,8 +84,10 @@
             <label
               class="form-label col-2 col-form-label col-form-label-lg"
               for="building"
-              >Building percentage</label
-            >
+              >Building percentage<span class="question-mark" onclick="showBuildingInfo()">?
+                <span class="tooltip-text">Info about building data percentage</span>
+              </span>
+              </label>
             <div class="input-group">
               <input
                 type="number"
@@ -180,16 +183,12 @@
             </div>
           </div>
 
-          <!-- Continue button -->
-          <div class="btn-container">
-            <button
-              type="button"
-              class="btn btn-primary btn-lg col-3 offset-3"
-              onclick="validateStart()"
-              id="continueBtn"
-            >
-              Order
-            </button>
+          <!-- Continue & cancel button -->
+          <div class="btn-container d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+
+            <button type="button" class="btn btn-lg cancel-button" id="customCancelBtn" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
+            <button type="button" class="btn btn-primary btn-lg col-3 offset-3" onclick="validateStart()"
+            id="continueBtn">Order</button>
           </div>
 
           <!-- Confirmation Modal -->
@@ -249,25 +248,34 @@
           </div>
 
           <!-- Loading modal -->
-          <div
-            class="modal fade"
-            tabindex="-1"
-            role="dialog"
-            data-backdrop="static"
-          >
-            <div
-              class="modal-dialog justify-content-center modal-dialog-centered"
-              role="document"
-            >
+          <div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+            <div class="modal-dialog justify-content-center modal-dialog-centered" role="document">
               <div class="spinner-container">
-                <span
-                  class="fa fa-spinner fa-spin fa-3x"
-                  style="font-size: 80px; color: #009dd3"
-                ></span>
+                <span class="fa fa-spinner fa-spin fa-3x" style="font-size: 80px; color: #009dd3"></span>
                 <div class="loading">Downloading data</div>
               </div>
             </div>
           </div>
+
+          <!-- Cancel Confirmation Modal -->
+          <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to cancel the order?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <button type="button" class="btn btn-primary">Yes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
