@@ -17,15 +17,14 @@
   </head>
 
   <body>
-    <div class="content">
       <!-- Header/navbar -->
       <header>
         <div id="header"></div>
       </header>
 
       <!-- Page content -->
-      <div class="main-container">
-        <!-- Headline and info -->
+      <div style="padding-top: 7rem" class="container">
+          <!-- Headline and info -->
         <div class="text-center">
           <h1 class="display-4 fw-normal">Constraints</h1>
           <p class="fs-5 text-muted">
@@ -34,167 +33,103 @@
         </div>
 
         <!-- Form-->
-        <div class="row w-75">
-          <div class="form-outline mb-4 col">
-            <label
-              class="form-label col-2 col-form-label col-form-label-lg"
-              for="training"
-            >
-              Training<span class="question-mark" onclick="showTrainingInfo()"
-                >?<span class="tooltip-text"
-                  >Info about training data percentage</span
-                ></span
-              >
-            </label>
-            <div class="input-group">
-              <input
-                type="number"
-                min="0"
-                max="100"
-                id="training"
-                class="form-control form-control-lg"
-              />
-              <span class="input-group-text">%</span>
-            </div>
-            <div
-              id="error-message-training"
-              class="alert alert-danger alert-dismissible fade show d-none"
-            ></div>
+        <!--Row for labels-->
+        <hr class="hr" />
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="display-6">Data settings</label>
           </div>
-
-          <div class="form-outline mb-4 col">
-            <label
-              class="form-label col-2 col-form-label col-form-label-lg"
-              for="validation"
-              >Validation<span
-                class="question-mark"
-                onclick="showValidationInfo()"
-                >?
-                <span class="tooltip-text"
-                  >Info about validation data percentage</span
-                >
-              </span></label
-            >
-            <div class="input-group">
-              <input
-                type="number"
-                min="0"
-                max="100"
-                id="validation"
-                class="form-control form-control-lg"
-              />
-              <span class="input-group-text">%</span>
-            </div>
-            <div
-              id="error-message-validation"
-              class="alert alert-danger alert-dismissible fade show d-none"
-            ></div>
+        </div>
+        <div class="row w-90">
+          <div class="col">
+            <label for="training" class="col-form-label-lg">Training (%)</label><span class="question-mark" onclick="showTrainingInfo()">?<span class="tooltip-text">Info about training data percentage</span></span>
           </div>
-
-          <div class="form-outline mb-4">
-            <label
-              class="form-label col-2 col-form-label col-form-label-lg"
-              for="building"
-              >Building percentage<span
-                class="question-mark"
-                onclick="showBuildingInfo()"
-                >?
-                <span class="tooltip-text"
-                  >Info about building data percentage</span
-                >
-              </span>
-            </label>
-            <div class="input-group">
-              <input
-                type="number"
-                min="0"
-                max="100"
-                id="building"
-                class="form-control form-control-lg"
-                aria-label="Recipient's username"
-                aria-describedby="basic-addon2"
-              />
-              <span class="input-group-text">%</span>
-            </div>
-            <div
-              id="error-message-building"
-              class="alert alert-danger alert-dismissible fade show d-none"
-            ></div>
+          <div class="col">
+            <label for="validation" class="col-form-label-lg">Validation (%)</label><span class="question-mark" onclick="showValidationInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
           </div>
-          <div class="row">
-            <div class="col">
-              <div class="form-outline mb-2">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="buildingCheck"
-                    checked
-                  />
-                  <label class="form-check-label" for="flexCheckDefault">
-                    Bygning
-                  </label>
-                  <input name="buildingColor" id="buildingColor" type="color" />
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="roadCheck"
-                  />
-                  <label class="form-check-label" for="flexCheckDefault">
-                    Veg
-                  </label>
-                  <input name="roadColor" id="roadColor" type="color" />
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="bridgeCheck"
-                  />
-                  <label class="form-check-label" for="flexCheckDefault">
-                    Bru
-                  </label>
-                  <input name="bridgeColor" id="bridgeColor" type="color" />
-                </div>
+          <div class="col">
+            <label for="building" class="col-form-label-lg">Building percentage (%)</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+          </div>
+        </div>
+         <!--Row for input fields-->
+        <div class="row w-90">
+          <div class="col">
+            <div class="input-group">
+              <input type="number" placeholder="Amount of data allocated to training" min="0" max="100"
+              id="training" class="form-control form-control-lg" />
+            </div>
+            <div id="error-message-training" class="alert alert-danger alert-dismissible fade show d-none"></div>
+        </div>
+          <div class="col">
+            <div class="input-group">
+              <input type="number" min="0" max="100" placeholder="Amount of data allocated to validation"
+                id="validation" class="form-control form-control-lg"/>
               </div>
+              <div id="error-message-validation" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+          <div class="col">
+            <div class="input-group">
+              <input type="number" min="0" max="100" placeholder="Minimum amount (%) of building features (Only NGIS)"
+              id="building" class="form-control form-control-lg"/>
+            </div>
+            <div id="error-message-building" class="alert alert-danger alert-dismissible fade show d-none"></div>
+          </div>
+        </div>
+        <!--Row for checkbox labels-->
+        <hr class="hr" />
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="display-6">WMS Layers</label>
+          </div>
+        </div>
+        <div class="row w-90">
+          <div class="col">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="buildingCheck" checked />
+              <label for="building" class="form-check-label">Buildings</label>
+              <input type="color" id="buildingColor" value="#563d7c">
             </div>
           </div>
           <div class="col">
-            <label class="form-check-label" for="flexCheckDefault">
-              Størrelse på tile (Eks. Hvis du skriver 100 får du tiles på
-              100x100 px)
-            </label>
-            <div class="input-group mb-3">
-              <input
-                type="number"
-                id="tileSize"
-                class="form-control"
-                placeholder="Størrelse på tile"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
-              />
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="roadCheck" checked />
+              <label for="building" class="form-check-label">Roads</label>
+              <input type="color" id="roadColor" value="#563d7c">
             </div>
-            <label class="form-check-label" for="flexCheckDefault">
-              Oppløsning på bildet (Eks. 0.2 er 0.2 meter per piksel)
-            </label>
-            <div class="input-group mb-3">
-              <input
-                type="number"
-                class="form-control"
-                id="imageResolution"
-                placeholder="Oppløsning på bilde"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
-              />
+          </div>
+          <div class="col">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="bridgeCheck" checked />
+              <label for="building" class="form-check-label">Bridges</label>
+              <input type="color" id="bridgeColor" value="#563d7c">
             </div>
           </div>
         </div>
-
+        <hr class="hr" />
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="display-6">Image settings</label>
+          </div>
+        </div>
+        <!--Labels for image settings-->
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="col-form-label-lg">Tile Size</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+          </div>
+          <div class="col">
+            <label for="building" class="col-form-label-lg">Image Resolution</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+          </div>
+        </div>
+        <div class="row w-90">
+          <div class="col">
+            <input type="number" id="tileSize" class="form-control form-control-lg" placeholder="Enter your desired tile size"/>
+            <div id="error-message-tileSize" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+          <div class="col">
+            <input type="number" class="form-control form-control-lg" id="imageResolution" placeholder="Enter your desired image resolution"/>
+            <div id="error-message-imageResolution" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+        </div>
         <!-- Continue & cancel button -->
         <div
           class="btn-container d-grid gap-2 d-sm-flex justify-content-sm-center mt-4"
@@ -215,7 +150,7 @@
             onclick="validateStart()"
             id="continueBtn"
           >
-            Order
+          Order
           </button>
         </div>
 
@@ -273,6 +208,7 @@
         <!-- Loading modal -->
         <div
           class="modal fade"
+          id="loadingModal"
           tabindex="-1"
           role="dialog"
           data-backdrop="static"

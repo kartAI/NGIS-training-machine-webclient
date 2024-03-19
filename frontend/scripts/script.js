@@ -51,10 +51,9 @@ const continueBtn = document.getElementById("continueBtn");
 const errorMessage = document.getElementById('error-message');
 
 function validateStart() {
-  const inputFields = ['training', 'validation', 'building'];
-  const errorMessages = ['Please fill out this field.', 'Please fill out this field.', 'Please fill out this field.'];
-  const rangeErrorMessage = 'Please enter a value between 0 and 100.';
-
+  const inputFields = ['training', 'validation', 'building', "tileSize", "imageResolution"];
+  const emptyMessage = "Please fill out this field."
+  const rangeErrorMessage = 'Please enter a value between 1 and 100 in this field.';
   let allFieldsFilledFlag = true;
   let validRangeFlag = true;
 
@@ -63,21 +62,50 @@ function validateStart() {
     const errorMessage = document.getElementById(`error-message-${inputFields[i]}`);
 
     if (inputField.value === '') {
-      errorMessage.textContent = errorMessages[i];
+      errorMessage.textContent = emptyMessage;
       errorMessage.classList.remove('d-none');
       allFieldsFilledFlag = false;
     } else {
       errorMessage.textContent = '';
       errorMessage.classList.add('d-none');
     }
-
-    const inputValue = parseFloat(inputField.value);
-    if (isNaN(inputValue) || inputValue < 0 || inputValue > 100) {
-      errorMessage.textContent = rangeErrorMessage;
-      errorMessage.classList.remove('d-none');
-      validRangeFlag = false;
-    }
   }
+  console.log(inputTraining.value)
+  if(parseFloat(inputTraining.value) < 0 || parseFloat(inputTraining.value) > 100){
+    errorElement = document.getElementById("error-message-training");
+      errorElement.textContent = rangeErrorMessage;
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+  if(parseFloat(inputValidation.value) < 0 || parseFloat(inputValidation.value) > 100){
+    errorElement = document.getElementById("error-message-validation");
+      errorElement.textContent = rangeErrorMessage;
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+  if(parseFloat(inputBuilding.value) < 0 || parseFloat(inputBuilding.value) > 100){
+    errorElement = document.getElementById("error-message-building");
+      errorElement.textContent = rangeErrorMessage;
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+  if(parseFloat(inputTileSize.value) < 100 || parseFloat(inputTileSize.value) > 1104){
+    errorElement = document.getElementById("error-message-tileSize");
+      errorElement.textContent = "Please enter a tile size between 100 and 1104";
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+  if(parseFloat(inputResolution.value) < 0 || parseFloat(inputResolution.value) > 0.5){
+    errorElement = document.getElementById("error-message-imageResolution");
+      errorElement.textContent = "Please enter a resolution between 0.1 and 0.5";
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
 
 
 
@@ -170,11 +198,8 @@ function generatePhotos() {
     .catch(error => console.error(error));
 }
 
-function cancelModal(){
-  
-}
 
 // Display the loading modal
 function loadingModal() {
-  $('.modal').modal('show');
+  $('#loadingModal').modal('show');
 }
