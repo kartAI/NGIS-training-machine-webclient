@@ -1,5 +1,5 @@
 // Map initialization
-var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([59.917075, 10.727720], 10);
+var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([58.151833, 8.004227], 14);
 
 // Add OpenStreetMap Tiles
 var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=gBHYqk3cSCXUdQqICyH3', {
@@ -22,11 +22,14 @@ var drawControl = new L.Control.Draw({
         rectangle: true,
         circle: false,
         marker: false,
-        edit: false
+        edit: false,
+        remove: true
     }
 });
 
 map.addControl(drawControl);
+
+var cornerCircles = [];
 
 // Binds listener to the event:created
 map.on("draw:created", function (c) {
@@ -40,6 +43,48 @@ map.on("draw:created", function (c) {
     // Adds shape to layergroup: drawnItems
     drawnItems.addLayer(layer);
     noScroll();
+
+    // Add small circles at the corners of the rectangle to show the coordinate points
+    if (layer instanceof L.Rectangle) {
+        var bounds = layer.getBounds();
+        var corners = [
+            bounds.getNorthWest(),
+            bounds.getNorthEast(),
+            bounds.getSouthEast(),
+            bounds.getSouthWest()
+        ];
+//defining the size of the circles
+        corners.forEach(function (corner, index) {
+            var circle = L.circle(corner, { radius: 5 }).addTo(map);
+
+            // Add tooltip to the circle to display coordinate point
+            var labelText = (index === 0 || index === 4) ? "P1,P5" : "P" + (index + 1);
+            circle.bindTooltip(labelText);
+            
+
+            
+            circle.openTooltip();
+        setTimeout(function () {
+            circle.closeTooltip();
+        }, 3000);
+        cornerCircles.push(circle); //stores the circle reference inside the array
+
+            
+        });
+    }
+
+    if (drawControl.options.draw.remove) {
+        // Bind click event to the drawn shape for removal
+        layer.on('click', function () {
+            drawnItems.removeLayer(layer);
+            // Remove corner circles when rectangle is removed
+            cornerCircles.forEach(function (circle) {
+                map.removeLayer(circle);
+            });
+            // Clear the array
+            
+        });
+    }
 
     // Retrieves the coordinates of the shape
     var coords;
@@ -110,16 +155,16 @@ map.on("draw:created", function (c) {
     console.log(kartAIcoords);
 
     coordinatesElement.innerHTML = coordinatesString;
-    updateWMSCoordinates(kartAIcoords);
+    updateCoordinateFile(kartAIcoords);
 
 
 });
 
 
 // Updates the coordinates on the server for wms.
-async function updateWMSCoordinates(coordinates) {
+async function updateCoordinateFile(coordinates) {
     //Make a POST Request to the server
-    const response = await fetch('/updateWMSCoordinateFile', {
+    const response = await fetch('/updateCoordinateFile', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -167,3 +212,20 @@ function saveCoordinates() {
 function noScroll() {
     map.scrollWheelZoom.disable();
 }
+
+
+window.onload = () => {
+    setup_folders()
+  }
+  
+  async function setup_folders(){
+    const response = await fetch('/setupUserSessionFolders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  
+    const data = await response.json();
+    return data;
+  }

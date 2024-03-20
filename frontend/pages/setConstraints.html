@@ -1,134 +1,275 @@
 <html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Trainingdata Generator</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Training Data Generator</title>
 
     <!-- Bootstrap stylesheet -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
-        integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
 
     <!-- Custom stylesheet -->
-    <link rel="stylesheet" href="frontend/style.css">
+    <link rel="stylesheet" href="frontend/style.css" />
+  </head>
 
-</head>
+  <body>
+      <!-- Header/navbar -->
+      <header>
+        <div id="header"></div>
+      </header>
 
-<body>
-
-    <div class="content">
-        <!-- Header/navbar -->
-        <header>
-            <div id="header"></div>
-        </header>
-
-        <!-- Page content -->
-        <div class="main-container">
-
-            <!-- Headline and info -->
-            <div class="text-center">
-                <h1 class="display-4 fw-normal">Constraints</h1>
-                <p class="fs-5 text-muted"> Fill in fields for constrains to be applied to trainingdata</p>
-            </div>
-
-            <!-- Form-->
-            <div class="row w-75">
-                <div class="form-outline mb-4 col">
-                    <label class="form-label col-2 col-form-label col-form-label-lg" for="training">Training*</label>
-                    <div class="input-group">
-                        <input type="number" min="0" max="100" id="training" class="form-control form-control-lg">
-                        <span class="input-group-text">%</span>
-                    </div>
-                    <div id="error-message-training" class="alert alert-danger alert-dismissible fade show d-none">
-                    </div>
-                </div>
-
-                <div class="form-outline mb-4 col">
-                    <label class="form-label col-2 col-form-label col-form-label-lg"
-                        for="validation">Validation*</label>
-                    <div class="input-group">
-                        <input type="number" min="0" max="100" id="validation" class="form-control form-control-lg">
-                        <span class="input-group-text">%</span>
-                    </div>
-                    <div id="error-message-validation" class="alert alert-danger alert-dismissible fade show d-none">
-                    </div>
-                </div>
-
-                <div class="form-outline mb-4">
-                    <label class="form-label col-2 col-form-label col-form-label-lg" for="building">Building
-                        percentage</label>
-                    <div class="input-group">
-                        <input type="number" min="0" max="100" id="building" class="form-control form-control-lg"
-                            aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <span class="input-group-text">%</span>
-                    </div>
-                    <div id="error-message-building" class="alert alert-danger alert-dismissible fade show d-none">
-                    </div>
-                </div>
-
-                <!-- Continue button -->
-                <div class="btn-container">
-                    <button type="button" class="btn btn-primary btn-lg col-3 offset-3" onclick="validateStart()"
-                        id="continueBtn">Order</button>
-                </div>
-
-                <!-- Confirmation Modal -->
-                <div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content d-flex justify-content-center text-center">
-                            <div class="modal-header ">
-                                <h2 class="modal-title">Confirm order</h2>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Please wait while we download the selected data. Download time depends on the area
-                                    size and internet speed. Larger areas and slower connections may take several
-                                    minutes. After download completion, you'll be redirected to the next page.<br><br>
-                                    <strong>Do not close or refresh until the download is finished.</strong>
-                            </div>
-                            <div class="modal-footer d-flex">
-                                <button type="button" class="btn btn-primary btn-lg col-auto ms-3 bg-danger border-0"
-                                    data-dismiss="modal">Cancel</button>
-                               <!-- 
-                                KNAPPEN FRA NGIS
-                                <button type="button" class="btn btn-primary btn-lg col me-3 ms-3 "
-                                onclick="confirmTraining(), loadingModal();" data-dismiss="modal">Confirm</button> -->
-                                <button type="button" class="btn btn-primary btn-lg col me-3 ms-3 "
-                                   onclick="generatePhotos(), loadingModal();" data-dismiss="modal">Confirm</button>
-                                </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Loading modal -->
-                <div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
-                    <div class="modal-dialog justify-content-center modal-dialog-centered " role="document">
-                        <div class="spinner-container">
-                            <span class="fa fa-spinner fa-spin fa-3x " style="font-size:80px;color:#009dd3"></span>
-                            <div class="loading">Downloading data</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- Page content -->
+      <div style="padding-top: 7rem" class="container">
+          <!-- Headline and info -->
+        <div class="text-center">
+          <h1 class="display-4 fw-normal">Constraints</h1>
+          <p class="fs-5 text-muted">
+            Fill in fields for constrains to be applied to trainingdata
+          </p>
         </div>
+
+        <!-- Form-->
+        <!--Row for labels-->
+        <hr class="hr" />
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="display-6">Data settings</label>
+          </div>
+        </div>
+        <div class="row w-90">
+          <div class="col">
+            <label for="training" class="col-form-label-lg">Training (%)</label><span class="question-mark" onclick="showTrainingInfo()">?<span class="tooltip-text">Info about training data percentage</span></span>
+          </div>
+          <div class="col">
+            <label for="validation" class="col-form-label-lg">Validation (%)</label><span class="question-mark" onclick="showValidationInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+          </div>
+          <div class="col">
+            <label for="building" class="col-form-label-lg">Building percentage (%)</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+          </div>
+        </div>
+         <!--Row for input fields-->
+        <div class="row w-90">
+          <div class="col">
+            <div class="input-group">
+              <input type="number" placeholder="Amount of data allocated to training" min="0" max="100"
+              id="training" class="form-control form-control-lg" />
+            </div>
+            <div id="error-message-training" class="alert alert-danger alert-dismissible fade show d-none"></div>
+        </div>
+          <div class="col">
+            <div class="input-group">
+              <input type="number" min="0" max="100" placeholder="Amount of data allocated to validation"
+                id="validation" class="form-control form-control-lg"/>
+              </div>
+              <div id="error-message-validation" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+          <div class="col">
+            <div class="input-group">
+              <input type="number" min="0" max="100" placeholder="Minimum amount (%) of building features (Only NGIS)"
+              id="building" class="form-control form-control-lg"/>
+            </div>
+            <div id="error-message-building" class="alert alert-danger alert-dismissible fade show d-none"></div>
+          </div>
+        </div>
+        <!--Row for checkbox labels-->
+        <hr class="hr" />
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="display-6">WMS Layers</label>
+          </div>
+        </div>
+        <div class="row w-90">
+          <div class="col">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="buildingCheck" checked />
+              <label for="building" class="form-check-label">Buildings</label>
+              <input type="color" id="buildingColor" value="#563d7c">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="roadCheck" checked />
+              <label for="building" class="form-check-label">Roads</label>
+              <input type="color" id="roadColor" value="#563d7c">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="bridgeCheck" checked />
+              <label for="building" class="form-check-label">Bridges</label>
+              <input type="color" id="bridgeColor" value="#563d7c">
+            </div>
+          </div>
+        </div>
+        <hr class="hr" />
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="display-6">Image settings</label>
+          </div>
+        </div>
+        <!--Labels for image settings-->
+        <div class="row w-90">
+          <div class="col">
+            <label for="building" class="col-form-label-lg">Tile Size</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+          </div>
+          <div class="col">
+            <label for="building" class="col-form-label-lg">Image Resolution</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+          </div>
+        </div>
+        <div class="row w-90">
+          <div class="col">
+            <input type="number" id="tileSize" class="form-control form-control-lg" placeholder="Enter your desired tile size"/>
+            <div id="error-message-tileSize" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+          <div class="col">
+            <input type="number" class="form-control form-control-lg" id="imageResolution" placeholder="Enter your desired image resolution"/>
+            <div id="error-message-imageResolution" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+        </div>
+        <!-- Continue & cancel button -->
+        <div
+          class="btn-container d-grid gap-2 d-sm-flex justify-content-sm-center mt-4"
+        >
+          <button
+            type="button"
+            class="btn btn-lg cancel-button"
+            onclick="cancelModal()"
+            id="customCancelBtn"
+            data-bs-toggle="modal"
+            data-bs-target="#cancelModal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-lg col-3 offset-3"
+            onclick="validateStart()"
+            id="continueBtn"
+          >
+          Order
+          </button>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div
+              class="modal-content d-flex justify-content-center text-center"
+            >
+              <div class="modal-header">
+                <h2 class="modal-title">Confirm order</h2>
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  Please wait while we download the selected data. Download time
+                  depends on the area size and internet speed. Larger areas and
+                  slower connections may take several minutes. After download
+                  completion, you'll be redirected to the next page.<br /><br />
+                  <strong
+                    >Do not close or refresh until the download is
+                    finished.</strong
+                  >
+                </p>
+              </div>
+
+              <div class="modal-footer d-flex">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-lg col-auto ms-3 bg-danger border-0"
+                  data-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-lg col me-3 ms-3"
+                  onclick="generatePhotos(), loadingModal();"
+                  data-dismiss="modal"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading modal -->
+        <div
+          class="modal fade"
+          id="loadingModal"
+          tabindex="-1"
+          role="dialog"
+          data-backdrop="static"
+        >
+          <div
+            class="modal-dialog justify-content-center modal-dialog-centered"
+            role="document"
+          >
+            <div class="spinner-container">
+              <span
+                class="fa fa-spinner fa-spin fa-3x"
+                style="font-size: 80px; color: #009dd3"
+              ></span>
+              <div class="loading">Downloading data</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cancel Confirmation Modal -->
+        <div
+          class="modal fade"
+          id="cancelModal"
+          tabindex="-1"
+          aria-labelledby="cancelModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to cancel the order?
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  No
+                </button>
+                <a href="home.html" class="btn btn-primary">Yes</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- jQuery library -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
-    <!-- Popper.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 
     <!-- Custom script -->
     <script src="frontend/scripts/script.js"></script>
-
-</body>
-
-
+  </body>
 </html>

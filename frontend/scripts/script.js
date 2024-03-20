@@ -1,4 +1,4 @@
-//Header
+  //Header
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'header.html');
 xhr.responseType = 'text';
@@ -39,14 +39,21 @@ function home() {
 const inputTraining = document.getElementById("training");
 const inputValidation = document.getElementById("validation");
 const inputBuilding = document.getElementById("building");
+const inputBuildingLayer = document.getElementById("buildingCheck");
+const inputRoadLayer = document.getElementById("roadCheck");
+const inputBridgeLayer = document.getElementById("bridgeCheck");
+const inputBuildingColor = document.getElementById("buildingColor");
+const inputRoadColor = document.getElementById("roadColor");
+const inputBridgeColor = document.getElementById("bridgeColor");
+const inputTileSize = document.getElementById("tileSize");
+const inputResolution = document.getElementById("imageResolution");
 const continueBtn = document.getElementById("continueBtn");
 const errorMessage = document.getElementById('error-message');
 
 function validateStart() {
-  const inputFields = ['training', 'validation', 'building'];
-  const errorMessages = ['Please fill out this field.', 'Please fill out this field.', 'Please fill out this field.'];
-  const rangeErrorMessage = 'Please enter a value between 0 and 100.';
-
+  const inputFields = ['training', 'validation', 'building', "tileSize", "imageResolution"];
+  const emptyMessage = "Please fill out this field."
+  const rangeErrorMessage = 'Please enter a value between 1 and 100 in this field.';
   let allFieldsFilledFlag = true;
   let validRangeFlag = true;
 
@@ -55,48 +62,96 @@ function validateStart() {
     const errorMessage = document.getElementById(`error-message-${inputFields[i]}`);
 
     if (inputField.value === '') {
-      errorMessage.textContent = errorMessages[i];
+      errorMessage.textContent = emptyMessage;
       errorMessage.classList.remove('d-none');
       allFieldsFilledFlag = false;
     } else {
       errorMessage.textContent = '';
       errorMessage.classList.add('d-none');
     }
-
-    const inputValue = parseFloat(inputField.value);
-    if (isNaN(inputValue) || inputValue < 0 || inputValue > 100) {
-      errorMessage.textContent = rangeErrorMessage;
-      errorMessage.classList.remove('d-none');
+  }
+  console.log(inputTraining.value)
+  if(parseFloat(inputTraining.value) < 0 || parseFloat(inputTraining.value) > 100){
+    errorElement = document.getElementById("error-message-training");
+      errorElement.textContent = rangeErrorMessage;
+      errorElement.classList.remove('d-none');
       validRangeFlag = false;
-    }
   }
 
+  if(parseFloat(inputValidation.value) < 0 || parseFloat(inputValidation.value) > 100){
+    errorElement = document.getElementById("error-message-validation");
+      errorElement.textContent = rangeErrorMessage;
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+  if(parseFloat(inputBuilding.value) < 0 || parseFloat(inputBuilding.value) > 100){
+    errorElement = document.getElementById("error-message-building");
+      errorElement.textContent = rangeErrorMessage;
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+  if(parseFloat(inputTileSize.value) < 100 || parseFloat(inputTileSize.value) > 1104){
+    errorElement = document.getElementById("error-message-tileSize");
+      errorElement.textContent = "Please enter a tile size between 100 and 1104";
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+  if(parseFloat(inputResolution.value) < 0 || parseFloat(inputResolution.value) > 0.5){
+    errorElement = document.getElementById("error-message-imageResolution");
+      errorElement.textContent = "Please enter a resolution between 0.1 and 0.5";
+      errorElement.classList.remove('d-none');
+      validRangeFlag = false;
+  }
+
+
+
+
   if (allFieldsFilledFlag && validRangeFlag) {
-    updateWMSConfig();
+    updateConfig();
     startTraining();
   }
 }
 
 // Updates the WMS config file on the server
-async function updateWMSConfig() {
-  //Hardcoder disse inn per nå
-  const layers = ["Bygning", "Veg", "Bru"]
-  const colors = ["#000000", "#ffff00", "#00ff00"]
+async function updateConfig() {
+  //Define the arrays
+  const layers = [];
+  const colors = [];
 
+
+  //Checks each checkbox to see if the box is checked, if it is then add the data to the array.
+  if(inputBuildingLayer.checked){
+    layers.push("Bygning")
+    colors.push(inputBuildingColor.value)
+  }
+
+  if(inputRoadLayer.checked){
+    layers.push("Veg")
+    colors.push(inputRoadColor.value)
+  }
+
+  if(inputBridgeLayer .checked){
+    layers.push("Bru")
+    colors.push(inputBridgeColor.value)
+  }
 
   const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
 
-  const response = await fetch('/updateWMSConfigFile', {
+  const response = await fetch('/updateConfigFile', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors}),
+    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors, "tile_size": inputTileSize.value, "image_resolution": inputResolution.value}),
   });
 
   const data = await response.json();
   return data;
 }
+
 
 
 
@@ -143,7 +198,8 @@ function generatePhotos() {
     .catch(error => console.error(error));
 }
 
+
 // Display the loading modal
 function loadingModal() {
-  $('.modal').modal('show');
+  $('#loadingModal').modal('show');
 }

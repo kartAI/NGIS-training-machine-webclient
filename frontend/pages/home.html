@@ -5,48 +5,108 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Trainingdata Generator</title>
+    <title>Training Data Generator</title>
 
-    <!-- CSS Stylesheet -->
-    <link rel="stylesheet" href="frontend/style.css">
-
-    <!--  Bootstrap Stylesheet-->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
-    <!-- Google icons Stylesheet -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="frontend/style.css">
+
 
 </head>
 
 <body>
-    <div class="content">
+    <div class="main-container">
+        <h1 class="display-4">Training Data Generator</h1><br>
+        <p class="fs-4">This application generates map data to train an AI model</p><br>
+        <p class="fs-5 mb-4">Some more information about this amazing app</p>
+        <br><br><br>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="info.html" style="text-decoration: none;">
+                <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Learn more</button>
+            </a>
+            <a href="methods.html" style="text-decoration: none;">
+                <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Get started!</button>
+            </a>
+        </div>
+    </div>
 
-        <!-- Header/navbar-->
-        <header>
-            <div id="header"></div>
-        </header>
+    <div class="footer d-flex justify-content-between align-items-center">
+        <div class="footer-logos d-flex align-items-center">
+            <a href="https://kartai.no/">
 
-        <!-- Page content -->
-        <div class="main-container">
+                <img src="frontend/images/KartaiLogo_White.png" alt="Logo for KartAI" class="footerimg"/>
+            </a>
+            <a href="https://www.kartverket.no//">
+                <img src="frontend/images/Kartverket.png" alt="Logo for Kartverket" class="footerimg"> 
+            </a>
+            <a href="https://www.kristiansand.kommune.no/">
+                <img src="frontend/images/KristiansandKommune.png" alt="Logo for Kristiansand Kommune" class="footerimg"> 
+            </a>
+            <a href="https://www.uia.no">
+                <img src="frontend/images/UniversitetetIAgder.png" alt="Logo for Universitetet i Agder" class="footerimg"> 
+            </a>
+        </div>
+    
+        <div class="cookie-policy-container">
+            <a href="#" id="cookiePolicyLink">Cookie Policy</a>
+            <div id="cookiePolicyPopup" class="cookie-policy-popup">
+                <h2>Cookie Policy for Training Data Generator</h2>
 
-            <!-- Headline and info -->
-            <div class="text-center">
-                <h1 class="display-4 fw-normal">Choose method</h1>
-                <p class="fs-5 text-muted">Choose method for input of coordinates
-                </p>
-            </div>
+                <p><strong>Last updated:</strong> 18.03.2024</p>
 
-            <!-- Cards -->
-            <div id="card-container">
+                <p>At KartAI, we believe in being clear and open about how we collect and use data related to you. This policy provides detailed information about how and when we use cookies. By using Training Data Generator, you agree to our use of cookies as described in this Cookie Policy.</p>
+
+                <h4>What is a cookie?</h4>
+
+                <p>A cookie is a small file placed onto your device that enables Training Data Generator features and functionality. For example, cookies enable us to identify your device and secure your access to Training Data Generator.</p>
+
+                <h4>Why does Training Data Generator use cookies?</h4>
+
+                <p>Cookies play an important role. They help us provide you with a seamless experience by maintaining session continuity and safe connections as you navigate through the application. Here's a brief overview of the types of cookies we use:</p>
+
+                <ul>
+                    <li><strong>Session Cookies:</strong> These are temporary cookies used to remember you during the course of your visit to the application, and they expire when you close the web browser.</li>
+                </ul>
+
+                <h4>How does Training Data Generator use cookies?</h4>
+
+                <p><strong>Sessions Management:</strong> Cookies help us keep track of your activity as you navigate through the application, ensuring that the application remembers your activity.</p>
+
+                <h4>What to do if you don't want cookies to be set</h4>
+
+                <p>You can usually manage cookies through your browser settings. Most browsers provide the ability to block cookies or block cookies from specific sites. Browsers can also help you delete cookies when you close the application. However, you should note that our application requires cookies to function properly, and disabling cookies may affect your experience.</p>
+
+                <h4>Changes to this policy</h4>
+
+                <p>We may update this policy from time to time. Please revisit this page to stay aware of any changes. By continuing to use Training Data Generator and our services after those changes become effective, you agree to be bound by the revised Cookie Policy.</p>
+
+                <button id="closePopup">Close</button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Scripts -->
-    <script src="frontend/scripts/script.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kQtW33rZJAHjyblvHYh5eRZ4pWd8PZNTShaOXG1D3h7jK7ap9t8J72lcMV9hoPgR"
+        crossorigin="anonymous"></script>
+    <Script>
+        document.getElementById('cookiePolicyLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('cookiePolicyPopup').style.display = 'block';
+        });
+        
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('cookiePolicyPopup').style.display = 'none';
+        });
+    </Script>
+    <!-- Custom script -->
     <script src="frontend/scripts/home.js"></script>
-
 </body>
 
 </html>
