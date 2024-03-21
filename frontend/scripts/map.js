@@ -176,19 +176,6 @@ async function updateCoordinateFile(coordinates) {
     return data;
 }
 
-// Updates the coordinates on the server.
-async function updateCoordinates(coordinates) {
-    const response = await fetch('http://localhost:8000/update_coordinates', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({"input": coordinates}),
-    });
-
-    const data = await response.json();
-    return data;
-}
 
 // Function saves coordinates entered by the user, converts them to latLng objects, and draws a red polygon on the map.
 function saveCoordinates() {
@@ -212,20 +199,3 @@ function saveCoordinates() {
 function noScroll() {
     map.scrollWheelZoom.disable();
 }
-
-
-window.onload = () => {
-    setup_folders()
-  }
-  
-  async function setup_folders(){
-    const response = await fetch('/setupUserSessionFolders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  
-    const data = await response.json();
-    return data;
-  }

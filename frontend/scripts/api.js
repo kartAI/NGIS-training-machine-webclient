@@ -46,28 +46,6 @@ async function transformCoordinates(coordinates, from_epsg, to_epsg) {
     return transformMultipleCoordinates(coordinates, from_epsg, to_epsg);
 }
 
-// Updates the coordinates in the database by sending a POST request to a web service
-async function updateCoordinates(coordinates) {
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ coordinates }),
-    };
-    const response = await fetch('/update-coordinates', requestOptions);
-    const data = await response.json();
-    console.log(data.message);
-}
-
-// This function updates the training data in the database by sending a POST request to a web service
-export async function updateTraining(training) {
-    const response = await fetch('/update_coordinates', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(training),
-    });
-}
 
 // Export the functions as an object so that they can be used in other modules
 module.exports = {
