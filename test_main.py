@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from main import app
+import unittest
 from unittest.mock import patch, MagicMock, mock_open
 import tempfile
 import zipfile
@@ -8,8 +9,11 @@ from main import send_email_with_attachment
 from pathlib import Path
 import pytest
 import os
-from WMS import util
+from application import util
 from main import zip_files
+import numpy as np
+from application.ortoCOG import generate_cog_data
+from rasterio.transform import from_origin
 
 #Import test client
 client = TestClient(app)
@@ -150,3 +154,46 @@ def test_send_email_with_attachment(mock_sendgrid_client, mock_exists):
 
     # Verify the send method was called on the SendGrid client
     assert mock_sendgrid_client.return_value.send.called
+    
+    ''' COG TEST'''
+    
+class TestGenerateCogData(unittest.TestCase):
+    @patch('application.ortoCOG.os.getenv')
+    @patch('application.ortoCOG.load_dotenv')
+    @patch('application.ortoCOG.util.read_file')
+    @patch('application.ortoCOG.util.create_bbox_array')
+    @patch('application.ortoCOG.rasterio.open')
+    @patch('application.ortoCOG.imageio.imwrite')
+    @patch('application.ortoCOG.plt.imsave')
+    @patch('application.ortoCOG.os.path.isdir')
+    @patch('application.ortoCOG.os.makedirs')
+    def test_generate_cog_data_success(self, mock_makedirs, mock_isdir, mock_plt_imsave, mock_imageio, mock_rasterio_open, mock_create_bbox_array, mock_read_file, mock_load_dotenv, mock_getenv):
+        mock_getenv.side_effect = lambda key: {
+            'AZURE_STORAGE_ACCESS_KEY': 'fake_key',
+            'AZURE_STORAGE_ACCOUNT_NAME': 'fake_account'
+        }.get(key, None)
+        mock_isdir.return_value = False
+        mock_read_file.side_effect = [
+            {'Coordinates': [[0, 0], [10, 10]]},
+            {'Config': {'tile_size': 256, 'image_resolution': 0.2}} #Mock coord and config files
+        ]
+        mock_create_bbox_array.return_value = [[0, 0, 10, 10]]  #Simplified bounding box
+
+        src_mock = MagicMock()
+        src_mock.read.return_value = np.ones((256, 256, 3)) * 0.5
+        mock_rasterio_open.return_value.__enter__.return_value = src_mock
+        src_mock.transform = from_origin(0, 0, 1, 1)
+
+        file_paths = {
+            'coordinates': 'path/to/coordinates.json',
+            'config': 'path/to/config.json',
+            'root': '/fake/root'
+        }
+
+        result = generate_cog_data(file_paths)
+
+        self.assertTrue(result)
+        mock_imageio.assert_called()
+
+if __name__ == '__main__':
+    unittest.main()
