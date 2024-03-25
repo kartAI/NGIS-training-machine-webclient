@@ -173,6 +173,9 @@ async function updateCoordinateFile(coordinates) {
     });
 
     const data = await response.json();
+    if(data.error_message){
+        document.getElementById("error-message").innerHTML = data.error_message
+    }
     return data;
 }
 

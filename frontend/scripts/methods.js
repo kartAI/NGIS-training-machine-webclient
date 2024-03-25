@@ -40,22 +40,26 @@ cardData.forEach(card => {
   cardContainer.innerHTML += cardHtml;
 });
 
-
 window.onload = () => {
-  setup_cookies()
-}
+  setup_folders();
+  updateImageSources();
+};
 
-async function setup_cookies(){
-  const response = await fetch('/cookies', {
-    method: 'POST',
+async function setup_folders() {
+  const response = await fetch("/setupUserSessionFolders", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
-  const data = response.json()
-  console.log(data)
-  return data
+
+  const data = await response.json();
+  if(data.message){
+    let element = document.getElementById("folder-message").innerHTML = data.message;
+    element.removeAttribute("hidden")
+  }
 }
+
 
 let ngis_layer = document.getElementById("ngis-layer")
 let wms_layer = document.getElementById("wms-layer")
@@ -98,6 +102,12 @@ async function updateImageSources(){
     });
     
     const data = await response.json();
+
+    if(data.message){
+      let element = document.getElementById("folder-message").innerHTML = data.message;
+      element.removeAttribute("hidden")
+    }
+    
     return data;
   }else{
     document.getElementById("Error").innerHTML = "Please select data sources"
