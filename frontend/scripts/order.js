@@ -1,29 +1,30 @@
 
-//Javascript code for downloading file. missings paths and file
-document.getElementById("downloadButton").addEventListener("click", function() {
-    var xhr = new XMLHttpRequest();
+// Javascript code for downloading file. missings paths and file
+document.getElementById("downloadButton").addEventListener("click", function() { 
+    var xhr = new XMLHttpRequest(); 
     xhr.open("GET", "/path-to-your-file", true); // Specify the file path here
     xhr.responseType = "blob";
     xhr.onload = function() {
-        if (xhr.status === 200) {
-            var blob = xhr.response;
+        if (xhr.status === 200) { // Check if the request is successful
+            var blob = xhr.response; // Get the response as a Blob
             var link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
             link.download = "filename.extension"; // Specify the filename and extension
             document.body.appendChild(link);
-            link.click();
+            link.click(); // Trigger the download
             document.body.removeChild(link);
         }
     };
     xhr.send();
 });
 
-//Fetch header
-<script>
-    fetch('header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header').innerHTML = data;
-        })
-        .catch(error => console.error('Error loading the header:', error));
-</script>
+fetch('header.html') // Load the header
+    .then(function(response) {
+        return response.text();
+    })
+    .then(function(data) { 
+        document.getElementById('header').innerHTML = data;
+    })
+    .catch(function(error) {
+        console.error('Error loading the header:', error); // Log
+    }); 

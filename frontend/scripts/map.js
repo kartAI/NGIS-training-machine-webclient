@@ -1,18 +1,17 @@
 // Map initialization
-var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([58.151833, 8.004227], 14);
+var map = L.map('map', { crs: L.CRS.EPSG3857 }).setView([58.151833, 8.004227], 14); // Set the map view to a specific location and zoom level (Note, this is ESPG 3857)
 
-// Add OpenStreetMap Tiles
+// OpenStreetMap Tiles
 var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=gBHYqk3cSCXUdQqICyH3', {
     attribution: '<a href=" https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a><a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
-}).addTo(map);
+}).addTo(map); // Add the OpenStreetMap layer to the map
 
-// Søkefunksjon til leaflet maps
+// Search function for Leaflet
 L.Control.geocoder().addTo(map);
 
-// Leaflet draw
+// FeatureGroup to store drawn lines on the map
 var drawnItems = new L.FeatureGroup();
-map.addLayer(drawnItems);
-
+map.addLayer(drawnItems); // Add the FeatureGroup to the map
 
 // Specifies controls to be displayed
 var drawControl = new L.Control.Draw({
@@ -27,8 +26,9 @@ var drawControl = new L.Control.Draw({
     }
 });
 
-map.addControl(drawControl);
+map.addControl(drawControl); // Add the draw control to the map
 
+// Array to store the corner circles of the rectangle, useful to see rectangle if zoomed out
 var cornerCircles = [];
 
 // Binds listener to the event:created
@@ -53,26 +53,25 @@ map.on("draw:created", function (c) {
             bounds.getSouthEast(),
             bounds.getSouthWest()
         ];
-//defining the size of the circles
+        // Define the size of the circles
         corners.forEach(function (corner, index) {
-            var circle = L.circle(corner, { radius: 5 }).addTo(map);
+            var circle = L.circle(corner, { radius: 5 }).addTo(map); // Radius can be changed to make the circle bigger or smaller
 
             // Add tooltip to the circle to display coordinate point
             var labelText = (index === 0 || index === 4) ? "P1,P5" : "P" + (index + 1);
-            circle.bindTooltip(labelText);
+            circle.bindTooltip(labelText); // Add a position prediction to the corner circles
             
-
-            
+            // Close the tooltip after 3 seconds
             circle.openTooltip();
         setTimeout(function () {
             circle.closeTooltip();
         }, 3000);
-        cornerCircles.push(circle); //stores the circle reference inside the array
+        cornerCircles.push(circle); // Stores the circle reference inside the array
 
             
         });
     }
-
+    // Remove the drawn shape when clicked
     if (drawControl.options.draw.remove) {
         // Bind click event to the drawn shape for removal
         layer.on('click', function () {
@@ -102,14 +101,14 @@ map.on("draw:created", function (c) {
         return [coord.lng, coord.lat];
     });
 
-    // Create a new array with unique coordinates
-    var uniqueCoordsArray = [];
-    var coordsMap = new Map();
-    for (var i = 0; i < coordsArray.length; i++) {
-        var key = coordsArray[i].join(',');
-        if (!coordsMap.has(key)) {
-            uniqueCoordsArray.push(coordsArray[i]);
-            coordsMap.set(key, true);
+    // Create a new array 
+    var uniqueCoordsArray = []; // Array to store unique coordinates
+    var coordsMap = new Map(); // Map to store unique coordinates
+    for (var i = 0; i < coordsArray.length; i++) { // Loop through the coordinates
+        var key = coordsArray[i].join(','); // Create a key for the map
+        if (!coordsMap.has(key)) { // Check if the map contains the key
+            uniqueCoordsArray.push(coordsArray[i]); // Add the coordinate to the array
+            coordsMap.set(key, true); // Set the key in the map
         }
     }
 
@@ -130,15 +129,15 @@ map.on("draw:created", function (c) {
         coordinatesString += "<b>P" + (i + 1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
     }
 
-    kartAIcoords4326 = uniqueCoordsArray;
+    kartAIcoords4326 = uniqueCoordsArray; // KartAI coordinates in EPSG:4326, used for conversion
 
-    //We need to add the new projection to the project
+    // EPSG:4326 to EPSG:25832 conversion defined in proj4
     proj4.defs("EPSG:25832","+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
 
     // Define the source (EPSG:4326) and destination (EPSG:3857) projections
-    const epsg4326 = 'EPSG:4326';
-    const epsg3857 = 'EPSG:3857';
-    const epsg25832 = 'EPSG:25832';
+    const epsg4326 = 'EPSG:4326'; 
+    const epsg3857 = 'EPSG:3857'; // Default EPSG for Leaflet
+    const epsg25832 = 'EPSG:25832'; // Default EPSG for this project
 
     // Function to convert coordinates from EPSG:4326 to EPSG:3857
     function convertToEPSG3857(coordsArray) {
@@ -151,54 +150,49 @@ map.on("draw:created", function (c) {
 
     // Convert the coordinates and store them in a new array
     const kartAIcoords = convertToEPSG3857(kartAIcoords4326);
+    
+    console.log(kartAIcoords); // Log the converted coordinates for debugging
 
-    console.log(kartAIcoords);
-
+    // Update the HTML element with the converted coordinates
     coordinatesElement.innerHTML = coordinatesString;
     updateCoordinateFile(kartAIcoords);
-
-
 });
 
 
 // Updates the coordinates on the server for wms.
 async function updateCoordinateFile(coordinates) {
     //Make a POST Request to the server
-    const response = await fetch('/updateCoordinateFile', {
+    const response = await fetch('/updateCoordinateFile', { // Send the coordinates to the server
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 
         },
-        body: JSON.stringify({"input": coordinates}),
+        body: JSON.stringify({"input": coordinates}), // Send the coordinates as JSON
     });
 
-    const data = await response.json();
-    if(data.error_message){
-        document.getElementById("error-message").innerHTML = data.error_message
-    }
-    return data;
+    const data = await response.json(); 
+    return data; // Return the server's response data
 }
 
 
-// Function saves coordinates entered by the user, converts them to latLng objects, and draws a red polygon on the map.
-function saveCoordinates() {
-    var coordinatesInput = document.getElementById("coordi").value;
-    console.log("coordinatesInput:", coordinatesInput);
-    var coordinatesArray = coordinatesInput.split(",");
-    console.log("coordinatesArray:", coordinatesArray);
-    var latLngArray = [];
-    for (var i = 0; i < coordinatesArray.length; i += 2) {
-        var latLng = L.latLng(parseFloat(coordinatesArray[i]), parseFloat(coordinatesArray[i + 1]));
-        latLngArray.push(latLng);
+// Save, convert, draw on map
+function saveCoordinates() { // Function to save the coordinates entered by the user
+    var coordinatesInput = document.getElementById("coordi").value; // Get the coordinates entered by the user
+    console.log("coordinatesInput:", coordinatesInput); // Log 
+    var coordinatesArray = coordinatesInput.split(","); // Split the coordinates into an array
+    console.log("coordinatesArray:", coordinatesArray); // Log 
+    var latLngArray = []; // Store the latLng objects
+    for (var i = 0; i < coordinatesArray.length; i += 2) { // Loop through the coordinates
+        var latLng = L.latLng(parseFloat(coordinatesArray[i]), parseFloat(coordinatesArray[i + 1])); // Create a latLng object
+        latLngArray.push(latLng); // Add the latLng object to the array
     }
-    console.log("latLngArray:", latLngArray);
-    var polygon = L.polygon(latLngArray, { color: "red" }).addTo(map);
-    map.fitBounds(polygon.getBounds());
+    console.log("latLngArray:", latLngArray); // Log 
+    var polygon = L.polygon(latLngArray, { color: "red" }).addTo(map); // Draw a red polygon on the map
+    map.fitBounds(polygon.getBounds()); // Fit the map to the polygon
 }
-
 
 
 // The function disables the scroll wheel zoom on the map.
-function noScroll() {
+function noScroll() { 
     map.scrollWheelZoom.disable();
 }
