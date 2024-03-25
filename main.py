@@ -280,7 +280,7 @@ async def generatePhotos(request: Request):
 
     if generateTrainingData(paths, label_source, orto_source) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
         print("Something went wrong with generating the data")
-        return {"Message": "Something went wrong with generating the data"}
+        return {"message": "Something went wrong with generating the data"}
     else:
         labelTiles = 0
         for path in os.listdir(os.path.join(paths["root"],"tiles", "fasit")):
@@ -292,7 +292,7 @@ async def generatePhotos(request: Request):
                 trainingTiles += 1
 
         if(labelTiles != trainingTiles):
-            return {"Message": "Amount of tiles do not match, please try again"}
+            return {"message": "Amount of tiles do not match, please try again"}
         
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
         

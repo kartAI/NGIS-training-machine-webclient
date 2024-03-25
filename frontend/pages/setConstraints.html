@@ -183,20 +183,22 @@
                     finished.</strong
                   >
                 </p>
+                <div id="message" class="alert alert-danger" role="alert" hidden></div>
               </div>
 
               <div class="modal-footer d-flex">
                 <button
                   type="button"
                   class="btn btn-primary btn-lg col-auto ms-3 bg-danger border-0"
-                  data-dismiss="modal"
+                  data-bs-dismiss="modal"
+                  data-bs-target="confirmationModal"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   class="btn btn-primary btn-lg col me-3 ms-3"
-                  onclick="generatePhotos(), loadingModal();"
+                  onclick="loadingModal(), generatePhotos();"
                   data-dismiss="modal"
                 >
                   Confirm
