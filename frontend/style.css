@@ -250,6 +250,7 @@ label, input {
   display: flex;
   flex-direction: column;
   margin-left: 30px; 
+  
 }
 
 .btn:disabled {
@@ -385,3 +386,4 @@ margin-right: 20px; /* Increase this value to add more space */
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   z-index: 1050; /* Make sure it's above other items on the page */
 }
+
