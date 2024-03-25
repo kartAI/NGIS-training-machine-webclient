@@ -33,7 +33,7 @@ document.getElementById('file-input').addEventListener('change', function () {
             geojsonLayer.addTo(map);
             map.fitBounds(geojsonLayer.getBounds());
         } catch (error) {
-            // Alert the user in case of an error parsing the JSON file
+            // Alert the user in case of an error parsing the JSON file content 
             alert('Error parsing the JSON file: ' + error);
         }
     };
@@ -56,6 +56,5 @@ document.getElementById('nextBtn').addEventListener('click', function () {
         document.getElementById('fileUploadError').style.display = 'block';
     } else {
     // Continue to next step if the button is enabled
-
     }
 });

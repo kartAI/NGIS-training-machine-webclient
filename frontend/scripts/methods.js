@@ -1,32 +1,36 @@
+
+// Displays an alert with information about the layer selection
 function showLayerInfo() {
   alert("Information about layer selection...");
 }
 
+
+// Displays an alert with information about Ortofoto
 function showOrtofotoInfo() {
   alert("Information about Ortofoto...");
 }
 
-
-//Define the card data
+// Data structure representing the cards to be displayed on the webpage
 const cardData = [
   {
-    icon: 'fa-map-marker-alt',
-    text: 'Draw shape on map',
-    link: 'map.html'
+    icon: 'fa-map-marker-alt', // Font Awesome icon class for the card
+    text: 'Draw shape on map', // Text displayed on the card
+    link: 'map.html' // URL the card links to
   },
   {
-    icon: 'fa-keyboard',
-    text: 'Write coordinates',
-    link: 'coordinates.html'
+    icon: 'fa-keyboard', // Font Awesome icon class for the card
+    text: 'Write coordinates', // Text displayed on the card
+    link: 'coordinates.html' // URL the card links to
   },
   {
-    icon: 'fa-upload',
-    text: 'Upload geoJSON-file',
-    link: 'uploadFile.html'
+    icon: 'fa-upload', // Font Awesome icon class for the card
+    text: 'Upload geoJSON-file', // Text displayed on the card
+    link: 'uploadFile.html' // URL the card links to
   }
 ];
 
-//Loop through the card data and generate the HTML code for each card -->
+
+// Generates HTML content for cards based on cardData and appends it to the card container
 const cardContainer = document.getElementById('card-container');
 cardData.forEach(card => {
   const cardHtml = `
@@ -37,58 +41,71 @@ cardData.forEach(card => {
       <h3 class="my-0 fw-normal">${card.text}</h3>
     </a>
   `;
-  cardContainer.innerHTML += cardHtml;
+  cardContainer.innerHTML += cardHtml; // Append the card HTML to the container
 });
 
 
+// On window load, set up necessary cookies for the session
 window.onload = () => {
-  setup_cookies()
+  setup_cookies(); // Call the function to set up cookies
 }
 
-async function setup_cookies(){
+// Sets up cookies by making a POST request to the server
+// @returns {Promise<Object>} A promise that resolves with the server response data
+
+async function setup_cookies() {
   const response = await fetch('/cookies', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
   });
-  const data = response.json()
-  console.log(data)
-  return data
+  const data = await response.json(); // Parse the JSON response
+  console.log(data); // Log the data for debugging
+  return data; // Return the data for further processing
 }
 
-let ngis_layer = document.getElementById("ngis-layer")
-let wms_layer = document.getElementById("wms-layer")
-let fgb_layer = document.getElementById("fgb-layer")
-let wms_orto = document.getElementById("wms-ortofoto")
-let cog_orto = document.getElementById("cog-ortofoto")
-async function updateImageSources(){
-  console.log("AA")
-  let labelSource = ""
-  let ortoSource = ""
-  let filled = true
-  if(ngis_layer.checked){
-    labelSource = "NGIS"
-  }else if(wms_layer.checked){
-    labelSource = "WMS"
-  }else if(fgb_layer.checked){
-    labelSource = "FGB"
-  }else{
-    filled = false
-    console.log("No label source selected")
+// Get references to DOM elements related to data source selection.
+let ngis_layer = document.getElementById("ngis-layer");
+let wms_layer = document.getElementById("wms-layer");
+let fgb_layer = document.getElementById("fgb-layer");
+let wms_orto = document.getElementById("wms-ortofoto");
+let cog_orto = document.getElementById("cog-ortofoto");
+
+// Updates the image sources based on user selections and sends the selections to the server
+// @returns {Promise<Object>|void} A promise that resolves with the server response data, or void if selections are incomplete
+
+async function updateImageSources() {
+  console.log("Updating image sources...");
+  let labelSource = ""; // Variable to hold the label source selection
+  let ortoSource = ""; // Variable to hold the Ortofoto source selection
+  let filled = true; // Flag to check if all selections are made
+
+  // Determine the label source based on user selection
+  if (ngis_layer.checked) {
+    labelSource = "NGIS";
+  } else if (wms_layer.checked) {
+    labelSource = "WMS";
+  } else if (fgb_layer.checked) {
+    labelSource = "FGB";
+  } else {
+    filled = false; // No label source selected
+    console.log("No label source selected");
   }
 
-  if(wms_orto.checked){
-    ortoSource = "WMS"
-  }else if(cog_orto.checked){
-    ortoSource = "COG"
-  }else{
-    filled = false
-    console.log("No Orto source selected")
+  // Determine the Ortofoto source based on user selection
+  if (wms_orto.checked) {
+    ortoSource = "WMS";
+  } else if (cog_orto.checked) {
+    ortoSource = "COG";
+  } else {
+    filled = false; // No Orto source selected
+    console.log("No Orto source selected");
   }
 
-  if(filled){
-    console.log("Calling..")
+  // If all necessary selections are made, send the data to the server
+  if (filled) {
+    console.log("Sending selections to the server...");
     const response = await fetch('/updateDataSources', {
       method: 'POST',
       headers: {
@@ -97,9 +114,9 @@ async function updateImageSources(){
       body: JSON.stringify({"label_source": labelSource, "orto_source": ortoSource}),
     });
     
-    const data = await response.json();
-    return data;
-  }else{
-    document.getElementById("Error").innerHTML = "Please select data sources"
+    const data = await response.json(); // Parse the JSON response
+    return data; // Return the data for further processing
+  } else {
+    document.getElementById("Error").innerHTML = "Please select data sources";
   }
 }
