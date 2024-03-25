@@ -110,11 +110,12 @@ function validateStart() {
       errorElement.textContent = "Please enter a resolution between 0.1 and 0.5";
       errorElement.classList.remove('d-none');
       validRangeFlag = false;
-  }
-
-  if (allFieldsFilledFlag && validRangeFlag) {
-    updateConfig();
-    startTraining();
+    }
+    
+    if (allFieldsFilledFlag && validRangeFlag) {
+      if(updateConfig())
+      updateConfig();
+      startTraining();
   }
 }
 
@@ -160,51 +161,32 @@ async function updateConfig() {
 }
 
 
-
-
-// Updates the training fraction values on the server
-async function updateValue() {
-  const trainingFraction = [inputTraining.value, inputValidation.value, inputBuilding.value];
-
-  // Fetch the data from the server and return the data
-  const response = await fetch('/update_training', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(trainingFraction),
-  });
-
-  const data = await response.json();
-  return data;
-}
-
 // Display a confirmation modal
 function startTraining() {
   $('#confirmationModal').modal('show');
 }
 
-// Initiate a training process and redirect to next page
-function confirmTraining() {
-  fetch('/startTraining', {
-    method: 'POST'
-  })
-    .then(() => {
-      window.location.href = '/order.html';
-    })
-    .catch(error => console.error(error));
+// Initiate a download process and redirect to next page
+async function generatePhotos() {
+  const response = await fetch('/generatePhotos', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+  if(data.message){
+    let element = document.getElementById("message");
+    element.innerHTML = data.message
+    element.classList.add("alert-danger")
+    element.removeAttribute("hidden")
+    document.getElementById("loadingModal").setAttribute("hidden")
+  }else{
+    document.location.href = "./order.html"
+    }
 }
 
-// Initiate a download process and redirect to next page
-function generatePhotos() {
-  fetch('/generatePhotos', {
-    method: 'POST' 
-  })
-    .then(() => {
-      window.location.href = '/order.html';
-    })
-    .catch(error => console.error(error));
-}
 
 // Display the loading modal
 function loadingModal() {
