@@ -220,9 +220,9 @@ async def update_data_source(dataSourceInput: DataSourceInput, request: Request)
     session_id = request.cookies.get("session_id", None)
     config_path = get_paths(session_id)["config"]
     if(util.write_file(config_path, data)):
-        return {"success-message": "Data sources updated successfully!"}
+        return {"message": "Data sources updated successfully!", "error": 0}
     else:
-        return {"error-message": "Could not update your data sources, please try again!"}
+        return {"message": "Could not update your data sources, please try again!", "error": 1}
 
 
 #Route for updating the coordinate file in the WMS/Resources folder

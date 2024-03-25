@@ -198,7 +198,7 @@ function confirmTraining() {
 // Initiate a download process and redirect to next page
 function generatePhotos() {
   fetch('/generatePhotos', {
-    method: 'POST'
+    method: 'POST' 
   })
     .then(() => {
       window.location.href = '/order.html';
