@@ -57,7 +57,7 @@ async function setup_cookies() {
   const response = await fetch('/cookies', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
   const data = await response.json(); // Parse the JSON response
@@ -115,6 +115,18 @@ async function updateImageSources() {
     });
     
     const data = await response.json(); // Parse the JSON response
+    console.log(data)
+    if(data.error == 1){
+      let element = document.getElementById("message");
+      element.innerHTML = data.message
+      element.classList.add("alert-danger")
+      element.removeAttribute("hidden")
+    }else{
+      let element = document.getElementById("message");
+      element.innerHTML = data.message
+      element.classList.add("alert-success")
+      element.removeAttribute("hidden")
+    }
     return data; // Return the data for further processing
   } else {
     document.getElementById("Error").innerHTML = "Please select data sources";

@@ -169,6 +169,7 @@ async def setup_session_folders(request: Request, response: Response):
             print(f"All folders were created successfully for session: {session_id}")
         else:
             print(f"Error creating folders for session: {session_id}")
+            return {"message": "Something went wrong when setting up the application, please delete your cookie settings and try again!"}
 
 
 
@@ -189,7 +190,9 @@ async def update_coordinate_file(input: Input, request: Request):
     coordinate_path = get_paths(session_id)["coordinates"]
     data = {"Coordinates": input.input}
     if(util.write_file(coordinate_path, data)):
-        return {"Message": "Coordinates were updated successfully"}
+        return {"success_message": "Coordinates were updated successfully"}
+    else:
+        return {"error_message": "Could not add your chosen coordinates, please try again!"}
     
 #Route for updating the config file with the data source choices
 @app.post("/updateDataSources")
@@ -217,7 +220,9 @@ async def update_data_source(dataSourceInput: DataSourceInput, request: Request)
     session_id = request.cookies.get("session_id", None)
     config_path = get_paths(session_id)["config"]
     if(util.write_file(config_path, data)):
-        return {"Message": "Config was updated successfully"}
+        return {"message": "Data sources updated successfully!", "error": 0}
+    else:
+        return {"message": "Could not update your data sources, please try again!", "error": 1}
 
 
 #Route for updating the coordinate file in the WMS/Resources folder
@@ -250,6 +255,8 @@ async def update_config_file(configInput: ConfigInput, request: Request):
    
     if(util.write_file(config_path, data)):
         return {"Message": "Config was updated successfully"}
+    else:
+        return {"error_message": "Could not update your application settings, please try again!"}
 
 
 @app.post("/generatePhotos")
