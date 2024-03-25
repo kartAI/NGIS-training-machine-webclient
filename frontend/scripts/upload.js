@@ -3,16 +3,6 @@ document.getElementById('file-input').addEventListener('change', function () {
     // Retrieve the first file selected by the user
     var file = this.files[0];
 
-    // Define the allowed MIME types for GeoJSON and JSON file upload
-    var allowedTypes = ['application/json', 'application/geo+json'];
-    
-    // Check if the uploaded file type is among the allowed types
-    if (!allowedTypes.includes(file.type)) {
-        // Alert the user if the file type is not allowed and stop further processing
-        alert('Only GeoJSON and JSON files are allowed.');
-        return; // Exit the function early
-    }
-
     // Initialize FileReader to read the content of the file
     var reader = new FileReader();
 
@@ -32,9 +22,11 @@ document.getElementById('file-input').addEventListener('change', function () {
             // Add the processed layer to the map and adjust the map's view accordingly
             geojsonLayer.addTo(map);
             map.fitBounds(geojsonLayer.getBounds());
+
+            console.log(data["features"][0]["geometry"]["coordinates"])
         } catch (error) {
             // Alert the user in case of an error parsing the JSON file
-            alert('Error parsing the JSON file: ' + error);
+            alert('Error parsing the file: ' + error);
         }
     };
 
