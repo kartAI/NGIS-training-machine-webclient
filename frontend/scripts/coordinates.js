@@ -17,7 +17,8 @@ window.onload = () => {
     if (coordSysValue != "EPSG:25832") {
       coordinateArray = convertToEPSG25832(coordinateArray, coordSysValue);
     }
-    drawCoordinatesOnMap(coordinateArray)
+
+    drawCoordinatesOnMap(coordinateArray);
     console.log("Coordinates that will be pushed:" + coordinateArray);
     // Enable the next button
     enableNextButton();
@@ -30,20 +31,19 @@ function drawCoordinatesOnMap(coordinates) {
   proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
   proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
 
+  var coordinates4326 = coordinates.map((coord) =>
+    proj4("EPSG:25832", "EPSG:4326", coord)
+  );
 
-  let coordsArray = []
-  for (let i = 0; i < coordinates.length; i += 2) {
-    const latLng = L.latLng(parseFloat(coordinates[i][0]), parseFloat(coordinates[i][1]));
-    coordsArray.push(latLng);
+  let correctedPairs = []
+  for(let i = 0; i < coordinates4326.length; i++){
+    correctedPairs.push(
+      [coordinates4326[i][1], coordinates4326[i][0]]
+    )
   }
 
 
-  let convertedCoordsArray;
-  convertedCoordsArray = coordsArray.map(coord => {
-    const [y, x] = proj4("EPSG:25832", "EPSG:3857", [coord.lat, coord.lng]);
-    return [y, x];
-  });
-  const polygon = L.polygon(convertedCoordsArray, { color: "red" }).addTo(map);
+  const polygon = L.polygon(correctedPairs, { color: "red" }).addTo(map);
   map.fitBounds(polygon.getBounds());
 }
 
@@ -88,21 +88,6 @@ function parseCoordinates(coordinates) {
   return coordsArray;
 }
 
-// Function to convert coordinates from EPSG:4326 to EPSG:3857
-function convertToEPSG4326(coordsArray, originalEPSG) {
-  //Add custom projections to proj4 for other EPSGs
-  proj4.defs(
-    "EPSG:25832",
-    "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs"
-  );
-  proj4.defs("EPSG:5972", "+proj=utm +zone=33 +ellps=WGS84 +units=m +no_defs");
-
-  return coordsArray.map((coord) => {
-    const [longitude, latitude] = coord;
-    const [x, y] = proj4(originalEPSG, "EPSG:3857", [longitude, latitude]);
-    return [x, y];
-  });
-}
 
 // Function to convert coordinates from EPSG:4326 to EPSG:3857
 function convertToEPSG25832(coordsArray, originalEPSG) {
