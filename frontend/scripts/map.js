@@ -85,8 +85,8 @@ map.on("draw:created", function (c) {
         });
     }
 
-    // Retrieves the coordinates of the shape
-    var coords;
+        // Retrieves the coordinates of the shape
+        var coords;
     if (layer instanceof L.Polygon) {
         // Retrieves all the coordinates of the polygon
         coords = layer.getLatLngs();
@@ -174,6 +174,22 @@ async function updateCoordinateFile(coordinates) {
     return data; // Return the server's response data
 }
 
+const geoJSONData = {
+    "type": "FeatureCollection",
+    "name": "leafletArea",
+    "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::25832" } },
+    "features": [
+    { "type": "Feature", "properties": { "id": 0 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 445455.840260153403506, 6447241.938237250782549 ], [ 446411.136294620053377, 6446821.367656039074063 ], [ 446200.851004014199134, 6445709.859691408462822 ], [ 445696.166306560102385, 6445000.897854508832097 ], [ 444800.951783695199993, 6444171.772994405589998 ], [ 444392.397504803782795, 6444315.968622249551117 ], [ 443749.52533066587057, 6445295.297261357307434 ], [ 444512.560528007161338, 6446989.595888524316251 ], [ 445455.840260153403506, 6447241.938237250782549 ] ] ] ] } }
+    ]
+    }
+    
+
+function showDisclosedAreas(){
+    let coordinatesToDraw = geoJSONData["features"][0]["geometry"]["coordinates"][0][0]
+    drawCoordinatesOnMap(coordinatesToDraw)
+}
+
+
 
 // Save, convert, draw on map
 function saveCoordinates() { // Function to save the coordinates entered by the user
@@ -196,3 +212,37 @@ function saveCoordinates() { // Function to save the coordinates entered by the 
 function noScroll() { 
     map.scrollWheelZoom.disable();
 }
+
+
+// Function to display given coordinates on a map by drawing a polygon.
+function drawCoordinatesOnMap(coordinates) {
+
+    // Define a style for the GeoJSON layer
+    var geoJsonLayerStyle = {
+        color: "#cd32cd", // Orange line color
+        weight: 20,        // Line thickness
+        opacity: 0.65     // Line opacity
+    };
+    // Define projections for converting between coordinate systems using proj4.
+      proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
+      proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
+  
+    // Convert the coordinates from EPSG:25832 to EPSG:4326 (a common format for web maps).
+    var coordinates4326 = coordinates.map((coord) =>
+      proj4("EPSG:25832", "EPSG:4326", coord)
+    );
+  
+    let correctedPairs = [];
+    // Correct the order of coordinates for compatibility with the mapping library.
+    for(let i = 0; i < coordinates4326.length; i++){
+      correctedPairs.push([coordinates4326[i][1], coordinates4326[i][0]]);
+    }
+  
+    // Use Leaflet to draw a polygon on the map using the converted and corrected coordinates.
+    const polygon = L.polygon(correctedPairs, { color: "red" }).addTo(map);
+    polygon.setStyle({fillColor: "#ffffff"})
+    polygon.setStyle({color: "#cd32cd"})
+    polygon.setStyle({opacity: 0.65})
+    // Adjust the map view to fit the bounds of the polygon.
+    map.fitBounds(polygon.getBounds());
+  }
