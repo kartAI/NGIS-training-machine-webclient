@@ -41,8 +41,8 @@ window.onload = () => {
 // Function to display given coordinates on a map by drawing a polygon.
 function drawCoordinatesOnMap(coordinates) {
   // Define projections for converting between coordinate systems using proj4.
-  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
-  proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
+    proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
+    proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
 
   // Convert the coordinates from EPSG:25832 to EPSG:4326 (a common format for web maps).
   var coordinates4326 = coordinates.map((coord) =>
@@ -117,7 +117,7 @@ function convertToEPSG25832(coordsArray, originalEPSG) {
     const response = await fetch("/updateCoordinateFile", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json", "application/geo+json": "", 
+        "Content-Type": "application/json", 
       },
       body: JSON.stringify({ input: coordinates }), // Send the coordinates as JSON.
     });
