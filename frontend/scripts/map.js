@@ -85,8 +85,8 @@ map.on("draw:created", function (c) {
         });
     }
 
-    // Retrieves the coordinates of the shape
-    var coords;
+        // Retrieves the coordinates of the shape
+        var coords;
     if (layer instanceof L.Polygon) {
         // Retrieves all the coordinates of the polygon
         coords = layer.getLatLngs();
@@ -174,6 +174,69 @@ async function updateCoordinateFile(coordinates) {
     return data; // Return the server's response data
 }
 
+const geoJSONData = {
+    "type": "FeatureCollection",
+    "name": "leafletHighlight",
+    "crs": {
+      "type": "name",
+      "properties": {
+        "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+    },
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "id": 0
+        },
+        "geometry": {
+          "type": "MultiPolygon",
+          "coordinates": [
+            [
+              [
+                [58.161162677136666, 8.08024462074493],
+                [58.163088906459535, 8.065464745712365],
+                [58.16125440470738, 8.060827922172738],
+                [58.1559643950546, 8.054220448628769],
+                [58.15394603382506, 8.052655520684144],
+                [58.148410243600964, 8.052133878035935],
+                [58.14376073804149, 8.052771441272633],
+                [58.142567674904754, 8.053872686863293],
+                [58.141588721445665, 8.053872686863293],
+                [58.140242616490056, 8.058161748637454],
+                [58.14018142869202, 8.062218969234628],
+                [58.14207820153972, 8.065348825123877],
+                [58.14446432063769, 8.07392694867219],
+                [58.1445255010759, 8.076129439853512],
+                [58.149480767422986, 8.077752328092382],
+                [58.15278389512783, 8.084243881047861],
+                [58.1559643950546, 8.086214531052203],
+                [58.15694295323303, 8.086794133994657],
+                [58.161162677136666, 8.08024462074493]
+              ]
+            ]
+          ]
+        }
+      }
+    ]
+  }
+
+// Define a style for the GeoJSON layer
+    var geoJsonLayerStyle = {
+        color: "#cd32cd", // Orange line color
+        weight: 20,        // Line thickness
+        opacity: 0.65     // Line opacity
+    };
+
+    // Add the GeoJSON layer with the defined style
+    L.geoJSON(geoJSONData, { 
+        style: geoJsonLayerStyle,
+        onEachFeature: function(feature, layer) {
+            if (feature.properties && feature.properties.popupContent) {
+                layer.bindPopup(feature.properties.popupContent);
+            }
+        }
+    }).addTo(map); // Add the GeoJSON layer to the map
 
 // Save, convert, draw on map
 function saveCoordinates() { // Function to save the coordinates entered by the user
