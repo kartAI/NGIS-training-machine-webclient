@@ -47,14 +47,14 @@ cardData.forEach(card => {
 
 // On window load, set up necessary cookies for the session
 window.onload = () => {
-  setup_cookies(); // Call the function to set up cookies
+  setup_user_folders(); // Call the function to set up cookies
 }
 
 // Sets up cookies by making a POST request to the server
 // @returns {Promise<Object>} A promise that resolves with the server response data
 
-async function setup_cookies() {
-  const response = await fetch('/cookies', {
+async function setup_user_folders() {
+  const response = await fetch('/setupUserSessionFolders', {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
