@@ -25,27 +25,31 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
     training_files = int(training_fraction)/100 * int(tiles)
     validation_files = int(validation_fraction)/100 * int(tiles)
 
-    # Copy the files into the right places
-    for i in range(0, tiles):
+    training_tiles = os.listdir(os.path.join(image_path, "orto"))
+    validation_tiles = os.listdir(os.path.join(image_path, "fasit"))
+
+    for i in range(0, len(training_tiles)):
+        print(os.path.join(image_path, "orto", training_tiles[i]))
         if(i < training_files):
-            os.path.join(image_path, "orto", f"tile_{i}_{i}.png")
-            os.path.join(output_folder, "train", "images")
-            os.path.join(output_folder, "train", "mask")
-            try:
-                # Utilizes the shutil library to copy the files
-                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}.png"),   os.path.join(output_folder, "train", "images")) 
-                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}.png"),   os.path.join(output_folder, "train", "masks"))
-            except:
-                print("Something went wrong with copying training data...") # Prints out error message if something goes wrong
-                return
+            destination = os.path.join(output_folder, "train", "images")
         else:
-            try:
-                # Utilizes the shutil library to copy the files
-                shutil.copy2(os.path.join(image_path, "orto", f"tile_{i}.png"),   os.path.join(output_folder, "val", "images"))
-                shutil.copy2( os.path.join(image_path, "fasit", f"tile_{i}.png"),   os.path.join(output_folder, "val", "masks"))
-            except:
-                print("Something went wrong with copying validation data...") # Prints out error message if something goes wrong
-                return
+            destination = os.path.join(output_folder, "val", "images")
+        try:
+            shutil.copy2(os.path.join(image_path, "orto", training_tiles[i]), destination)
+        except:
+            print("Couldn't copy training data correctly")
+
+    for i in range(0, len(validation_tiles)):
+        print(os.path.join(image_path, "orto", validation_tiles[i]))
+        if(i < training_files):
+            destination = os.path.join(output_folder, "train", "masks")
+        else:
+            destination = os.path.join(output_folder, "val", "masks")
+        try:
+            shutil.copy2(os.path.join(image_path, "fasit", validation_tiles[i]), destination)
+        except:
+            print("Couldn't copy validation data correctly")
+
 
 
 def setup_user_session_folders(session_id):
@@ -155,3 +159,17 @@ def create_bbox_array(coordinates, config):
             
             bboxes.append([x0, y0, x1, y1])
     return bboxes
+
+def create_bbox(coordinates):
+    '''
+    Creates a bbox based on coordiantess
+    Args:
+    coordinates (array): An array of the coordinates you want to convert to bbox
+    Return:
+    The requested bbox 
+    '''
+    min_x = min(coord[0] for coord in coordinates)
+    min_y = min(coord[1] for coord in coordinates)
+    max_x = max(coord[0] for coord in coordinates)
+    max_y = max(coord[1] for coord in coordinates)
+    return {"minx": min_x, "miny":min_y, "maxx":max_x, "maxy":max_y}
