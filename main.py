@@ -13,6 +13,7 @@ from application import util
 from application import ortoPhotoWMS
 from application import labelPhotoWMS
 from application import ortoCOG
+from application import labelFGB
 from zipfile import ZipFile
 import random
 
@@ -132,7 +133,7 @@ def get_paths(session_id):
     This function dynamically returns the path of the user's folders based on the session id
     Args:
     session_id (str): The id for the session you want to return folder paths for.
-    
+     
     Returns:
     (Set) A set of key value pairs where the key is the name of the path you want and the value is the path itself
     '''
@@ -284,8 +285,9 @@ async def generatePhotos(request: Request):
             if os.path.isfile(os.path.join(paths["root"],"tiles", "orto", path)):
                 trainingTiles += 1 # Increment the amount of tiles
 
-        if(labelTiles != trainingTiles):
-            return {"message": "Amount of tiles do not match, please try again"}
+        #if(labelTiles != trainingTiles):
+            #TODO: Update the error checking code here, doesn't work if you have both tif and jpg with COGs
+            #return {"message": "Amount of tiles do not match, please try again"}
         
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
         
@@ -301,6 +303,10 @@ def generateTrainingData(paths, label_source, orto_source):
         if labelPhotoWMS.generate_label_data_colorized(paths) is not True:
             print("Label photo (Colorized) failed")
             all_ran = False
+    elif(label_source == "FGB"):
+        if labelFGB.generate_label_data(paths) is not True:
+            print("Label photo (FGB) failed")
+            all_ran = False  
     if(orto_source == "WMS"):
         if ortoPhotoWMS.generate_training_data(paths) is not True:
             print("Ortophoto failed")
