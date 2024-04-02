@@ -192,3 +192,32 @@ async function generatePhotos() {
 function loadingModal() {
   $('#loadingModal').modal('show');
 }
+
+
+
+
+// Add event listeners to the input fields
+inputTraining.addEventListener("input", updateValidation);
+inputValidation.addEventListener("input", updateTraining);
+
+// Function to update validation input based on training input
+function updateValidation() {
+  const trainingValue = parseFloat(inputTraining.value);
+  if (!isNaN(trainingValue)) {
+    const validationValue = 100 - trainingValue;
+    inputValidation.value = validationValue > 0 ? validationValue : 0;
+  }
+}
+
+// Function to update training input based on validation input
+function updateTraining() {
+  const validationValue = parseFloat(inputValidation.value);
+  if (!isNaN(validationValue)) {
+    const trainingValue = 100 - validationValue;
+    inputTraining.value = trainingValue > 0 ? trainingValue : 0;
+  }
+}
+
+// Initialize values when the page loads
+updateValidation();
+updateTraining();
