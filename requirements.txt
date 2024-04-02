@@ -19,3 +19,5 @@ pytest
 python-env
 imageio
 rasterio
+shapely
+geopandas

@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
 
     <title>Trainingdata Generator</title>
 
@@ -75,7 +73,7 @@
                     name="mapDatabase"
                     value="WMS"
                     checked
-                    />
+                  />
                   <label for="wms"
                     >WMS</label
                   >
@@ -111,7 +109,8 @@
                     id="wms-ortofoto"
                     name="ortoDatabase"
                     value="WMS"
-                  checked/>
+                    checked
+                  />
                   <label for="wms"
                     >WMS</label
                   >
@@ -143,28 +142,10 @@
         <!-- Cards -->
         <div id="card-container"></div>
       </div>
-     </div>
+    </div>
 
     <!-- Custom Scripts -->
     <script src="frontend/scripts/script.js"></script>
     <script src="frontend/scripts/methods.js"></script>
-    <script>
-      window.onload = () => {
-        setup_folders();
-      };
-
-      async function setup_folders() {
-        const response = await fetch("/setupUserSessionFolders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const data = await response.json();
-        return data;
-      }
-    </script>
   </body>
 </html>
-

@@ -1,30 +1,23 @@
 import os
-from zipfile import ZipFile
-import base64
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, HTTPException
+import base64
+from pydantic import BaseModel
+from fastapi import FastAPI, Response, Depends, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-from fastapi import Response
-from fastapi import HTTPException, FastAPI, Response, Depends
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from application import util
 from application import ortoPhotoWMS
 from application import labelPhotoWMS
 from application import ortoCOG
-from pydantic import BaseModel
-from uuid import UUID, uuid4
+from application import labelFGB
+from zipfile import ZipFile
 import random
-from fastapi.responses import FileResponse
-
-
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
-
 
 #Class for the coordinate inputs in the application
 class Input(BaseModel):
@@ -110,10 +103,10 @@ def get_session_id(request: Request): # Returns session ID
     Returns:
     The session ID that was requested if it exists, otherwise None
     '''
-    return request.cookies.get("session_id", None)
+    return request.cookies.get("session_id", None) # Returns the session ID if it exists, otherwise None
 
 @app.post("/cookies")
-def read_main(request: Request, response: Response):
+def read_main(request: Request, response: Response): # Sets session ID in cookie
     '''
     This function is a fastAPI route that sets the session_id and session_id cookie 
     Args:
@@ -124,10 +117,10 @@ def read_main(request: Request, response: Response):
     message (bool): True if the cookie was set successfully, false otherwise
     '''
     session_id = get_session_id(request)  # Corrected function call
-    if not session_id:
+    if not session_id: # If the session ID does not exist, set the cookie
         set_session_cookie(response)
         return {"message": True}
-    return {"message": False}
+    return {"message": False} 
 
 
 '''
@@ -140,13 +133,13 @@ def get_paths(session_id):
     This function dynamically returns the path of the user's folders based on the session id
     Args:
     session_id (str): The id for the session you want to return folder paths for.
-    
+     
     Returns:
     (Set) A set of key value pairs where the key is the name of the path you want and the value is the path itself
     '''
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     return {"coordinates": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id), "coordinates.json")), "config": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id), "config.json")), "root": os.path.abspath(os.path.join(BASE_DIR, "datasets", "dataset_" + str(session_id)))}
-
+    # Returns the path to the coordinates and config files for the session
 
 @app.post("/setupUserSessionFolders")
 async def setup_session_folders(request: Request, response: Response):
@@ -157,18 +150,19 @@ async def setup_session_folders(request: Request, response: Response):
     response (Response): The response object that the session is attached to, this is handled by FastAPI
     
     '''
-    session_id = get_session_id(request);
-    if session_id == None:
+    session_id = get_session_id(request);  # Get the session ID from the cookie
+    if session_id == None: 
         set_session_cookie(response, None)
         print("Cookie not set, returning to home")
-        return FileResponse(os.path.join("frontend", "pages", "home.html"))
+        return FileResponse(os.path.join("frontend", "pages", "home.html")) # Return to home if the cookie is not set
     else:
-        print(f"Existing session, session_id: {session_id}")
+        print(f"Existing session, session_id: {session_id}") # Print the session ID if it exists
         session_id = request.cookies.get("session_id", None)
         if(util.setup_user_session_folders(session_id)):
-            print(f"All folders were created successfully for session: {session_id}")
+            print(f"All folders were created successfully for session: {session_id}") 
         else:
-            print(f"Error creating folders for session: {session_id}")
+            print(f"Error creating folders for session: {session_id}") 
+            return {"message": "Something went wrong when setting up the application, please delete your cookie settings and try again!"}
 
 
 
@@ -185,14 +179,16 @@ async def update_coordinate_file(input: Input, request: Request):
     Returns:
     A message if the coordinates were updated successfully
     '''
-    session_id = request.cookies.get("session_id", None)
-    coordinate_path = get_paths(session_id)["coordinates"]
-    data = {"Coordinates": input.input}
-    if(util.write_file(coordinate_path, data)):
-        return {"Message": "Coordinates were updated successfully"}
+    session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
+    coordinate_path = get_paths(session_id)["coordinates"]  # Get the path to the coordinates file
+    data = {"Coordinates": input.input} # Get the input from the request
+    if(util.write_file(coordinate_path, data)): # Write the data to the coordinates file
+        return {"success_message": "Coordinates were updated successfully"}
+    else:
+        return {"error_message": "Could not add your chosen coordinates, please try again!"}
     
 #Route for updating the config file with the data source choices
-@app.post("/updateDataSources")
+@app.post("/updateDataSources") 
 async def update_data_source(dataSourceInput: DataSourceInput, request: Request):
     '''
     Updates the Config file with data sources
@@ -206,7 +202,7 @@ async def update_data_source(dataSourceInput: DataSourceInput, request: Request)
     '''
 
     data = {"Config": {
-        "label_source": dataSourceInput.label_source,
+        "label_source": dataSourceInput.label_source, 
         "orto_source": dataSourceInput.orto_source,
         "data_parameters": "",
         "layers": "",
@@ -214,10 +210,12 @@ async def update_data_source(dataSourceInput: DataSourceInput, request: Request)
         "tile_size": "",
         "image_resolution": ""
     }}
-    session_id = request.cookies.get("session_id", None)
-    config_path = get_paths(session_id)["config"]
-    if(util.write_file(config_path, data)):
-        return {"Message": "Config was updated successfully"}
+    session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
+    config_path = get_paths(session_id)["config"] # Get the path to the config file
+    if(util.write_file(config_path, data)): # Write the data to the config file
+        return {"message": "Data sources updated successfully!", "error": 0}
+    else:
+        return {"message": "Could not update your data sources, please try again!", "error": 1}
 
 
 #Route for updating the coordinate file in the WMS/Resources folder
@@ -233,10 +231,10 @@ async def update_config_file(configInput: ConfigInput, request: Request):
     Returns:
     A message if the config was updated successfully
     '''
-    session_id = request.cookies.get("session_id", None)
-    config_path = get_paths(session_id)["config"]
-    label_source = util.read_file(config_path)["Config"]["label_source"]
-    orto_source = util.read_file(config_path)["Config"]["orto_source"]
+    session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
+    config_path = get_paths(session_id)["config"] # Get the path to the config file
+    label_source = util.read_file(config_path)["Config"]["label_source"] # Get the label source from the config
+    orto_source = util.read_file(config_path)["Config"]["orto_source"] # Get the orto source from the config
 
     data = {"Config": {
         "label_source": label_source, 
@@ -250,6 +248,8 @@ async def update_config_file(configInput: ConfigInput, request: Request):
    
     if(util.write_file(config_path, data)):
         return {"Message": "Config was updated successfully"}
+    else:
+        return {"error_message": "Could not update your application settings, please try again!"}
 
 
 @app.post("/generatePhotos")
@@ -265,35 +265,37 @@ async def generatePhotos(request: Request):
     '''
 
     #Read config from the file
-    session_id = request.cookies.get("session_id", None)
-    paths = get_paths(session_id)
-    config = util.read_file(paths["config"])["Config"];
-    label_source = config["label_source"]
-    orto_source = config["orto_source"]
+    session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
+    paths = get_paths(session_id) # Get the paths for the session
+    config = util.read_file(paths["config"])["Config"]; # Read the config file
+    label_source = config["label_source"] # Get the label source from the config
+    orto_source = config["orto_source"] # Get the orto source from the config
+   
 
     if generateTrainingData(paths, label_source, orto_source) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
         print("Something went wrong with generating the data")
-        return {"Message": "Something went wrong with generating the data"}
+        return {"message": "Something went wrong with generating the data"}
     else:
         labelTiles = 0
-        for path in os.listdir(os.path.join(paths["root"],"tiles", "fasit")):
-            if os.path.isfile(os.path.join(paths["root"],"tiles", "fasit", path)):
-                labelTiles += 1
-        trainingTiles = 0
-        for path in os.listdir(os.path.join(paths["root"],"tiles", "orto")):
+        for path in os.listdir(os.path.join(paths["root"],"tiles", "fasit")): # Check if the amount of tiles match
+            if os.path.isfile(os.path.join(paths["root"],"tiles", "fasit", path)): 
+                labelTiles += 1 # Increment the amount of tiles
+        trainingTiles = 0 
+        for path in os.listdir(os.path.join(paths["root"],"tiles", "orto")): # Check if the amount of tiles match
             if os.path.isfile(os.path.join(paths["root"],"tiles", "orto", path)):
-                trainingTiles += 1
+                trainingTiles += 1 # Increment the amount of tiles
 
-        if(labelTiles != trainingTiles):
-            return {"Message": "Amount of tiles do not match, please try again"}
+        #if(labelTiles != trainingTiles):
+            #TODO: Update the error checking code here, doesn't work if you have both tif and jpg with COGs
+            #return {"message": "Amount of tiles do not match, please try again"}
         
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
         
         zip_files(os.path.join(paths["root"]), f"Dataset_{session_id}.zip")
         return 0
     
-def generateTrainingData(paths, label_source, orto_source):
-    all_ran = True
+def generateTrainingData(paths, label_source, orto_source): 
+    all_ran = True # Check if all the functions ran successfully
     if(label_source == "WMS"):
         if labelPhotoWMS.generate_label_data(paths) is not True:
             print("Label photo (Non-colorized) failed")
@@ -301,18 +303,21 @@ def generateTrainingData(paths, label_source, orto_source):
         if labelPhotoWMS.generate_label_data_colorized(paths) is not True:
             print("Label photo (Colorized) failed")
             all_ran = False
+    elif(label_source == "FGB"):
+        if labelFGB.generate_label_data(paths) is not True:
+            print("Label photo (FGB) failed")
+            all_ran = False  
     if(orto_source == "WMS"):
         if ortoPhotoWMS.generate_training_data(paths) is not True:
             print("Ortophoto failed")
             all_ran = False
- 
     elif(orto_source == "COG"):
         if ortoCOG.generate_cog_data(paths) is not True:
             print("COG photo  failed")
             all_ran = False
 
-    
-    return all_ran
+    return all_ran # Return if all the functions ran successfully
+
 
     
 
@@ -330,10 +335,10 @@ async def download_file(request: Request):
 
     session_id = request.cookies.get("session_id", None)
     paths = get_paths(session_id)
-    headers = {'Content-Disposition': f'attachment; filename="Dataset_{session_id}.zip"'}
-    return FileResponse(os.path.join(paths["root"], f"Dataset_{session_id}.zip") ,headers= headers)
+    headers = {'Content-Disposition': f'attachment; filename="Dataset_{session_id}.zip"'} # Set the headers for the file
+    return FileResponse(os.path.join(paths["root"], f"Dataset_{session_id}.zip") ,headers= headers) # Return the file for download
 
-@app.post("/deleteFile")
+@app.post("/deleteFile") # Deletes the file after download
 async def delete_files(request: Request):
     '''
     FastAPI route that deletes a user's files after downloading
@@ -343,7 +348,7 @@ async def delete_files(request: Request):
     
     '''
     session_id = request.cookies.get("session_id", None)
-    util.teardown_user_session_folders(session_id)
+    util.teardown_user_session_folders(session_id) # Delete the files for the session
 
 
 # Her begynner fil zipping og epost sending for WMS/Fasit

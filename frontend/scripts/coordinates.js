@@ -1,82 +1,87 @@
-window.onload = () => {
-  const inputCoordinates = document.getElementById("coordinates-input");
-  const doneButton = document.getElementById("done-button");
-  const coordSys = document.getElementById("coordSys"); // Get the coordSys element
+// This script is designed to interact with a web page for handling geographical coordinates.
+// It includes functionality for parsing, converting, and displaying coordinates on a map.
 
+// Set up an event listener for when the window finishes loading.
+window.onload = () => {
+  // Access elements from the document using their ID to interact with the UI.
+  const inputCoordinates = document.getElementById("coordinates-input"); // Input field for user to enter coordinates.
+  const doneButton = document.getElementById("done-button"); // Button for user to indicate completion of coordinate input.
+  const coordSys = document.getElementById("coordSys"); // Dropdown for selecting the coordinate system.
+
+  // Add an event listener to the "Done" button for when it is clicked.
   doneButton.addEventListener("click", async () => {
-    const coordSysValue = coordSys.value; // Get the selected EPSG value
+    const coordSysValue = coordSys.value; // Retrieve the value of the selected coordinate system.
+
+    // Check if the user has selected a coordinate system before proceeding.
     if (coordSysValue === "Choose coordinatesystem") {
       alert("Please choose a coordinatesystem before proceeding.");
-      return;
+      return; // Exit the function early if no coordinate system is selected.
     }
 
-    let coordinateArray = parseCoordinates(
-      inputCoordinates.value,
-      coordSysValue
-    );
+    // Parse the input coordinates based on the selected coordinate system.
+    let coordinateArray = parseCoordinates(inputCoordinates.value, coordSysValue);
+
+    // If the selected system is not EPSG:25832, convert the coordinates to EPSG:25832.
     if (coordSysValue != "EPSG:25832") {
       coordinateArray = convertToEPSG25832(coordinateArray, coordSysValue);
     }
-    drawCoordinatesOnMap(coordinateArray)
+
+    // Display the coordinates on a map.
+    drawCoordinatesOnMap(coordinateArray);
     console.log("Coordinates that will be pushed:" + coordinateArray);
-    // Enable the next button
+
+    // Enable the next button in the UI, typically allowing the user to proceed with the next action.
     enableNextButton();
-    // Send the coordinates to the server
+
+    // Send the updated coordinates to the server for processing or storage.
     updateCoordinateFile(coordinateArray);
   });
 };
 
+// Function to display given coordinates on a map by drawing a polygon.
 function drawCoordinatesOnMap(coordinates) {
-  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
-  proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
+  // Define projections for converting between coordinate systems using proj4.
+    proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
+    proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
 
+  // Convert the coordinates from EPSG:25832 to EPSG:4326 (a common format for web maps).
+  var coordinates4326 = coordinates.map((coord) =>
+    proj4("EPSG:25832", "EPSG:4326", coord)
+  );
 
-  let coordsArray = []
-  for (let i = 0; i < coordinates.length; i += 2) {
-    const latLng = L.latLng(parseFloat(coordinates[i][0]), parseFloat(coordinates[i][1]));
-    coordsArray.push(latLng);
+  let correctedPairs = [];
+  // Correct the order of coordinates for compatibility with the mapping library.
+  for(let i = 0; i < coordinates4326.length; i++){
+    correctedPairs.push([coordinates4326[i][1], coordinates4326[i][0]]);
   }
 
-
-  let convertedCoordsArray;
-  convertedCoordsArray = coordsArray.map(coord => {
-    const [y, x] = proj4("EPSG:25832", "EPSG:3857", [coord.lat, coord.lng]);
-    return [y, x];
-  });
-  const polygon = L.polygon(convertedCoordsArray, { color: "red" }).addTo(map);
+  // Use Leaflet to draw a polygon on the map using the converted and corrected coordinates.
+  const polygon = L.polygon(correctedPairs, { color: "red" }).addTo(map);
+  // Adjust the map view to fit the bounds of the polygon.
   map.fitBounds(polygon.getBounds());
 }
 
+// Function to parse input coordinates from a string to an array of coordinate pairs.
 function parseCoordinates(coordinates) {
-  //If the coordiantes are input as points [x,y], [x,y] for example, we need to make it convert it
+  // Check if the input format is an array of coordinates in string format.
   if (coordinates[0] == "[") {
-    // Remove the square brackets and split the string into pairs of coordinates
+    // Process the string to separate individual coordinate pairs.
     let pairs = coordinates.slice(1, -1).split("], [");
 
-    // Initialize an array to store the result
     let resultString = "";
-
-    // Iterate over each pair of coordinates
     pairs.forEach((pair, index) => {
-      // Split the pair into individual coordinates
-      let coordinates = pair.split(", ");
-
-      // Convert coordinates to string and add to the result string
-      resultString += coordinates.join(",");
-
-      // Add a comma if it's not the last pair
+      let coords = pair.split(", ");
+      resultString += coords.join(",");
       if (index !== pairs.length - 1) {
         resultString += ",";
       }
     });
-
     coordinates = resultString;
   }
 
-  // Get the input value and split it by commas
+  // Convert the string of coordinates into an array of numeric coordinate pairs.
   let inputCoordinates = coordinates.split(",");
   let coordsArray = [];
-
   for (let i = 0; i < inputCoordinates.length; i += 2) {
     let coord = [
       parseFloat(inputCoordinates[i]),
@@ -88,53 +93,45 @@ function parseCoordinates(coordinates) {
   return coordsArray;
 }
 
-// Function to convert coordinates from EPSG:4326 to EPSG:3857
-function convertToEPSG4326(coordsArray, originalEPSG) {
-  //Add custom projections to proj4 for other EPSGs
-  proj4.defs(
-    "EPSG:25832",
-    "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs"
-  );
-  proj4.defs("EPSG:5972", "+proj=utm +zone=33 +ellps=WGS84 +units=m +no_defs");
 
-  return coordsArray.map((coord) => {
-    const [longitude, latitude] = coord;
-    const [x, y] = proj4(originalEPSG, "EPSG:3857", [longitude, latitude]);
-    return [x, y];
-  });
-}
-
-// Function to convert coordinates from EPSG:4326 to EPSG:3857
+// Converts coordinates from any supported EPSG system to EPSG:25832.
 function convertToEPSG25832(coordsArray, originalEPSG) {
-  //Add custom projections to proj4 for other EPSGs
+  // Add definitions for the target projection system.
   proj4.defs(
     "EPSG:25832",
     "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs"
-  );
-  proj4.defs("EPSG:5972", "+proj=utm +zone=33 +ellps=WGS84 +units=m +no_defs");
-
-  return coordsArray.map((coord) => {
-    const [longitude, latitude] = coord;
-    const [x, y] = proj4(originalEPSG, "EPSG:25832", [longitude, latitude]);
-    return [x, y];
-  });
-}
-
-async function updateCoordinateFile(coordinates) {
-  //Make a POST Request to the server
-  const response = await fetch("/updateCoordinateFile", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ input: coordinates }),
-  });
-
-  const data = await response.json();
-  return data;
-}
-
-function enableNextButton() {
-  const nextButton = document.getElementById("next-button");
-  nextButton.disabled = false;
-}
+    );
+    // Additional projection definitions can be added here for other EPSG codes as needed.
+  
+    // Convert each coordinate in the array from the original EPSG system to EPSG:25832.
+    return coordsArray.map((coord) => {
+      const [longitude, latitude] = coord;
+      const [x, y] = proj4(originalEPSG, "EPSG:25832", [longitude, latitude]);
+      return [x, y]; // Return the converted coordinate pair.
+    });
+  }
+  
+  // Asynchronously updates the server with the new coordinates.
+  async function updateCoordinateFile(coordinates) {
+    // Make a POST request to the server endpoint designated for updating the coordinate file.
+    const response = await fetch("/updateCoordinateFile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify({ input: coordinates }), // Send the coordinates as JSON.
+    });
+  
+    // Await the JSON response from the server, which could include confirmation or result data.
+    const data = await response.json();
+    return data; // Return the server's response data.
+  }
+  
+  // Enables the "Next" button in the UI, typically after a successful operation.
+  function enableNextButton() {
+    // Access the "Next" button using its document ID.
+    const nextButton = document.getElementById("next-button");
+    // Enable the button by setting its `disabled` property to false.
+    nextButton.disabled = false;
+  }
+  
