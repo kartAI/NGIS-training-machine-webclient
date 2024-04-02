@@ -1,21 +1,26 @@
-// Listen for changes in the file input element
-document.getElementById('file-input').addEventListener('change', function () {
-    // Retrieve the first file selected by the user
-    var file = this.files[0];
 
-    // Define the allowed MIME types for GeoJSON and JSON file upload
-    var allowedTypes = ['application/json', 'application/geo+json'];
+
+function uploadFile(){
+    coordSysElement = document.getElementById("coordSys")
+    fileElement = document.getElementById("file-input")
     
-    // Check if the uploaded file type is among the allowed types
-    if (!allowedTypes.includes(file.type)) {
-        // Alert the user if the file type is not allowed and stop further processing
-        alert('Only GeoJSON and JSON files are allowed.');
-        return; // Exit the function early
+    if(coordSysElement.value === "None"){
+        alert("Please choose a coordinate system!")
+        return
     }
+
+    if(!fileElement.files[0]){
+        alert("Please add a file!")
+        return
+    }
+    
+    // Retrieve the first file selected by the user
+    var file = fileElement.files[0];
 
     // Initialize FileReader to read the content of the file
     var reader = new FileReader();
 
+    
     // Function to be called when the file is successfully read
     reader.onload = function (e) {
         // Attempt to parse the file content as JSON
@@ -32,8 +37,18 @@ document.getElementById('file-input').addEventListener('change', function () {
             // Add the processed layer to the map and adjust the map's view accordingly
             geojsonLayer.addTo(map);
             map.fitBounds(geojsonLayer.getBounds());
+
+            let coordinateArray = data["features"][0]["geometry"]["coordinates"][0]
+            console.log(coordinateArray)
+            console.log(coordSysElement.value)
+            if(coordSysElement.value != "EPSG:25832"){
+                coordinateArray = convertToEPSG25832(coordinateArray, coordSysElement.value)
+            }
+            console.log(coordinateArray)
+            console.log(data["features"][0]["geometry"]["coordinates"])
+            updateCoordinateFile(coordinateArray)
         } catch (error) {
-            // Alert the user in case of an error parsing the JSON file
+            // Alert the user in case of an error parsing the JSON file content 
             alert('Error parsing the JSON file: ' + error);
         }
     };
@@ -47,7 +62,8 @@ document.getElementById('file-input').addEventListener('change', function () {
 
     // Start reading the file as text; suitable for JSON and GeoJSON files
     reader.readAsText(file);
-});
+}
+
 
 // Event listener for the "Next" button click action
 document.getElementById('nextBtn').addEventListener('click', function () {
@@ -56,6 +72,36 @@ document.getElementById('nextBtn').addEventListener('click', function () {
         document.getElementById('fileUploadError').style.display = 'block';
     } else {
     // Continue to next step if the button is enabled
-
     }
 });
+
+// Converts coordinates from any supported EPSG system to EPSG:25832.
+function convertToEPSG25832(coordsArray, originalEPSG) {
+    // Add definitions for the target projection system.
+      proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
+      proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
+      // Additional projection definitions can be added here for other EPSG codes as needed.
+    
+      // Convert each coordinate in the array from the original EPSG system to EPSG:25832.
+      return coordsArray.map((coord) => {
+        const [longitude, latitude] = coord;
+        const [x, y] = proj4(originalEPSG, "EPSG:25832", [longitude, latitude]);
+        return [x, y]; // Return the converted coordinate pair.
+      });
+    }
+
+    // Asynchronously updates the server with the new coordinates.
+    async function updateCoordinateFile(coordinates) {
+      // Make a POST request to the server endpoint designated for updating the coordinate file.
+      const response = await fetch("/updateCoordinateFile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", 
+        },
+        body: JSON.stringify({ input: coordinates }), // Send the coordinates as JSON.
+      });
+    
+      // Await the JSON response from the server, which could include confirmation or result data.
+      const data = await response.json();
+      return data; // Return the server's response data.
+    }

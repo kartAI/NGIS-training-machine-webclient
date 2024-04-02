@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
 
     <title>Trainingdata Generator</title>
 
@@ -37,6 +35,7 @@
       <!-- Page content -->
       <div class="main-container">
         <!-- Headline and info -->
+
     <div class="text-center">
           <h1 class="display-4 fw-normal">Choose method for input of coordinates</h1>
         <br>
@@ -48,6 +47,7 @@
               <!-- Choose label data -->
             <div class="db-choice card" style="background-color: transparent !important;" onmouseover="this.style.backgroundColor='transparent'">
               <div class="card-body" style="width: max-content">
+
 
               <form id="labelForm">
                 <h5>
@@ -75,7 +75,7 @@
                     name="mapDatabase"
                     value="WMS"
                     checked
-                    />
+                  />
                   <label for="wms"
                     >WMS</label
                   >
@@ -111,7 +111,8 @@
                     id="wms-ortofoto"
                     name="ortoDatabase"
                     value="WMS"
-                  checked/>
+                    checked
+                  />
                   <label for="wms"
                     >WMS</label
                   >
@@ -133,38 +134,23 @@
             </div>
           
         </div>
-        <button type="button" class="btn btn-primary btn-lg px-4 gap-3" onclick="updateImageSources()" style="text-align: center !important;">Save option</button>
+
+        <button type="button" class="btn btn-primary btn-lg px-4 gap-3" 
+            onclick="updateImageSources()" style="text-align: center !important;">Save option</button>
         <p id="Error" style="color: red; font-size: 2rem;""></p>
       </div>
        </div>
 
 
 
+
         <!-- Cards -->
         <div id="card-container"></div>
       </div>
-     </div>
+    </div>
 
     <!-- Custom Scripts -->
     <script src="frontend/scripts/script.js"></script>
     <script src="frontend/scripts/methods.js"></script>
-    <script>
-      window.onload = () => {
-        setup_folders();
-      };
-
-      async function setup_folders() {
-        const response = await fetch("/setupUserSessionFolders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const data = await response.json();
-        return data;
-      }
-    </script>
   </body>
 </html>
-
