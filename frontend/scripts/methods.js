@@ -1,9 +1,7 @@
-
 // Displays an alert with information about the layer selection
 function showLayerInfo() {
   alert("Information about layer selection...");
 }
-
 
 // Displays an alert with information about Ortofoto
 function showOrtofotoInfo() {
@@ -13,26 +11,25 @@ function showOrtofotoInfo() {
 // Data structure representing the cards to be displayed on the webpage
 const cardData = [
   {
-    icon: 'fa-map-marker-alt', // Font Awesome icon class for the card
-    text: 'Draw shape on map', // Text displayed on the card
-    link: 'map.html' // URL the card links to
+    icon: "fa-map-marker-alt", // Font Awesome icon class for the card
+    text: "Draw shape on map", // Text displayed on the card
+    link: "map.html", // URL the card links to
   },
   {
-    icon: 'fa-keyboard', // Font Awesome icon class for the card
-    text: 'Write coordinates', // Text displayed on the card
-    link: 'coordinates.html' // URL the card links to
+    icon: "fa-keyboard", // Font Awesome icon class for the card
+    text: "Write coordinates", // Text displayed on the card
+    link: "coordinates.html", // URL the card links to
   },
   {
-    icon: 'fa-upload', // Font Awesome icon class for the card
-    text: 'Upload geoJSON-file', // Text displayed on the card
-    link: 'uploadFile.html' // URL the card links to
-  }
+    icon: "fa-upload", // Font Awesome icon class for the card
+    text: "Upload geoJSON-file", // Text displayed on the card
+    link: "uploadFile.html", // URL the card links to
+  },
 ];
 
-
 // Generates HTML content for cards based on cardData and appends it to the card container
-const cardContainer = document.getElementById('card-container');
-cardData.forEach(card => {
+const cardContainer = document.getElementById("card-container");
+cardData.forEach((card) => {
   const cardHtml = `
     <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm onClick="updateImageSources()">
       <div class="card-body">
@@ -44,18 +41,17 @@ cardData.forEach(card => {
   cardContainer.innerHTML += cardHtml; // Append the card HTML to the container
 });
 
-
 // On window load, set up necessary cookies for the session
 window.onload = () => {
   setup_user_folders(); // Call the function to set up cookies
-}
+};
 
 // Sets up cookies by making a POST request to the server
 // @returns {Promise<Object>} A promise that resolves with the server response data
 
 async function setup_user_folders() {
-  const response = await fetch('/setupUserSessionFolders', {
-    method: 'POST',
+  const response = await fetch("/setupUserSessionFolders", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -77,6 +73,10 @@ let cog_orto = document.getElementById("cog-ortofoto");
 
 async function updateImageSources() {
   console.log("Updating image sources...");
+
+  document.getElementById("loadingIcon").hidden = false;
+  document.getElementById("message").hidden = true;
+
   let labelSource = ""; // Variable to hold the label source selection
   let ortoSource = ""; // Variable to hold the Ortofoto source selection
   let filled = true; // Flag to check if all selections are made
@@ -106,27 +106,34 @@ async function updateImageSources() {
   // If all necessary selections are made, send the data to the server
   if (filled) {
     console.log("Sending selections to the server...");
-    const response = await fetch('/updateDataSources', {
-      method: 'POST',
+    const response = await fetch("/updateDataSources", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({"label_source": labelSource, "orto_source": ortoSource}),
+      body: JSON.stringify({
+        label_source: labelSource,
+        orto_source: ortoSource,
+      }),
     });
-    
+
     const data = await response.json(); // Parse the JSON response
-    console.log(data)
-    if(data.error == 1){
+    console.log(data);
+    if (data.error == 1) {
       let element = document.getElementById("message");
-      element.innerHTML = data.message
-      element.classList.add("alert-danger")
-      element.removeAttribute("hidden")
-    }else{
+      element.innerHTML = data.message;
+      element.classList.add("alert-danger");
+      element.removeAttribute("hidden");
+    } else {
       let element = document.getElementById("message");
-      element.innerHTML = data.message
-      element.classList.add("alert-success")
-      element.removeAttribute("hidden")
+      element.innerHTML = data.message;
+      element.classList.add("alert-success");
     }
+    setTimeout(() => {
+      document.getElementById("loadingIcon").hidden = true;
+      document.getElementById("message").hidden = false;
+    }, 1000); // 1000 milliseconds (1 second)
+
     return data; // Return the data for further processing
   } else {
     document.getElementById("Error").innerHTML = "Please select data sources";
