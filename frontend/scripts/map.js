@@ -34,6 +34,13 @@ var cornerCircles = [];
 // Binds listener to the event:created
 map.on("draw:created", function (c) {
 
+    //If there are objects that are drawn on the map already we remove them
+    map.eachLayer(function (layer) {
+        //Check to see the layer is of the correct type
+        if(layer instanceof L.Polygon || layer instanceof L.Circle){
+            map.removeLayer(layer)
+        }
+    });
     // Enable the next button
     document.getElementById("nextButton").disabled = false;
 
@@ -188,25 +195,6 @@ function showDisclosedAreas(){
     let coordinatesToDraw = geoJSONData["features"][0]["geometry"]["coordinates"][0][0]
     drawCoordinatesOnMap(coordinatesToDraw)
 }
-
-
-
-// Save, convert, draw on map
-function saveCoordinates() { // Function to save the coordinates entered by the user
-    var coordinatesInput = document.getElementById("coordi").value; // Get the coordinates entered by the user
-    console.log("coordinatesInput:", coordinatesInput); // Log 
-    var coordinatesArray = coordinatesInput.split(","); // Split the coordinates into an array
-    console.log("coordinatesArray:", coordinatesArray); // Log 
-    var latLngArray = []; // Store the latLng objects
-    for (var i = 0; i < coordinatesArray.length; i += 2) { // Loop through the coordinates
-        var latLng = L.latLng(parseFloat(coordinatesArray[i]), parseFloat(coordinatesArray[i + 1])); // Create a latLng object
-        latLngArray.push(latLng); // Add the latLng object to the array
-    }
-    console.log("latLngArray:", latLngArray); // Log 
-    var polygon = L.polygon(latLngArray, { color: "red" }).addTo(map); // Draw a red polygon on the map
-    map.fitBounds(polygon.getBounds()); // Fit the map to the polygon
-}
-
 
 // The function disables the scroll wheel zoom on the map.
 function noScroll() { 

@@ -49,7 +49,7 @@ def generate_label_data(file_paths):
         # Check if the response from the server was OK
         if response.status_code == 200:
             # Define the file name and path for the image
-            file_name = f"tile_{i}.png"
+            file_name = f"tile_{i}.tif"
             image_path = os.path.join(images_directory_path, file_name)
             
             # Save the image
