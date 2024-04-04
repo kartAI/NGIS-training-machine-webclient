@@ -4,6 +4,8 @@ import os
 import shutil
 import json
 from fastapi import HTTPException
+from shapely.geometry import Polygon, MultiPoint
+import shapely
 
 
 def split_files(image_path, output_folder, tiles, training_fraction, validation_fraction):
@@ -129,36 +131,78 @@ def create_bbox_array(coordinates, config):
     Return:
     The requested bbox 
     '''
-     # Calculate bounds for the bounding boxes
-    min_x = min(coord[0] for coord in coordinates)
-    min_y = min(coord[1] for coord in coordinates)
-    max_x = max(coord[0] for coord in coordinates)
-    max_y = max(coord[1] for coord in coordinates)
+    if(len(coordinates) > 5):
+        #Create one big bbox that covers the entire polygon
+        polygon = Polygon(coordinates)
+        bigBox = polygon.envelope
+        bigBoxCoords = list(bigBox.exterior.coords)
 
-    # Define starting and ending points
-    starting_point = [min_x, min_y]
-    ending_point = [max_x, max_y]
+        print("BOX:" + str(bigBoxCoords))
+        print("POLYGON" + str(polygon))
 
-    # Configure tile size and resolution
-    preferred_image_size = [config["tile_size"], config["tile_size"]] # Pixels per time, recommendend is 500
-    resolution = config["image_resolution"] # Meters per pixel, recommended is 0.2
-    bbox_size = [preferred_image_size[0]*resolution, preferred_image_size[1]*resolution]
-    
-    # Determine the number of images required to cover the area
-    num_images_x = int((ending_point[0] - starting_point[0]) / bbox_size[0])
-    num_images_y = int((ending_point[1] - starting_point[1]) / bbox_size[1])
-    
-    # Generate bounding boxes
-    bboxes = []
-    for x in range(num_images_x):
-        for y in range(num_images_y):
-            x0 = starting_point[0] + (x * bbox_size[0])
-            y0 = starting_point[1] + (y * bbox_size[1])
-            x1 = starting_point[0] + ((x + 1) * bbox_size[0])
-            y1 = starting_point[1] + ((y + 1) * bbox_size[1])
-            
-            bboxes.append([x0, y0, x1, y1])
-    return bboxes
+        # Calculate bounds for the bounding boxes
+        min_x = min(coord[0] for coord in bigBoxCoords)
+        min_y = min(coord[1] for coord in bigBoxCoords)
+        max_x = max(coord[0] for coord in bigBoxCoords)
+        max_y = max(coord[1] for coord in bigBoxCoords)
+
+        # Define starting and ending points
+        starting_point = [min_x, min_y]
+        ending_point = [max_x, max_y]
+
+        # Configure tile size and resolution
+        preferred_image_size = [config["tile_size"], config["tile_size"]] # Pixels per time, recommendend is 500
+        resolution = config["image_resolution"] # Meters per pixel, recommended is 0.2
+        bbox_size = [preferred_image_size[0]*resolution, preferred_image_size[1]*resolution]
+        
+        # Determine the number of images required to cover the area
+        num_images_x = int((ending_point[0] - starting_point[0]) / bbox_size[0])
+        num_images_y = int((ending_point[1] - starting_point[1]) / bbox_size[1])
+        
+        # Generate bounding boxes
+        bboxes = []
+        for x in range(num_images_x):
+            for y in range(num_images_y):
+                x0 = starting_point[0] + (x * bbox_size[0])
+                y0 = starting_point[1] + (y * bbox_size[1])
+                x1 = starting_point[0] + ((x + 1) * bbox_size[0])
+                y1 = starting_point[1] + ((y + 1) * bbox_size[1])
+                
+                coords = [[x0, y0], [x0 + bbox_size[0], y0],[x0, y0 + bbox_size[1]], [x1, y1]]
+                bbox = Polygon(coords)
+                if(bbox.intersects(polygon)):
+                    bboxes.append([x0, y0, x1, y1])
+        return bboxes
+    else:
+        # Calculate bounds for the bounding boxes
+        min_x = min(coord[0] for coord in coordinates)
+        min_y = min(coord[1] for coord in coordinates)
+        max_x = max(coord[0] for coord in coordinates)
+        max_y = max(coord[1] for coord in coordinates)
+
+        # Define starting and ending points
+        starting_point = [min_x, min_y]
+        ending_point = [max_x, max_y]
+
+        # Configure tile size and resolution
+        preferred_image_size = [config["tile_size"], config["tile_size"]] # Pixels per time, recommendend is 500
+        resolution = config["image_resolution"] # Meters per pixel, recommended is 0.2
+        bbox_size = [preferred_image_size[0]*resolution, preferred_image_size[1]*resolution]
+        
+        # Determine the number of images required to cover the area
+        num_images_x = int((ending_point[0] - starting_point[0]) / bbox_size[0])
+        num_images_y = int((ending_point[1] - starting_point[1]) / bbox_size[1])
+        
+        # Generate bounding boxes
+        bboxes = []
+        for x in range(num_images_x):
+            for y in range(num_images_y):
+                x0 = starting_point[0] + (x * bbox_size[0])
+                y0 = starting_point[1] + (y * bbox_size[1])
+                x1 = starting_point[0] + ((x + 1) * bbox_size[0])
+                y1 = starting_point[1] + ((y + 1) * bbox_size[1])
+                bboxes.append([x0, y0, x1, y1])
+        return bboxes
 
 def create_bbox(coordinates):
     '''
@@ -173,3 +217,27 @@ def create_bbox(coordinates):
     max_x = max(coord[0] for coord in coordinates)
     max_y = max(coord[1] for coord in coordinates)
     return {"minx": min_x, "miny":min_y, "maxx":max_x, "maxy":max_y}
+
+
+def square_bbox_from_polygon(polygon):
+    # Get the minimum bounding box of the polygon
+    min_x, min_y, max_x, max_y = polygon.bounds
+    
+    # Calculate the center of the bounding box
+    center_x = (min_x + max_x) / 2
+    center_y = (min_y + max_y) / 2
+    
+    # Calculate the width and height of the bounding box
+    width = max(max_x - min_x, max_y - min_y)
+    height = width
+    
+    # Create a square bounding box
+    square_bbox = Polygon([
+        (center_x - width / 2, center_y - height / 2),
+        (center_x + width / 2, center_y - height / 2),
+        (center_x + width / 2, center_y + height / 2),
+        (center_x - width / 2, center_y + height / 2),
+        (center_x - width / 2, center_y - height / 2)
+    ])
+    
+    return square_bbox

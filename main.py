@@ -236,6 +236,8 @@ async def update_config_file(configInput: ConfigInput, request: Request):
     label_source = util.read_file(config_path)["Config"]["label_source"] # Get the label source from the config
     orto_source = util.read_file(config_path)["Config"]["orto_source"] # Get the orto source from the config
 
+    print(configInput)
+
     data = {"Config": {
         "label_source": label_source, 
         "orto_source": orto_source,

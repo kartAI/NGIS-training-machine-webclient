@@ -45,7 +45,6 @@ def generate_label_data(file_paths):
     gdf = gpd.read_file(os.path.join(BASE_DIR, "resources", "FGBInput.fgb"))
     #Get the bbox from the util file
     temp = util.create_bbox(coordinates)
-    print(temp["minx"], temp["miny"], temp["maxx"], temp["maxy"])
     bbox = box(temp["minx"], temp["miny"], temp["maxx"], temp["maxy"])
     #Use the geopandas library to filter the features based on the bbox
     features_within_bbox = gdf[gdf.geometry.within(bbox)]
@@ -73,22 +72,22 @@ def generate_label_data(file_paths):
             # Load GeoJSON file
             with open(os.path.join(temp_geojson_directory,'filtered_features.geojson')) as src:
                 geoms = [shape(feature['geometry']) for feature in json.load(src)['features']]
-            
-            # Rasterize the GeoJSON features
-            rasterized = rasterize(
-                geoms,
-                out_shape=(config["tile_size"], config["tile_size"]),
-                transform=dst.transform,
-                fill=1,
-                default_value=0,
-                all_touched=True
-            )
-            
-            # Write the rasterized data to the raster image
-            print("Saved tile to ...")
-            image_path = os.path.join(images_directory_path, file_name)
-            i+=1
-            dst.write( rasterized , 1)
+                if(len(geoms) > 0):
+                    # Rasterize the GeoJSON features
+                    rasterized = rasterize(
+                        geoms,
+                        out_shape=(config["tile_size"], config["tile_size"]),
+                        transform=dst.transform,
+                        fill=1,
+                        default_value=0,
+                        all_touched=True
+                    )
+                    
+                    # Write the rasterized data to the raster image
+                    print("Saved tile to ...")
+                    image_path = os.path.join(images_directory_path, file_name)
+                    i+=1
+                    dst.write( rasterized , 1)
 
             #Copy the files to the right directory, they won't be written there for some reason
         shutil.move(file_name, images_directory_path)
