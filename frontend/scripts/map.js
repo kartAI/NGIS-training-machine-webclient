@@ -6,8 +6,18 @@ var osm = L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.j
     attribution: '<a href=" https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a><a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
 }).addTo(map); // Add the OpenStreetMap layer to the map
 
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map); // Add the scalebar layer to the map
+
 // Search function for Leaflet
 L.Control.geocoder().addTo(map);
+
+//Scalebar function for leaflet
+var scalebar = new L.control.scale({
+    imperial: false,
+    metric: true,
+}).addTo(map);
 
 // FeatureGroup to store drawn lines on the map
 var drawnItems = new L.FeatureGroup();
