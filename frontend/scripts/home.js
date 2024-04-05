@@ -11,6 +11,11 @@ document.getElementById('closePopup').addEventListener('click', function() { // 
 // Elements for input fields and the continue buttons
 window.onload = () => {
     setup_cookies()
+    firstTime = localStorage.getItem("firstTime")
+    if(firstTime == null){
+        document.getElementById('cookiePolicyPopup').style.display = 'block';
+        localStorage.setItem("firstTime", "No")
+    }
   }
   // Sets up cookies by making a POST request to the server (/cookies route)
   async function setup_cookies(){

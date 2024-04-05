@@ -217,27 +217,3 @@ def create_bbox(coordinates):
     max_x = max(coord[0] for coord in coordinates)
     max_y = max(coord[1] for coord in coordinates)
     return {"minx": min_x, "miny":min_y, "maxx":max_x, "maxy":max_y}
-
-
-def square_bbox_from_polygon(polygon):
-    # Get the minimum bounding box of the polygon
-    min_x, min_y, max_x, max_y = polygon.bounds
-    
-    # Calculate the center of the bounding box
-    center_x = (min_x + max_x) / 2
-    center_y = (min_y + max_y) / 2
-    
-    # Calculate the width and height of the bounding box
-    width = max(max_x - min_x, max_y - min_y)
-    height = width
-    
-    # Create a square bounding box
-    square_bbox = Polygon([
-        (center_x - width / 2, center_y - height / 2),
-        (center_x + width / 2, center_y - height / 2),
-        (center_x + width / 2, center_y + height / 2),
-        (center_x - width / 2, center_y + height / 2),
-        (center_x - width / 2, center_y - height / 2)
-    ])
-    
-    return square_bbox
