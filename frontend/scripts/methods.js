@@ -57,7 +57,6 @@ async function setup_user_folders() {
     },
   });
   const data = await response.json(); // Parse the JSON response
-  console.log(data); // Log the data for debugging
   return data; // Return the data for further processing
 }
 
@@ -139,3 +138,81 @@ async function updateImageSources() {
     document.getElementById("Error").innerHTML = "Please select data sources";
   }
 }
+
+document.getElementById('file-input').addEventListener('change', function(e) {
+  loadMetaData()
+});
+
+
+async function loadMetaData() {
+  fileElement = document.getElementById("file-input");
+
+  if (!fileElement.files[0]) {
+    alert("Please add a file!");
+    return;
+  }
+  console.log("Loading metadata from file and sending it to the server...");
+  var file = fileElement.files[0];
+  var reader = new FileReader();
+
+    
+    // Function to be called when the file is successfully read
+    reader.onload = function (e) {
+        // Attempt to parse the file content as JSON
+        try {
+            var data = JSON.parse(e.target.result);
+            coordinates_input = data["Chosen Coordinates: "]
+            config_input = data["Config Options Used: "]
+            uploadMetaData(coordinates_input, config_input)
+          }catch (error) {
+            // Alert the user in case of an error parsing the JSON file content 
+            alert('Error parsing the JSON file: ' + error);
+        }
+    }
+    reader.readAsText(file);
+}
+
+async function uploadMetaData(coordinates, config){
+  const response = await fetch("/loadMetaData", {
+     method: "POST",
+     headers: {
+       "Content-Type": "application/json",
+     },
+     body: JSON.stringify({
+       coordinates_input: {"Coordinates" : coordinates}, 
+       label_source: config["label_source"],
+       orto_source: config["orto_source"],
+       data_parameters: config["data_parameters"],
+       layers: config["layers"],
+       colors: config["colors"],
+       tile_size: config["tile_size"], 
+       image_resolution: config["image_resolution"]
+     })
+   });
+
+   const data = await response.json()
+   if(data.written == true){
+
+    console.log(config["data_parameters"])
+
+    localStorage.setItem("Coordinates", coordinates)
+    localStorage.setItem("ConfigSet", "True")
+    localStorage.setItem("label_source", config["label_source"])
+    localStorage.setItem("orto_source", config["orto_source"])
+    localStorage.setItem("data_parameters", config["data_parameters"])
+    localStorage.setItem("layers", config["layers"])
+    localStorage.setItem("colors", config["colors"])
+    localStorage.setItem("tile_size", config["tile_size"])
+    localStorage.setItem("image_resolution", config["image_resolution"])
+
+    let element = document.getElementById("metadata-message");
+      element.innerHTML = data.message;
+      element.classList.add("alert-success");
+      element.removeAttribute("hidden");
+   }else{
+    let element = document.getElementById("metadata-message");
+      element.innerHTML = data.message;
+      element.classList.add("alert-danger");
+      element.removeAttribute("hidden");
+   }
+ }

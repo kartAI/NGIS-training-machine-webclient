@@ -8,7 +8,20 @@ window.onload = () => {
   const doneButton = document.getElementById("done-button"); // Button for user to indicate completion of coordinate input.
   const coordSys = document.getElementById("coordSys"); // Dropdown for selecting the coordinate system.
 
-  // Add an event listener to the "Done" button for when it is clicked.
+  if(localStorage.getItem("Coordinates")){
+      tempCoordinateArrayStrings = localStorage.getItem("Coordinates").split(",")
+      tempCoordinateArray = []
+      for(i = 0; i < tempCoordinateArrayStrings.length; i++){
+         tempCoordinateArray.push(parseFloat(tempCoordinateArrayStrings[i]))
+      }
+      finalCoordinateArray = []
+      for(i = 0; i < tempCoordinateArray.length; i += 2){
+          finalCoordinateArray.push([tempCoordinateArray[i], tempCoordinateArray[i+1]])
+      }
+      console.log(finalCoordinateArray)
+      drawCoordinatesOnMap(finalCoordinateArray, color="#FF0000");
+      enableNextButton()
+    }
   doneButton.addEventListener("click", async () => {
     const coordSysValue = coordSys.value; // Retrieve the value of the selected coordinate system.
 

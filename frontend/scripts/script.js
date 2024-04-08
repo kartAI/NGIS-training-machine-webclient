@@ -221,3 +221,47 @@ function updateTraining() {
 // Initialize values when the page loads
 updateValidation();
 updateTraining();
+
+
+if(localStorage.getItem("ConfigSet") != null){
+  data_parameters = localStorage.getItem("data_parameters").split(",")
+  inputTraining.value = parseFloat(data_parameters[0])
+  inputValidation.value = parseFloat(data_parameters[1])
+  inputBuilding.value = parseFloat(data_parameters[2])
+ 
+ 
+  colors = localStorage.getItem("colors").split(",")
+  console.log(colors[0])
+  inputBuildingColor.value = String(colors[0])
+  inputBridgeColor.value = colors[1]
+  inputRoadColor.value = colors[2]
+
+  layers = localStorage.getItem("layers").split(",")
+
+  if(!layers.includes("Veg")){
+    inputRoadLayer.checked = false
+  }
+  if(!layers.includes("Bru")){
+    inputBridgeLayer.checked = false
+  }
+  if(!layers.includes("Bygning")){
+    inputBridgeLayer.checked = false
+  }
+
+  inputTileSize.value = parseFloat(localStorage.getItem("tile_size"))
+  inputResolution.value = parseFloat(localStorage.getItem("image_resolution"))
+}
+/*
+const inputTraining = document.getElementById("training");
+const inputValidation = document.getElementById("validation");
+const inputBuilding = document.getElementById("building");
+const inputBuildingLayer = document.getElementById("buildingCheck");
+const inputRoadLayer = document.getElementById("roadCheck");
+const inputBridgeLayer = document.getElementById("bridgeCheck");
+const inputBuildingColor = document.getElementById("buildingColor");
+const inputRoadColor = document.getElementById("roadColor");
+const inputBridgeColor = document.getElementById("bridgeColor");
+const inputTileSize = document.getElementById("tileSize");
+const inputResolution = document.getElementById("imageResolution");
+const continueBtn = document.getElementById("continueBtn");
+const errorMessage = document.getElementById('error-message');*/

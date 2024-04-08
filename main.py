@@ -16,6 +16,8 @@ from application import ortoCOG
 from application import labelFGB
 from zipfile import ZipFile
 import random
+import json
+from datetime import datetime
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
 
@@ -35,6 +37,16 @@ class ConfigInput(BaseModel):
 class DataSourceInput(BaseModel):
     label_source: str
     orto_source: str
+
+class MetaDataInput(BaseModel):
+    coordinates_input: object
+    data_parameters: list
+    layers: list
+    label_source: str
+    orto_source: str
+    colors: list 
+    tile_size : int
+    image_resolution: float
 
 # Import and create instance of the FastAPI framework
 app = FastAPI()
@@ -292,7 +304,7 @@ async def generatePhotos(request: Request):
             #return {"message": "Amount of tiles do not match, please try again"}
         
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
-        
+        createMetaData(paths)
         zip_files(os.path.join(paths["root"]), f"Dataset_{session_id}.zip")
         return 0
     
@@ -320,8 +332,65 @@ def generateTrainingData(paths, label_source, orto_source):
 
     return all_ran # Return if all the functions ran successfully
 
+def createMetaData(paths):
 
+    '''
+    Helperfunction to write metadata to a file
     
+    Args:
+    paths (List): The list of paths associated with this user's cookie ID
+    
+    '''
+
+    config = util.read_file(paths["config"])["Config"]; # Read the config file
+    coordinates = util.read_file(paths["coordinates"])["Coordinates"]; # Read the coordinates file
+    num_training_tiles = len(os.listdir(os.path.join(paths["root"],"tiles", "orto")))
+    num_label_tiles = len(os.listdir(os.path.join(paths["root"],"tiles", "fasit")))
+
+    #Date and time of creation.
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    dataToWrite = {
+        "Time & Date of creation: " : dt_string,
+        "Chosen Coordinates: " : coordinates,
+        "Config Options Used: " : config,
+        "Training Tiles Generated" : num_training_tiles,
+        "Label Tiles Generated": num_label_tiles
+    }
+    util.write_file(os.path.join(paths["root"],"email", "metadata.json"), dataToWrite)
+
+@app.post("/uploadMetaData")
+async def upload_metadata(request: Request):
+    session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
+    paths = get_paths(session_id) # Get the paths for this session
+
+@app.post("/loadMetaData")
+async def download_metadata(request: Request, metaDataInput : MetaDataInput):
+
+    coordinateInput = metaDataInput.coordinates_input
+
+    configData = {"Config": {
+        "label_source": metaDataInput.label_source, 
+        "orto_source": metaDataInput.orto_source,
+        "data_parameters": metaDataInput.data_parameters,
+        "layers": metaDataInput.layers,
+        "colors": metaDataInput.colors,
+        "tile_size": metaDataInput.tile_size,
+        "image_resolution": metaDataInput.image_resolution
+    }}
+
+    session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
+    paths = get_paths(session_id) # Get the paths for this session
+    
+    written = True
+    message = "Successfully uploaded metadata file!"
+    if(util.write_file(paths["config"], configData) != 1 or util.write_file(paths["coordinates"], coordinateInput) != 1):
+        written = False
+        message = "Someting failed with uploading metadata file, please check that your file is correctly formatted and try again!"
+    return {"written": written, "message": message}
+
+
 
 @app.get("/downloadFile")
 async def download_file(request: Request):

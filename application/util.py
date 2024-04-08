@@ -80,9 +80,16 @@ def setup_user_session_folders(session_id):
     os.path.join("datasets", main_folder_name, "tiles", "fasit"),
     os.path.join("datasets", main_folder_name, "tiles", "orto")]
     
+  
     # Create the folders
     for folder in folders_to_make:
             os.makedirs(folder, exist_ok=True)
+
+    #Path for the metadata file.
+    metadata_path = os.path.join("datasets", main_folder_name,"email", "metadata.json")
+    if not os.path.exists(metadata_path):
+        open(metadata_path, "x")
+    
     
     # Check if all folders were created
     allCreated = True
