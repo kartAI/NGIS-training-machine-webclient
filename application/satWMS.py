@@ -28,7 +28,7 @@ def fetch_satellite_images(file_paths):
     print("Starting the process of fetching satellite images with coordinates: " + str(coordinates) + " and config settings: " + str(config))
     
     # Directory where the image will be saved
-    images_directory = "satellite"
+    images_directory = "orto"
     images_directory_path = os.path.join(file_paths["root"], "tiles", images_directory)
     print("Satellite images will be saved to: " + images_directory_path)
     
@@ -55,7 +55,7 @@ def fetch_satellite_images(file_paths):
             image_path = os.path.join(images_directory_path, file_name)
             with open(image_path, 'wb') as file:
                 file.write(response.content)
-            print(f"Copernicus tile_{i} was saved to {image_path}.")
+            print(f"Satellite tile_{i} was saved to {image_path}.")
             i += 1
         else:
             print(f"Could not save the image, status code: {response.status_code}")
@@ -84,18 +84,17 @@ def get_image_url(bbox: List[float], image_size: List[float]) -> str:
     
     # Parameters for the WMS request
     wms_params = {
+        "service": "WMS",
+        "version": "1.1.1",
         "request": "GetMap",
         "layers": "NATURAL-COLOR",
-        "styles": "",
         "MAXCC": 20,
-        "format": "image/jpeg",
-        "transparent": "true",
-        "version": "1.3.0",
-        "crs": "EPSG:25832",
+        "format": "image/png",
+        "crs": "EPSG:4326",
         "bbox": bbox_str,
         "width": str(image_size[0]),
         "height": str(image_size[1]),
-        "service": "WMS",
+        "TIME": "2022-12-01/2023-01-01"
     }
     
     # Encode the parameters and construct the full URL

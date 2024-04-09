@@ -291,7 +291,7 @@ async def generatePhotos(request: Request):
     orto_source = config["orto_source"] # Get the orto source from the config
    
 
-    if generateTrainingData(paths, label_source, orto_source) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
+    if generateTrainingData(paths, label_source, orto_source) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True or satWMS.fetch_satellite_images(paths) is not True:
         print("Something went wrong with generating the data")
         return {"message": "Something went wrong with generating the data"}
     else:
