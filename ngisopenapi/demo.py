@@ -21,7 +21,7 @@ def get_api():
         return NgisOpenApi(url, user, password, "KartAITest")
     except Exception as e:
         print(f"Error getting API: {e}")
-        sys.exit(1)
+        sys.exit(1) 
 
 # Function for saving a json file
 

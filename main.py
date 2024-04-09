@@ -14,6 +14,7 @@ from application import ortoPhotoWMS
 from application import labelPhotoWMS
 from application import ortoCOG
 from application import labelFGB
+from application import labelNGIS
 from zipfile import ZipFile
 import random
 import json
@@ -72,6 +73,10 @@ for dir_name in static_dirs:
     app.mount(f"/{dir_name}", StaticFiles(directory=dir_name), name=dir_name)
 
 templates = Jinja2Templates(directory="frontend/pages")
+
+@app.get("/nigs")
+async def getNGIS():
+    labelNGIS.getNGIS()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
@@ -429,7 +434,7 @@ async def delete_files(request: Request):
 
 # Her begynner fil zipping og epost sending for WMS/Fasit
     
-# Finner path til .env filen som ligger i ngisopenapi mappen
+# Finner path til .env filen som ligger i application mappen
 env_file_path = os.path.join("application", ".env")
 
 # Laster .env fra riktig path
