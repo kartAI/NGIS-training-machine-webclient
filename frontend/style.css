@@ -59,7 +59,6 @@ html, body {
   justify-content: center;
   align-items: stretch;
   flex-wrap: wrap;
-  padding-top: 3rem;
   margin-top: 20px;  
   max-height: 70vh;  
   overflow-y: auto;  
@@ -76,10 +75,8 @@ html, body {
   flex-direction: column;
   justify-content: center;
   min-width: 200px !important;
-  height: 280px;
   margin: 30px;
   max-width: 25%;
-  width: -webkit-fill-available !important;
   border: 1px solid #ccc;
 }
 
@@ -110,6 +107,17 @@ html, body {
 
 .card:hover h3 {
   color: white;
+}
+
+.choice-card{
+  text-align: center;
+  border: 1px solid #000;
+  border-radius: 5px;
+  margin-left: 10rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-color: lightgray;
+  width: 100%;
 }
 
 /* Map style */

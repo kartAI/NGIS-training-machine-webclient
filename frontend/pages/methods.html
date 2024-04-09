@@ -24,141 +24,55 @@
       rel="stylesheet"
     />
   </head>
-
   <body>
-    <div class="content">
-      <!-- Header/navbar-->
-      <header>
-        <div id="header"></div>
-      </header>
-
-      <!-- Page content -->
-      <div class="main-container">
-        <!-- Headline and info -->
-
-    <div class="text-center">
-          <h1 class="display-4 fw-normal">Choose method for input of coordinates</h1>
-        <br>
-          <h6 class="display-6 fw-noprmal">Choose a database</h6>
-          <div class="cards-and-btn" style="display: flex; flex-direction: column; align-items: center;">
-          <div class="choices-container" style="display: flex; flex-direction: row; margin-left: 8rem;">
-            <div class="choices" style="display: flex; flex-direction: row;" >
-
-              <!-- Choose label data -->
-            <div class="db-choice card" style="background-color: transparent !important;" onmouseover="this.style.backgroundColor='transparent'">
-              <div class="card-body" style="width: max-content">
-
-
-              <form id="labelForm">
-                <h5>
-                  Choose label source
-                  <span class="question-mark" onclick="showLayerInfo()"
-                    >?
-                    <span class="tooltip-text">Info about label data</span>
-                  </span>
-                </h5>
-                <div class="radio-group-layer" style="display: flex;">
-                  <input
-                    type="radio"
-                    id="ngis-layer"
-                    name="mapDatabase"
-                    value="NGIS"
-              
-                  />
-                  <label for="ngis"
-                    >NGIS</label
-                  >
-
-                  <input
-                    type="radio"
-                    id="wms-layer"
-                    name="mapDatabase"
-                    value="WMS"
-                    checked
-                  />
-                  <label for="wms"
-                    >WMS</label
-                  >
-
-                  <input
-                    type="radio"
-                    id="fgb-layer"
-                    name="mapDatabase"
-                    value="WMS"
-                  />
-                  <label for="wms"
-                    >FGB</label
-                  >
-                </div>
-              </form>
-            </div>
-            </div>
-
-<!-- Choose ortofoto -->
-<div class="card" style="background-color: transparent !important;" onmouseover="this.style.backgroundColor='transparent'">
-  <div class="card-body" style="width: max-content">
-              <form id="ortoForm">
-                <h5>
-                  Choose Ortofoto
-                  <span class="question-mark" onclick="showOrtofotoInfo()"
-                    >?
-                    <span class="tooltip-text">Info about Ortofoto</span>
-                  </span>
-                </h5>
-                <div class="radio-group-ortofoto">
-                  <input
-                    type="radio"
-                    id="wms-ortofoto"
-                    name="ortoDatabase"
-                    value="WMS"
-                    checked
-                  />
-                  <label for="wms"
-                    >WMS</label
-                  >
-
-                  <input
-                    type="radio"
-                    id="cog-ortofoto"
-                    name="ortoDatabase"
-                    value="WMS"
-                  />
-                  <label for="wms"
-                    >COG</label
-                  >
-                </div>
-              </form>
-            </div>
-          </div>
-
-            </div>
-          
-        </div>
-
-        <button type="button" class="btn btn-primary btn-lg px-4 gap-3" 
-            onclick="updateImageSources()" style="text-align: center !important;">Save option</button>
-        <p id="Error" style="color: red; font-size: 2rem;""></p>
-      </div>
-       </div>
-
-<div id="message" class="alert alert-success" role="alert" hidden></div>
-        <div id="folder-message" class="alert alert-danger" role="alert" hidden></div>
-
-<!-- Loading icon -->
-<div id="loadingIcon" class="spinner-border text-primary" role="status" hidden></div>
-
-<div>
-  <label for="file-input" class="ol-form-label col-form-label-lg">Choose metadata file (JSON)</label>
-  <input class="form-control form-control-lg" id="file-input" accept=".json" type="file">
-  <div id="metadata-message" class="alert alert-success" role="alert" hidden></div>
-</div>
-
-        <!-- Cards -->
-        <div id="card-container"></div>
+    <header>
+      <div id="header"></div>
+    </header>
+    <div style="padding-top: 7rem"  class="container">
+      <div class="text-center">
+        <p class="display-6 fw-normal">Choose your data sources or upload a metadata file</p>
       </div>
     </div>
-
-    <!-- Custom Scripts -->
+    <div class="row">
+      <div class="col-3">
+        <div class="choice-card" style="background-color: transparent !important; cursor: default;">
+          <h5>Choose label source <span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Info about label data</span></span></h5>
+          <div class="radio-group-layer">
+            <input type="radio" id="ngis-layer"name="mapDataBase"style="cursor:pointer"><label class="form-check-label">NGIS</label>
+            <input type="radio" id="wms-layer" name="mapDataBase" style="cursor:pointer" checked><label class="form-check-label">WMS</label>
+            <input type="radio" id="fgb-layer" name="mapDataBase" style="cursor:pointer"><label class="form-check-label">FGB</label>
+          </div>
+        </div>
+      </div>
+    <div class="col-3">
+      <div  class="choice-card" style="background-color: transparent !important">
+        <h5>Choose orto source <span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Info about orto data</span></span></h5>
+        <div class="radio-group-layer">
+          <input type="radio" id="wms-ortofoto" name="ortoDatabase" style="cursor:pointer"><label class="form-check-label" selected>WMS</label>
+          <input type="radio" id="cog-ortofoto" name="ortoDatabase" style="cursor:pointer" checked/><label class="form-check-label">COG</label>
+          <input type="radio" id="satelite-ortofoto" name="ortoDatabase" style="cursor:pointer" disabled><label class="form-check-label">Satelitt</label>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="choice-card">
+        <h5>Upload a metadata file<span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Info about orto data</span></span></h5>
+        <input class="form-control" style="width: 90%; margin: 0 auto;" id="file-input" accept=".json" type="file">
+      </div>
+    </div>
+    </div>
+    <div class="row">
+      <div class="col-3"></div>
+      <div class="col-6">
+        <div id="message" class="alert alert-success" role="alert" hidden></div>
+        <div id="folder-message" class="alert alert-danger" role="alert" hidden></div>
+      </div>
+      <div class="col-3">
+        <div id="loadingIcon" class="spinner-border text-primary" role="status" hidden></div>
+      </div>
+    </div>
+    <div id="card-container"></div>
+    </div>
     <script src="frontend/scripts/script.js"></script>
     <script src="frontend/scripts/methods.js"></script>
   </body>

@@ -31,7 +31,7 @@ const cardData = [
 const cardContainer = document.getElementById("card-container");
 cardData.forEach((card) => {
   const cardHtml = `
-    <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm onClick="updateImageSources()">
+    <a href="${card.link}" class="card p-3 mb-4 rounded-3 shadow-sm>
       <div class="card-body">
         <span class="fas ${card.icon}"></span>
       </div>
@@ -41,10 +41,7 @@ cardData.forEach((card) => {
   cardContainer.innerHTML += cardHtml; // Append the card HTML to the container
 });
 
-// On window load, set up necessary cookies for the session
-window.onload = () => {
-  setup_user_folders(); // Call the function to set up cookies
-};
+
 
 // Sets up cookies by making a POST request to the server
 // @returns {Promise<Object>} A promise that resolves with the server response data
@@ -139,9 +136,6 @@ async function updateImageSources() {
   }
 }
 
-document.getElementById('file-input').addEventListener('change', function(e) {
-  loadMetaData()
-});
 
 
 async function loadMetaData() {
@@ -192,6 +186,12 @@ async function uploadMetaData(coordinates, config){
 
    const data = await response.json()
    if(data.written == true){
+    document.getElementById("loadingIcon").hidden = false;
+    document.getElementById("message").hidden = true;
+    setTimeout(() => {
+      document.getElementById("loadingIcon").hidden = true;
+      document.getElementById("message").hidden = false;
+    }, 1000); // 1000 milliseconds (1 second)
 
     console.log(config["data_parameters"])
 
@@ -205,14 +205,77 @@ async function uploadMetaData(coordinates, config){
     localStorage.setItem("tile_size", config["tile_size"])
     localStorage.setItem("image_resolution", config["image_resolution"])
 
-    let element = document.getElementById("metadata-message");
+    let element = document.getElementById("message");
       element.innerHTML = data.message;
       element.classList.add("alert-success");
       element.removeAttribute("hidden");
+      switch(config["label_source"]){
+        case "WMS":
+        wms_layer.checked = true
+        break
+        case "NGIS":
+        ngis_layer.checked = true
+        break
+        case "FGB":
+        fgb_layer.checked = true
+        break
+      }
+
+      switch(config["orto_source"]){
+        case "WMS":
+        wms_orto.checked = true
+        break
+        case "COG":
+        cog_orto.checked = true
+        break
+      }
+
    }else{
-    let element = document.getElementById("metadata-message");
+    let element = document.getElementById("message");
       element.innerHTML = data.message;
       element.classList.add("alert-danger");
       element.removeAttribute("hidden");
    }
  }
+
+ // On window load, set up necessary cookies for the session
+window.onload = () => {
+  setup_user_folders(); // Call the function to set up cookies
+  updateImageSources();
+};
+
+ document.getElementById('file-input').addEventListener('change', function(e) {
+  loadMetaData()
+});
+
+document.getElementById('ngis-layer').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+document.getElementById('wms-layer').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('fgb-layer').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('wms-ortofoto').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('cog-ortofoto').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+document.getElementById('satelitt-ortofoto').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('ortoDatabase').addEventListener('change', function(e) {
+  updateImageSources()
+});
