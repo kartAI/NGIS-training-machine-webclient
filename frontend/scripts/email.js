@@ -68,7 +68,7 @@ function sendEmail() {
           window.location.href = "success.html";
         }, 2000);
       } else {
-
+        
         // Displays an error message if the email fails to send
         document.getElementById("filesPreview").innerHTML = "<p>An error has occurred... please try again later.</p>";
         console.error(response.statusText);
