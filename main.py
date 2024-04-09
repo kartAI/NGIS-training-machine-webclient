@@ -14,6 +14,7 @@ from application import ortoPhotoWMS
 from application import labelPhotoWMS
 from application import ortoCOG
 from application import labelFGB
+from application import satWMS
 from zipfile import ZipFile
 import random
 import json
@@ -336,6 +337,9 @@ def generateTrainingData(paths, label_source, orto_source):
         if ortoCOG.generate_cog_data(paths) is not True:
             print("COG photo  failed")
             all_ran = False
+    elif(orto_source == "SAT"):
+        if satWMS.fetch_satellite_images(paths) is not True:
+            print("Satellite photo failed")
 
     return all_ran # Return if all the functions ran successfully
 
