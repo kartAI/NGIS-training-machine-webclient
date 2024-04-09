@@ -15,7 +15,7 @@ def fetch_satellite_images(file_paths):
     '''
     # Find the path to the .env file and the coordinates and config files
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
-    env_file_path = os.path.join(current_script_directory, "..", "ngisopenapi", ".env")
+    env_file_path = os.path.join(current_script_directory, "..", "application", ".env")
     coordinates_file_path = file_paths["coordinates"]
     config_file_path = file_paths["config"]
     
