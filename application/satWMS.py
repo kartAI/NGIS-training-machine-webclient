@@ -85,7 +85,7 @@ def get_image_url(bbox: List[float], image_size: List[float]) -> str:
     # Parameters for the WMS request
     wms_params = {
         "service": "WMS",
-        "version": "1.1.1",
+        "version": "1.1.1", # Supported values are 1.1.1, and 1.3.0 (default) 
         "request": "GetMap",
         "layers": "NATURAL-COLOR",
         "MAXCC": 20,
@@ -94,7 +94,7 @@ def get_image_url(bbox: List[float], image_size: List[float]) -> str:
         "bbox": bbox_str,
         "width": str(image_size[0]),
         "height": str(image_size[1]),
-        "TIME": "2022-12-01/2023-01-01"
+        "TIME": "2022-12-01/2023-01-01" # For future reference, the smaller time frame the better
     }
     
     # Encode the parameters and construct the full URL
