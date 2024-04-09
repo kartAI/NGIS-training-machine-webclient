@@ -27,7 +27,7 @@ def generate_cog_data(file_paths):
     bboxes = util.create_bbox_array(coordinates, config)
 
     # Loads hidden values in script
-    env_file_path = os.path.join(current_script_directory, "..", "ngisopenapi", ".env")
+    env_file_path = os.path.join(current_script_directory, "..", "application", ".env")
 
     # Utilize dotenv to load necessary environment variables, if not already configured in the environment
     load_dotenv(env_file_path)
