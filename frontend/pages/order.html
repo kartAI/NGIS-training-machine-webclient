@@ -86,7 +86,8 @@
                     var blob = xhr.response;
                     var link = document.createElement("a");
                     link.href = window.URL.createObjectURL(blob);
-                    link.download = "Dataset.zip";
+                    datasetName = localStorage.getItem("datasetName")
+                    link.download = datasetName + ".zip";
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);

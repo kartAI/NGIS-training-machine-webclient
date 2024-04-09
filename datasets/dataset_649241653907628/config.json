@@ -1,1 +1,1 @@
-{"Config": {"label_source": "WMS", "orto_source": "COG", "data_parameters": "", "layers": "", "colors": "", "tile_size": "", "image_resolution": ""}}
+{"Config": {"label_source": "WMS", "orto_source": "COG", "data_parameters": ["100", "0", "80"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#563d7c", "#563d7c", "#563d7c"], "tile_size": 500, "image_resolution": 0.2, "email": "gustav@test.com", "dataset_name": "hei"}}

@@ -31,6 +31,8 @@ class ConfigInput(BaseModel):
     layers: list
     colors: list
     tile_size: int
+    email: str
+    dataset_name: str
     image_resolution: float
 
 #Class for datasource input
@@ -257,7 +259,9 @@ async def update_config_file(configInput: ConfigInput, request: Request):
         "layers": configInput.layers,
         "colors": configInput.colors,
         "tile_size": configInput.tile_size,
-        "image_resolution": configInput.image_resolution
+        "image_resolution": configInput.image_resolution,
+        "email": configInput.email,
+        "dataset_name": configInput.dataset_name
     }}
    
     if(util.write_file(config_path, data)):
@@ -305,7 +309,10 @@ async def generatePhotos(request: Request):
         
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
         createMetaData(paths)
-        zip_files(os.path.join(paths["root"]), f"Dataset_{session_id}.zip")
+        datasetName = config["dataset_name"]
+        zip_files(os.path.join(paths["root"]), f"{datasetName}_{session_id}.zip")
+        if(config["email"] != ""):
+            send_email_with_attachment(config["email"],"Here is your dataset!","Dataset from the training data generator", os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"))
         return 0
     
 def generateTrainingData(paths, label_source, orto_source): 
@@ -360,10 +367,6 @@ def createMetaData(paths):
     }
     util.write_file(os.path.join(paths["root"],"email", "metadata.json"), dataToWrite)
 
-@app.post("/uploadMetaData")
-async def upload_metadata(request: Request):
-    session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
-    paths = get_paths(session_id) # Get the paths for this session
 
 @app.post("/loadMetaData")
 async def download_metadata(request: Request, metaDataInput : MetaDataInput):
@@ -406,8 +409,10 @@ async def download_file(request: Request):
 
     session_id = request.cookies.get("session_id", None)
     paths = get_paths(session_id)
-    headers = {'Content-Disposition': f'attachment; filename="Dataset_{session_id}.zip"'} # Set the headers for the file
-    return FileResponse(os.path.join(paths["root"], f"Dataset_{session_id}.zip") ,headers= headers) # Return the file for download
+    config = util.read_file(paths["config"])["Config"]
+    datasetName = config["dataset_name"]
+    headers = {'Content-Disposition': f'attachment; filename="{datasetName}_{session_id}.zip"'} # Set the headers for the file
+    return FileResponse(os.path.join(paths["root"], f"{datasetName}_{session_id}.zip") ,headers= headers) # Return the file for download
 
 @app.post("/deleteFile") # Deletes the file after download
 async def delete_files(request: Request):
@@ -472,24 +477,3 @@ def zip_files(directory_path: str, zip_name: str = 'attachments.zip'):
                 file_path = os.path.join(root, file)
                 zipf.write(file_path, arcname=os.path.relpath(file_path, os.path.join(directory_path, "email")))
 
-@app.post("/sendEmail")
-async def send_zipped_files_email(request : Request):
-
-        # Extract email from request
-    email = {}
-    if request.body:
-        email = await request.json()
-    """Zip and send email to endpoint"""
-    zip_files()  # Zipper alle filer i WMS/email/
-    
-    send_email_with_attachment(
-        to_emails=email["email"],
-        subject="Here are your zipped files",
-        content="<strong>Zip file holding the requested data.</strong>",
-        attachment_path="attachments.zip"
-    )
-    
-    session_id = request.cookies.get("session_id", None)
-    util.teardown_user_session_folders(session_id)
-    
-    return {"message": "Email sent successfully with zipped files."}
