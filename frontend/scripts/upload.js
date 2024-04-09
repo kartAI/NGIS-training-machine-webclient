@@ -64,6 +64,22 @@ function uploadFile(){
     reader.readAsText(file);
 }
 
+if(localStorage.getItem("Coordinates")){
+    tempCoordinateArrayStrings = localStorage.getItem("Coordinates").split(",")
+    tempCoordinateArray = []
+    for(i = 0; i < tempCoordinateArrayStrings.length; i++){
+       tempCoordinateArray.push(parseFloat(tempCoordinateArrayStrings[i]))
+    }
+    finalCoordinateArray = []
+    for(i = 0; i < tempCoordinateArray.length; i += 2){
+        finalCoordinateArray.push([tempCoordinateArray[i], tempCoordinateArray[i+1]])
+    }
+    console.log(finalCoordinateArray)
+    drawCoordinatesOnMap(finalCoordinateArray, color="#FF0000");
+    var nextBtn = document.getElementById('nextBtn');
+        nextBtn.disabled = false;
+  }
+
 
 // Event listener for the "Next" button click action
 document.getElementById('nextBtn').addEventListener('click', function () {

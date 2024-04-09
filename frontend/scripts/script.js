@@ -47,6 +47,8 @@ const inputRoadColor = document.getElementById("roadColor");
 const inputBridgeColor = document.getElementById("bridgeColor");
 const inputTileSize = document.getElementById("tileSize");
 const inputResolution = document.getElementById("imageResolution");
+const emailInput = document.getElementById("email");
+const datasetNameInput = document.getElementById("datasetName");
 const continueBtn = document.getElementById("continueBtn");
 const errorMessage = document.getElementById('error-message');
 
@@ -59,6 +61,19 @@ function validateStart() {
   // Update configuration and start the training process if validation passes
   let allFieldsFilledFlag = true;
   let validRangeFlag = true;
+
+
+  let email = "";
+  let datasetName = "Dataset"
+  if(emailInput.value != ""){
+      email = emailInput.value;
+    }
+    
+    
+    if(datasetNameInput.value != ""){
+      datasetName = datasetNameInput.value
+    }
+    localStorage.setItem("datasetName", datasetNameInput.value)
 
   // Check if all input fields are filled and display error messages if not
   for (let i = 0; i < inputFields.length; i++) {
@@ -126,6 +141,10 @@ async function updateConfig() {
   const colors = [];
 
 
+  console.log(datasetName);
+  console.log(email); 
+
+
   // Line 128 - 142 | Checks each checkbox to see if the box is checked, if it is then add the data to the array
   if(inputBuildingLayer.checked){
     layers.push("Bygning")
@@ -150,7 +169,7 @@ async function updateConfig() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors, "tile_size": inputTileSize.value, "image_resolution": inputResolution.value}),
+    body: JSON.stringify({"data_parameters": trainingFraction, "layers": layers, "colors": colors, "tile_size": inputTileSize.value, "image_resolution": inputResolution.value, "email" : emailInput.value, "dataset_name": datasetNameInput.value}),
   });
   // Await the JSON response from the server, which would include result data
   const data = await response.json();
@@ -221,3 +240,33 @@ function updateTraining() {
 // Initialize values when the page loads
 updateValidation();
 updateTraining();
+
+
+if(localStorage.getItem("ConfigSet") != null){
+  data_parameters = localStorage.getItem("data_parameters").split(",")
+  inputTraining.value = parseFloat(data_parameters[0])
+  inputValidation.value = parseFloat(data_parameters[1])
+  inputBuilding.value = parseFloat(data_parameters[2])
+ 
+ 
+  colors = localStorage.getItem("colors").split(",")
+  console.log(colors[0])
+  inputBuildingColor.value = String(colors[0])
+  inputBridgeColor.value = colors[1]
+  inputRoadColor.value = colors[2]
+
+  layers = localStorage.getItem("layers").split(",")
+
+  if(!layers.includes("Veg")){
+    inputRoadLayer.checked = false
+  }
+  if(!layers.includes("Bru")){
+    inputBridgeLayer.checked = false
+  }
+  if(!layers.includes("Bygning")){
+    inputBridgeLayer.checked = false
+  }
+
+  inputTileSize.value = parseFloat(localStorage.getItem("tile_size"))
+  inputResolution.value = parseFloat(localStorage.getItem("image_resolution"))
+}

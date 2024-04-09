@@ -31,9 +31,10 @@ const cardData = [
 const cardContainer = document.getElementById("card-container");
 cardData.forEach((card) => {
   const cardHtml = `
-    <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm onClick="updateImageSources()">
+    <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm>
       <div class="card-body">
         <span class="fas ${card.icon}"></span>
+        <br> 
       </div>
       <h3 class="my-0 fw-normal">${card.text}</h3>
     </a>
@@ -41,10 +42,7 @@ cardData.forEach((card) => {
   cardContainer.innerHTML += cardHtml; // Append the card HTML to the container
 });
 
-// On window load, set up necessary cookies for the session
-window.onload = () => {
-  setup_user_folders(); // Call the function to set up cookies
-};
+
 
 // Sets up cookies by making a POST request to the server
 // @returns {Promise<Object>} A promise that resolves with the server response data
@@ -57,7 +55,6 @@ async function setup_user_folders() {
     },
   });
   const data = await response.json(); // Parse the JSON response
-  console.log(data); // Log the data for debugging
   return data; // Return the data for further processing
 }
 
@@ -139,3 +136,147 @@ async function updateImageSources() {
     document.getElementById("Error").innerHTML = "Please select data sources";
   }
 }
+
+
+
+async function loadMetaData() {
+  fileElement = document.getElementById("file-input");
+
+  if (!fileElement.files[0]) {
+    alert("Please add a file!");
+    return;
+  }
+  console.log("Loading metadata from file and sending it to the server...");
+  var file = fileElement.files[0];
+  var reader = new FileReader();
+
+    
+    // Function to be called when the file is successfully read
+    reader.onload = function (e) {
+        // Attempt to parse the file content as JSON
+        try {
+            var data = JSON.parse(e.target.result);
+            coordinates_input = data["Chosen Coordinates: "]
+            config_input = data["Config Options Used: "]
+            uploadMetaData(coordinates_input, config_input)
+          }catch (error) {
+            // Alert the user in case of an error parsing the JSON file content 
+            alert('Error parsing the JSON file: ' + error);
+        }
+    }
+    reader.readAsText(file);
+}
+
+async function uploadMetaData(coordinates, config){
+  const response = await fetch("/loadMetaData", {
+     method: "POST",
+     headers: {
+       "Content-Type": "application/json",
+     },
+     body: JSON.stringify({
+       coordinates_input: {"Coordinates" : coordinates}, 
+       label_source: config["label_source"],
+       orto_source: config["orto_source"],
+       data_parameters: config["data_parameters"],
+       layers: config["layers"],
+       colors: config["colors"],
+       tile_size: config["tile_size"], 
+       image_resolution: config["image_resolution"]
+     })
+   });
+
+   const data = await response.json()
+   if(data.written == true){
+    document.getElementById("loadingIcon").hidden = false;
+    document.getElementById("message").hidden = true;
+    setTimeout(() => {
+      document.getElementById("loadingIcon").hidden = true;
+      document.getElementById("message").hidden = false;
+    }, 1000); // 1000 milliseconds (1 second)
+
+    console.log(config["data_parameters"])
+
+    localStorage.setItem("Coordinates", coordinates)
+    localStorage.setItem("ConfigSet", "True")
+    localStorage.setItem("label_source", config["label_source"])
+    localStorage.setItem("orto_source", config["orto_source"])
+    localStorage.setItem("data_parameters", config["data_parameters"])
+    localStorage.setItem("layers", config["layers"])
+    localStorage.setItem("colors", config["colors"])
+    localStorage.setItem("tile_size", config["tile_size"])
+    localStorage.setItem("image_resolution", config["image_resolution"])
+
+    let element = document.getElementById("message");
+      element.innerHTML = data.message;
+      element.classList.add("alert-success");
+      element.removeAttribute("hidden");
+      switch(config["label_source"]){
+        case "WMS":
+        wms_layer.checked = true
+        break
+        case "NGIS":
+        ngis_layer.checked = true
+        break
+        case "FGB":
+        fgb_layer.checked = true
+        break
+      }
+
+      switch(config["orto_source"]){
+        case "WMS":
+        wms_orto.checked = true
+        break
+        case "COG":
+        cog_orto.checked = true
+        break
+      }
+
+   }else{
+    let element = document.getElementById("message");
+      element.innerHTML = data.message;
+      element.classList.add("alert-danger");
+      element.removeAttribute("hidden");
+   }
+ }
+
+ // On window load, set up necessary cookies for the session
+window.onload = () => {
+  setup_user_folders(); // Call the function to set up cookies
+  updateImageSources();
+};
+
+ document.getElementById('file-input').addEventListener('change', function(e) {
+  loadMetaData()
+});
+
+document.getElementById('ngis-layer').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+document.getElementById('wms-layer').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('fgb-layer').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('wms-ortofoto').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('cog-ortofoto').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+document.getElementById('satelitt-ortofoto').addEventListener('change', function(e) {
+  updateImageSources()
+});
+
+
+document.getElementById('ortoDatabase').addEventListener('change', function(e) {
+  updateImageSources()
+});

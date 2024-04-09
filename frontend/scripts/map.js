@@ -41,7 +41,7 @@ map.addControl(drawControl); // Add the draw control to the map
 // Array to store the corner circles of the rectangle, useful to see rectangle if zoomed out
 var cornerCircles = [];
 
-// Binds listener to the event:created
+// Binds listener to the event:created 
 map.on("draw:created", function (c) {
 
     //If there are objects that are drawn on the map already we remove them
@@ -175,6 +175,25 @@ map.on("draw:created", function (c) {
     updateCoordinateFile(kartAIcoords);
 });
 
+// On window load, set up necessary cookies for the session
+window.onload = () => {
+    if(localStorage.getItem("Coordinates")){
+        tempCoordinateArrayStrings = localStorage.getItem("Coordinates").split(",")
+        tempCoordinateArray = []
+        for(i = 0; i < tempCoordinateArrayStrings.length; i++){
+           tempCoordinateArray.push(parseFloat(tempCoordinateArrayStrings[i]))
+        }
+        finalCoordinateArray = []
+        for(i = 0; i < tempCoordinateArray.length; i += 2){
+            finalCoordinateArray.push([tempCoordinateArray[i], tempCoordinateArray[i+1]])
+        }
+        console.log(finalCoordinateArray)
+        drawCoordinatesOnMap(finalCoordinateArray, color="#FF0000");
+        var nextBtn = document.getElementById('nextButton');
+        nextBtn.disabled = false;
+    }
+};
+
 
 // Updates the coordinates on the server for wms.
 async function updateCoordinateFile(coordinates) {
@@ -213,11 +232,11 @@ function noScroll() {
 
 
 // Function to display given coordinates on a map by drawing a polygon.
-function drawCoordinatesOnMap(coordinates) {
+function drawCoordinatesOnMap(coordinates, color="#cd32cd") {
 
     // Define a style for the GeoJSON layer
     var geoJsonLayerStyle = {
-        color: "#cd32cd", // Orange line color
+        color: color, // Orange line color
         weight: 20,        // Line thickness
         opacity: 0.65     // Line opacity
     };
@@ -239,7 +258,7 @@ function drawCoordinatesOnMap(coordinates) {
     // Use Leaflet to draw a polygon on the map using the converted and corrected coordinates.
     const polygon = L.polygon(correctedPairs, { color: "red" }).addTo(map);
     polygon.setStyle({fillColor: "#ffffff"})
-    polygon.setStyle({color: "#cd32cd"})
+    polygon.setStyle({color: color})
     polygon.setStyle({opacity: 0.65})
     // Adjust the map view to fit the bounds of the polygon.
     map.fitBounds(polygon.getBounds());
