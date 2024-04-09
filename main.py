@@ -14,6 +14,7 @@ from application import ortoPhotoWMS
 from application import labelPhotoWMS
 from application import ortoCOG
 from application import labelFGB
+from application import satWMS
 from zipfile import ZipFile
 import random
 import json
@@ -290,7 +291,7 @@ async def generatePhotos(request: Request):
     orto_source = config["orto_source"] # Get the orto source from the config
    
 
-    if generateTrainingData(paths, label_source, orto_source) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True:
+    if generateTrainingData(paths, label_source, orto_source) is not True: #labelPhotoWMS.generate_label_data(paths) is not True or ortoCOG.generate_cog_data(paths) is not True or ortoPhotoWMS.generate_training_data(paths) is not True or labelPhotoWMS.generate_label_data_colorized(paths) is not True or satWMS.fetch_satellite_images(paths) is not True:
         print("Something went wrong with generating the data")
         return {"message": "Something went wrong with generating the data"}
     else:
@@ -336,6 +337,9 @@ def generateTrainingData(paths, label_source, orto_source):
         if ortoCOG.generate_cog_data(paths) is not True:
             print("COG photo  failed")
             all_ran = False
+    elif(orto_source == "SAT"):
+        if satWMS.fetch_satellite_images(paths) is not True:
+            print("Satellite photo failed")
 
     return all_ran # Return if all the functions ran successfully
 
