@@ -355,8 +355,8 @@ async def delete_files(request: Request):
 
 # Her begynner fil zipping og epost sending for WMS/Fasit
     
-# Finner path til .env filen som ligger i ngisopenapi mappen
-env_file_path = os.path.join("ngisopenapi", ".env")
+# Finner path til .env filen som ligger i application mappen
+env_file_path = os.path.join("application", ".env")
 
 # Laster .env fra riktig path
 load_dotenv(env_file_path)
