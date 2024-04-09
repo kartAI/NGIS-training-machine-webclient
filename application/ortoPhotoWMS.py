@@ -13,9 +13,11 @@ def generate_training_data(file_paths):
     bool: True if generation of photos was successful, false otherwise
     '''
 
-    #Finds the path to the enviornment file in the NGISopenAPI directory and the path to the coordinates file
+    #Finds the path to the enviornment file in the Application directory and the path to the coordinates file
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
-    env_file_path = os.path.join(current_script_directory, "..", "appliaction", ".env")
+
+    env_file_path = os.path.join(current_script_directory, "..", "application", ".env")
+
     coordinates_file_path = file_paths["coordinates"]
     config_file_path = file_paths["config"]
 
