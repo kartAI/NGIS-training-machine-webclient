@@ -31,9 +31,10 @@ const cardData = [
 const cardContainer = document.getElementById("card-container");
 cardData.forEach((card) => {
   const cardHtml = `
-    <a href="${card.link}" class="card p-4 mb-4 rounded-3 shadow-sm>
+    <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm>
       <div class="card-body">
         <span class="fas ${card.icon}"></span>
+        <br> 
       </div>
       <h3 class="my-0 fw-normal">${card.text}</h3>
     </a>
