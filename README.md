@@ -12,7 +12,7 @@ Once this project is set up correctly you will have the option to order training
 
 5. Choose which layers you would like to include and the image settings for the data you are retrieving.
 
-5.5 (Optional) Enter an email adress to get the data sent to your email.
+(Optional) Enter an email adress to get the data sent to your email.
 
 7. Click "Order" and wait for your data to be downloaded.
 
