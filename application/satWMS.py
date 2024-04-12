@@ -36,15 +36,16 @@ def fetch_satellite_images(file_paths):
     preferred_image_size = [config["tile_size"], config["tile_size"]]
     bboxes = util.create_bbox_array(coordinates, config)
     
-    # Coordinate system transformer to reproject from EPSG:3857 to EPSG:25832
-    transformer = Transformer.from_crs("EPSG:3857", "EPSG:25832", always_xy=True)
-    
+    # Coordinate system transformer to reproject from EPSG:25832 to EPSG:3857
+    transformer = Transformer.from_crs("EPSG:25832", "EPSG:3857", always_xy=True)
+
     i = 0
     for bbox in bboxes:
-        # Reproject the coordinates from EPSG:3857 to EPSG:25832
+        # Reproject the coordinates from EPSG:25832 to EPSG:3857
         x0, y0 = transformer.transform(bbox[0], bbox[1])
         x1, y1 = transformer.transform(bbox[2], bbox[3])
         transformed_bbox = [x0, y0, x1, y1]
+
         
         image_url = get_image_url(transformed_bbox, preferred_image_size)
         
@@ -85,12 +86,12 @@ def get_image_url(bbox: List[float], image_size: List[float]) -> str:
     # Parameters for the WMS request
     wms_params = {
         "service": "WMS",
-        "version": "1.1.1",
+        "version": "1.3.0",
         "request": "GetMap",
         "layers": "NATURAL-COLOR",
         "MAXCC": 20,
         "format": "image/png",
-        "crs": "EPSG:4326",
+        "crs": "EPSG:3857",
         "bbox": bbox_str,
         "width": str(image_size[0]),
         "height": str(image_size[1]),

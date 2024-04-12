@@ -346,6 +346,18 @@ margin-right: 20px; /* Increase this value to add more space */
   z-index: 1000;
 }
 
+.privacy-policy-popup {
+  display: none;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  width: 300px; 
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 6px rgba(14, 12, 12, 0.1);
+  padding: 15px;
+  z-index: 1000;
+}
+
 /* cancel button colour*/
 #cancelButton {
   background-color: #B40000;
@@ -378,6 +390,8 @@ margin-right: 20px; /* Increase this value to add more space */
 
 }
 
+
+/* Styling for policy pop-up in the footer */
 #cookiePolicyPopup {
   display: none; /* Initially hidden until triggered */
   position: fixed; /* Or 'absolute' if you want it to scroll with the page */
@@ -395,3 +409,79 @@ margin-right: 20px; /* Increase this value to add more space */
   z-index: 1050; /* Make sure it's above other items on the page */
 }
 
+#privacyPolicyPopup {
+  display: none; /* Initially hidden until triggered */
+  position: fixed; /* Or 'absolute' if you want it to scroll with the page */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%; /* You can adjust this as needed */
+  max-width: 800px; /* You can adjust this as needed */
+  height: auto; /* Adjust the height to fit the content */
+  max-height: 90vh; /* You can adjust this as needed */
+  overflow-y: auto; /* Allows scrolling inside the popup if the content is too long */
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  z-index: 1050; /* Make sure it's above other items on the page */
+}
+
+.policy-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.privacy-policy-container, .cookie-policy-container {
+  position: relative;
+}
+
+.privacy-policy-popup, .cookie-policy-popup {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  max-width: 90%;
+  height: auto;
+  max-height: 80%;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  z-index: 1050;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.popup-close-btn {
+  padding: 8px 16px;
+  background-color: #005a9e; /* Blue background */
+  border: none;
+  border-radius: 20px; /* Increased border-radius for rounded corners */
+  color: white;
+  text-transform: uppercase;
+  font-size: 14px;
+  cursor: pointer;
+  display: block;
+  width: auto;
+  margin: 20px auto 10px; /* Center button horizontally */
+  text-align: center; /* Ensure text is centered */
+}
+
+/* Background modal overlay */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+/* Ensures a font that supports all character and that it is black */
+h4 {
+  font-family: Arial, sans-serif; 
+  color: black;
+}
