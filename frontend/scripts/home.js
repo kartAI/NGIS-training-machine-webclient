@@ -1,11 +1,30 @@
-
-document.getElementById('cookiePolicyLink').addEventListener('click', function(event) { // Add event listener to the cookie policy link
-    event.preventDefault(); // Prevent the default action of the link
-    document.getElementById('cookiePolicyPopup').style.display = 'block'; // Display the cookie policy popup
+document.getElementById('privacyPolicyLink').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('privacyPolicyPopup').style.display = 'block';
+  document.getElementById('modalOverlay').style.display = 'block';  // Show the modal background
 });
 
-document.getElementById('closePopup').addEventListener('click', function() { // Add event listener to the close button
-    document.getElementById('cookiePolicyPopup').style.display = 'none'; // Hide the cookie policy popup
+document.getElementById('closePrivacyPopup').addEventListener('click', function() {
+  document.getElementById('privacyPolicyPopup').style.display = 'none';
+  document.getElementById('modalOverlay').style.display = 'none';  // Hide the modal background
+});
+
+document.getElementById('cookiePolicyLink').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('cookiePolicyPopup').style.display = 'block';
+  document.getElementById('modalOverlay').style.display = 'block';  // Show the modal background
+});
+
+document.getElementById('closeCookiePopup').addEventListener('click', function() {
+  document.getElementById('cookiePolicyPopup').style.display = 'none';
+  document.getElementById('modalOverlay').style.display = 'none';  // Hide the modal background
+});
+
+// Close pop-up when clicking outside of it
+document.getElementById('modalOverlay').addEventListener('click', function() {
+  document.getElementById('privacyPolicyPopup').style.display = 'none';
+  document.getElementById('cookiePolicyPopup').style.display = 'none';
+  document.getElementById('modalOverlay').style.display = 'none';
 });
 
 // Elements for input fields and the continue buttons
