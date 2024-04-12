@@ -64,6 +64,8 @@ let wms_layer = document.getElementById("wms-layer");
 let fgb_layer = document.getElementById("fgb-layer");
 let wms_orto = document.getElementById("wms-ortofoto");
 let cog_orto = document.getElementById("cog-ortofoto");
+let sat_orto = document.getElementById("sat-ortofoto");
+
 
 // Updates the image sources based on user selections and sends the selections to the server
 // @returns {Promise<Object>|void} A promise that resolves with the server response data, or void if selections are incomplete
@@ -95,6 +97,8 @@ async function updateImageSources() {
     ortoSource = "WMS";
   } else if (cog_orto.checked) {
     ortoSource = "COG";
+  } else if (sat_orto.checked) {
+    ortoSource = "SAT";
   } else {
     filled = false; // No Orto source selected
     console.log("No Orto source selected");
@@ -272,7 +276,7 @@ document.getElementById('cog-ortofoto').addEventListener('change', function(e) {
   updateImageSources()
 });
 
-document.getElementById('satelitt-ortofoto').addEventListener('change', function(e) {
+document.getElementById('sat-ortofoto').addEventListener('change', function(e) {
   updateImageSources()
 });
 

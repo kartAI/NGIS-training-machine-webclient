@@ -13,15 +13,7 @@ load_dotenv()
 # Get the necessary connections for the api using dotenv
 
 
-def get_api():
-    try:
-        url = os.getenv('NGISAPI_URL')
-        user = os.getenv('NGISAPI_USER')
-        password = os.getenv('NGISAPI_PASS')
-        return NgisOpenApi(url, user, password, "KartAITest")
-    except Exception as e:
-        print(f"Error getting API: {e}")
-        sys.exit(1) 
+
 
 # Function for saving a json file
 
