@@ -5,11 +5,8 @@ from rasterio.transform import from_bounds
 import json
 from rasterio.crs import CRS
 from shapely.geometry import box, shape 
-from shapely import polygonize
 import os
-from scipy.spatial.distance import cdist
 from application import util  
-import time
 import shutil
 
 
@@ -17,6 +14,8 @@ def generate_label_data(file_paths):
 
     '''
     This function is used to generate label photos for machine learning
+    Args:
+    file_paths (dict): The file paths to the user session folders
     Returns: 
     bool: True if generation of photos was successful, false otherwise
     '''
@@ -48,7 +47,6 @@ def generate_label_data(file_paths):
     bbox = box(temp["minx"], temp["miny"], temp["maxx"], temp["maxy"])
     #Use the geopandas library to filter the features based on the bbox
     features_within_bbox = gdf[gdf.geometry.within(bbox)]
-    print("Filtered {x} amount of features in the chosen area")
     #Write the features to a temp file
     features_within_bbox.to_file(os.path.join(temp_geojson_directory,'filtered_features.geojson'), driver='GeoJSON')
 
@@ -84,12 +82,15 @@ def generate_label_data(file_paths):
                     )
                     
                     # Write the rasterized data to the raster image
-                    print("Saved tile to ...")
-                    image_path = os.path.join(images_directory_path, file_name)
+                    
                     i+=1
                     dst.write( rasterized , 1)
 
             #Copy the files to the right directory, they won't be written there for some reason
         shutil.move(file_name, images_directory_path)
-    return True
+        print(f"Saved file to {images_directory_path}")
+    if(i == amountToMake):
+        return True
+    else:
+        return False
 
