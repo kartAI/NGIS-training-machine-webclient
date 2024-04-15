@@ -6,9 +6,8 @@
 
     <title>Trainingdata Generator</title>
 
-    <!-- CSS Stylesheet -->
+   
 
-    <link rel="stylesheet" href="frontend/style.css" />
 
     <!--  Bootstrap Stylesheet-->
     <link
@@ -23,12 +22,16 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="frontend/style.css" />
+    
   </head>
   <body>
     <header>
       <div id="header"></div>
     </header>
-    <div style="padding-top: 7rem"  class="container">
+    <div style="padding-top: 5rem"  class="container">
       <div class="text-center">
         <p class="display-6 fw-normal">Choose your data sources or upload a metadata file</p>
         <br>
@@ -64,13 +67,14 @@
     </div>
     <div class="row">
       <div class="col-3"></div>
-      <div class="col-6">
+      
+      <div class="col-6 datasourceLoad">
         <div id="message" class="alert alert-success" role="alert" hidden></div>
         <div id="folder-message" class="alert alert-danger" role="alert" hidden></div>
-      </div>
-      <div class="col-3">
         <div id="loadingIcon" class="spinner-border text-primary" role="status" hidden></div>
-      </div>
+
+       </div>
+    </div>
     </div>
     <div id="card-container"></div>
     </div>
