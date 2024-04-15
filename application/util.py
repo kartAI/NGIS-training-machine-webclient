@@ -5,7 +5,7 @@ import shutil
 import json
 from fastapi import HTTPException
 from shapely.geometry import Polygon, MultiPoint
-import shapely
+import shapely 
 
 
 def split_files(image_path, output_folder, tiles, training_fraction, validation_fraction):
@@ -20,37 +20,49 @@ def split_files(image_path, output_folder, tiles, training_fraction, validation_
     validation_fraction (int): The amount of tiles that will be used for validation
     
     Returns:
-    None
+    bool: True if all files were moved successfully, False otherwise
     '''
-
     # Calculate the amount of files for each fraction
     training_files = int(training_fraction)/100 * int(tiles)
     validation_files = int(validation_fraction)/100 * int(tiles)
 
     training_tiles = os.listdir(os.path.join(image_path, "orto"))
     validation_tiles = os.listdir(os.path.join(image_path, "fasit"))
+    training_tiles_moved = 0
+    validation_tiles_moved = 0
+
+    print("Starting the process of distributing the files according to your settings.")
 
     for i in range(0, len(training_tiles)):
-        print(os.path.join(image_path, "orto", training_tiles[i]))
         if(i < training_files):
             destination = os.path.join(output_folder, "train", "images")
         else:
             destination = os.path.join(output_folder, "val", "images")
         try:
             shutil.copy2(os.path.join(image_path, "orto", training_tiles[i]), destination)
+            training_tiles_moved += 1
         except:
             print("Couldn't copy training data correctly")
 
     for i in range(0, len(validation_tiles)):
-        print(os.path.join(image_path, "orto", validation_tiles[i]))
         if(i < training_files):
             destination = os.path.join(output_folder, "train", "masks")
         else:
             destination = os.path.join(output_folder, "val", "masks")
         try:
             shutil.copy2(os.path.join(image_path, "fasit", validation_tiles[i]), destination)
+            validation_tiles_moved += 1
         except:
             print("Couldn't copy validation data correctly")
+
+    if(validation_tiles_moved == len(validation_tiles) and training_tiles_moved == len(training_tiles)):
+        print("Finished distributing files successfully!")
+        return True
+    else:
+        print("Something went wrong with distributing the files")
+        return False
+        
+
 
 
 
@@ -67,9 +79,9 @@ def setup_user_session_folders(session_id):
     config_path = os.path.join("datasets", main_folder_name, "config.json")
 
     if not os.path.exists(coordinates_path):
-        open(coordinates_path, "x")
+        open(coordinates_path, "x").close()
     if not os.path.exists(config_path):
-        open(config_path, "x")
+        open(config_path, "x").close()
 
     # Setup the files that will contain images and etc
     folders_to_make = [os.path.join("datasets", main_folder_name, "email", "train", "images"),
@@ -88,7 +100,7 @@ def setup_user_session_folders(session_id):
     #Path for the metadata file.
     metadata_path = os.path.join("datasets", main_folder_name,"email", "metadata.json")
     if not os.path.exists(metadata_path):
-        open(metadata_path, "x")
+        open(metadata_path, "x").close()
     
     
     # Check if all folders were created
@@ -123,7 +135,7 @@ def write_file(file_path, data):
     '''
     try:
         with open(file_path, "w") as file:
-            json.dump(data, file)  
+            json.dump(data, file)
             return 1
     except Exception as e:
       raise HTTPException(status_code=500, detail=f"Failed to write config to json file: {str(e)}")
@@ -143,9 +155,6 @@ def create_bbox_array(coordinates, config):
         polygon = Polygon(coordinates)
         bigBox = polygon.envelope
         bigBoxCoords = list(bigBox.exterior.coords)
-
-        print("BOX:" + str(bigBoxCoords))
-        print("POLYGON" + str(polygon))
 
         # Calculate bounds for the bounding boxes
         min_x = min(coord[0] for coord in bigBoxCoords)

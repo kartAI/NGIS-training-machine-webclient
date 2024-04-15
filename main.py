@@ -15,6 +15,7 @@ from application import labelPhotoWMS
 from application import ortoCOG
 from application import labelFGB
 from application import satWMS
+from application import labelNGIS
 from zipfile import ZipFile
 import random
 import json
@@ -73,6 +74,10 @@ for dir_name in static_dirs:
     app.mount(f"/{dir_name}", StaticFiles(directory=dir_name), name=dir_name)
 
 templates = Jinja2Templates(directory="frontend/pages")
+
+@app.get("/ngis")
+async def getNGIS():
+    labelNGIS.getNGIS()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):

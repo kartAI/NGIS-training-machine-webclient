@@ -10,6 +10,13 @@ from application import util
 
 # Function to generate COG data
 def generate_cog_data(file_paths):
+    '''
+    This function is used to generate orto photos for machine learning
+    Args:
+    file_paths (dict): The file paths to the user session folders
+    Returns: 
+    bool: True if generation of photos was successful, false otherwise
+    '''
     # Finds the current path of the script
     current_script_directory = os.path.dirname(os.path.abspath(__file__))
     coordinates_file_path = file_paths["coordinates"] # Path to the coordinates file
