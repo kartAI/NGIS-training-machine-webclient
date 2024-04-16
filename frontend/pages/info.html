@@ -41,11 +41,33 @@
       <br />
       <h2 class="display-6">Step by step instruction</h2>
       <ol>
-        <li>Enter coordinates into the application, this can be done either by selecting an area on a map, entering coordinates manually or uploading a geojson file</li>
-        <li>Enter data parameters for how much of the training data you would like to use for training and validation</li>
-        <li>(WMS Data sources only) Select the layers you would like to be included in your label data</li>
-        <li>Select the tile size and image resolution you want for the generated files</li>
-        <li>Download your selected data</li>
+        <li>
+          Choose data sources and how to draw on map.
+          <ul>
+            <li>You start with choosing you data sources for labels and orthography. You can also instead upload a file with metadata instead.</li>
+            <li>Then you choose how you want to choose area on a map</li>
+          </ul>
+        </li>
+        <li>
+          Designate area to be used for training.
+          <ul>
+            <li>You can draw a square or a polygon on a map,</li>
+            <li>or you can write in the coordinates,</li>
+            <li>or you can upload a geoJSON-file of the area you want to use.</li>
+          </ul>
+        </li>
+        <li>
+          On constraints, you fill in the parameters and settings for you training data.
+          <ul>
+            <li>Data Settings: Here you enter how much of the data will be used for training, how much will be used for validation and the minimum percentage of buildings.
+            If you are unsure about which values to put in, then set them at 60% for Training, 40% for Validation and 10% for Building percentage.</li>
+            <li>WMS Layers: If you have chosen WMS as label source, you can choose if you want buildings, roads or bridges in the training data and you can choose which colour they will have. This is not possible for NGIS or FGB as label source.</li>
+            <li>Image settings: Here you can define the size of the tiles in pixels of the training data. It must be a value between 100-1104. For image resolution you can choose a value between 0.1-0.5. 0.1 is 10cm.</li>
+            <li>Dataset settings: Here you can choose if you want the data sent to your email and give you dataset a name. If you do not enter your e-mail, you can download the dataset directly to your computer locally.</li>
+            <li>When you have filled all the parameters and required fields, you can order you data by clicking on the order button and then confirm.</li>
+            <li>If you have not entered an email, you will after having clicked order be given the option to download the data.</li>
+          </ul>
+        </li>
       </ol>
       <h2 class="display-6">What can you use the generated data for?</h2>
       <p>
@@ -53,6 +75,13 @@
         The generated data can be used for training machine learning models.
       </p>
       <h2 class="display-6">About KartAi</h2>
+      <ul>
+        <li>A research project for improving the quality of Norway's official property register (cadastre) and central common map database (SFKB) using artificial intelligence (AI).</li>
+        <li>The aim is to contribute to automating and streamlining the processing of construction building applications.</li>
+        <li>A collaboration between <a href="https://www.kristiansand.kommune.no/">Kristiansand municipality (project owner)</a>, <a href="https://www.kartverket.no/">Kartverket</a>, <a href="https://www.norkart.no/">Norkart AS</a> and <a href="https://www.uia.no/">the University of Agder.</a></li>
+        <li>Financially supported by <a href="https://www.regionaleforskningsfond.no/fondsregion-agder/">Regional research fund Agder.</a></li>
+        <li>The initiators are Alexander Salveson Nossum, Norkart AS; Terje Nuland, Kristiansand municipality; Lars Fredrik Gyland and Ivar Oveland, Kartverket.</li>
+      </ul>
       <p>
         KartAi is a research project conducted by Kartverket, Norkart, Kristiansand Municipality, and the University of Agder with financial support from the Regional Research Fund Agder. The main purpose of the project is to make the processing of building cases in the municipality more efficient. This will be achieved by improving the quality of the property register (matrikkelen), and map databases using Ai.
         The KartAi project has three sub-goals:
