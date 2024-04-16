@@ -33,8 +33,17 @@ class TestSplitFiles(unittest.TestCase):
         teardown_user_session_folders(self.test_session_id)
 
     def test_split_files_success(self):
-        result = split_files(self.image_folder, self.output_folder, self.files_to_make, self.trainingFraction, self.validationFraction)
+        result = split_files(self.image_folder, self.output_folder, self.trainingFraction)
         self.assertEqual(result, True)
+    
+    def test_split_files_fail_wrong_input(self):
+        result = split_files("", self.output_folder, self.trainingFraction)
+        self.assertEqual(result, False)
+
+    def test_split_files_wrong_output(self):
+        result = split_files(self.image_folder, "", self.trainingFraction)
+        self.assertEqual(result, False)
+    
 
     if __name__ == "main":
         unittest.main()
@@ -52,6 +61,7 @@ class TestSetupUserFolders(unittest.TestCase):
     def test_setup_success(self):
         result = setup_user_session_folders(self.test_session_id)
         self.assertEqual(result, True)
+    
 
 class TestReadFile(unittest.TestCase):
 
@@ -71,16 +81,28 @@ class TestReadFile(unittest.TestCase):
         result = read_file(self.filename)
         self.assertEqual(result, self.data)
 
+    def test_read_file_wrong_path(self):
+        with self.assertRaises(HTTPException) as context:
+            read_file(self.filename + ".txt")
+        self.assertEqual(context.exception.status_code, 500)
+        self.assertTrue(f"Could not find file: {str(self.filename)}" in str(context.exception.detail))
+
+
 
 class TestBBOXArray(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         self.coordinateFile =  [[1000, 1000], [2000, 1000], [2000, 2000], [1000, 2000], [1000, 1000]]
+        self.coordinateFile_notSquare =  [[1000, 1000], [2000, 1000], [2000, 2000], [1000, 1000]]
         self.config = {"label_source": "WMS", "orto_source": "WMS", "data_parameters": ["100", "0", "80"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#563d7c", "#563d7c", "#563d7c"], "tile_size": 500, "image_resolution": 0.2}
         super(TestBBOXArray, self).__init__(*args, **kwargs)
 
     def test_create_bbox_array(self):
         result = create_bbox_array(self.coordinateFile, self.config)
         self.assertEqual(len(result), 100)
+    
+    def test_create_bbox_array_polygon(self):
+        result = create_bbox_array(self.coordinateFile_notSquare, self.config)
+        self.assertEqual(len(result), 64)   
 
 class TestSingleBBOX(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -88,7 +110,7 @@ class TestSingleBBOX(unittest.TestCase):
         self.config = {"label_source": "WMS", "orto_source": "WMS", "data_parameters": ["100", "0", "80"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#563d7c", "#563d7c", "#563d7c"], "tile_size": 500, "image_resolution": 0.2}
         super(TestSingleBBOX, self).__init__(*args, **kwargs)
 
-    def test_create_bbox(self):
+    def test_create_bbox_success(self):
         result = create_bbox(self.coordinateFile)
         self.assertEqual(result["minx"], 1000)
 
