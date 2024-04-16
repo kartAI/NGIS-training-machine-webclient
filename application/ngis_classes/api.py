@@ -25,6 +25,9 @@ def get_query(objectType=None):
     return f'eq(*,{objectType})'
 
 
+
+
+
 class NgisOpenApi:
     def __init__(self, url, user, password, client_product_version):
         self.url = url
@@ -41,12 +44,12 @@ class NgisOpenApi:
     def get_features(self, dataset_id, bounds, objectType=None):
         return {
             "type": "FeatureCollection",
-            "features": merge_lists(self._get_features_paginated(f'/datasets/{dataset_id}/features', {"bbox": bounds, "query": get_query(objectType)}))
+            "features": merge_lists(self._get_features_paginated(f'/datasets/{dataset_id}/features', {"crs_ESPG" : "5972", "bbox": bounds,"references" : "direct", "query": get_query(objectType)}))
         }
 
     def _get_features_paginated(self, path, params=None):
         t = self._send_request(
-            path, params, {"accept": "application/vnd.kartverket.sosi+json; version=1.0"})
+            path, params, {"accept": "application/vnd.kartverket.sosi+json; version=2.0"})
         if t[1] is not None:
             return [t[0]["features"], self._get_features_paginated(t[1])[0]]
         return [t[0]["features"]]

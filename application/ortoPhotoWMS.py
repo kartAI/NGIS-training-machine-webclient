@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 def generate_training_data(file_paths):
     '''
     This function is used to generate a photo using Norkart's WMS with orthophoto capabilities. 
+    Args:
+    file_paths (dict): The file paths to the user session folders
     Returns: 
     bool: True if generation of photos was successful, false otherwise
     '''

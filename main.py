@@ -15,6 +15,7 @@ from application import labelPhotoWMS
 from application import ortoCOG
 from application import labelFGB
 from application import satWMS
+from application import labelNGIS
 from zipfile import ZipFile
 import random
 import json
@@ -73,6 +74,10 @@ for dir_name in static_dirs:
     app.mount(f"/{dir_name}", StaticFiles(directory=dir_name), name=dir_name)
 
 templates = Jinja2Templates(directory="frontend/pages")
+
+@app.get("/ngis")
+async def getNGIS():
+    labelNGIS.getNGIS()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
@@ -282,7 +287,6 @@ async def generatePhotos(request: Request):
     Returns:
     A message informing if there was an error or if everything went successfully
     '''
-
     #Read config from the file
     session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
     paths = get_paths(session_id) # Get the paths for the session
@@ -308,7 +312,7 @@ async def generatePhotos(request: Request):
             #TODO: Update the error checking code here, doesn't work if you have both tif and jpg with COGs
             #return {"message": "Amount of tiles do not match, please try again"}
         
-        util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), labelTiles, config["data_parameters"][0], config["data_parameters"][1])
+        util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), config["data_parameters"][0])
         createMetaData(paths)
         datasetName = config["dataset_name"]
         zip_files(os.path.join(paths["root"]), f"{datasetName}_{session_id}.zip")
