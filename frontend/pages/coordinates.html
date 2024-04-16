@@ -23,11 +23,11 @@
         </header>
        
         <!-- Page content -->
-        <div style="padding-top: 7rem" class="container">
+        <div style="padding-top: 4rem" class="container">
             <div class="row w-90">
                 <div class="col-3"></div>
                 <div class="col-6">
-                    <h1 class="display-4 fw-normal">Write Coordinates</h1>
+                    <h1 class="display-6 fw-normal">Write Coordinates</h1>
                 </div>
                 <div class="col-2"></div>
             </div>
@@ -35,9 +35,9 @@
                 <div class="col-3"></div>
                 <div class="col-6">
                     <ol>
-                        <li class="fs-5"> Choose coordinate system</li>
-                        <li class="fs-5"> Enter coordinates in the field and click "Done"</li>
-                        <li class="fs-5">Review the area on the map of the coordinates and then click "Next"</li>
+                        <li class="fs-6"> Choose coordinate system</li>
+                        <li class="fs-6"> Enter coordinates in the field and click "Done"</li>
+                        <li class="fs-6">Review the area on the map of the coordinates and then click "Next"</li>
                     </ol>
                 </div>
                 <div class="col-2"></div>
@@ -49,7 +49,7 @@
                 <div class="col">
                     <!--Select field-->
                     <label for="coordSys" class="col-form-label col-form-label-lg">Coordinatesystem <span class="question-mark" onclick="showCoordinateSystemInfo()">?
-                        <span class="tooltip-text">Info about the coordinate system</span></span>
+                        <span class="tooltip-text">Choose between EPSG:25832, EPSG4326 or EPSG:3587</span></span>
                     </label>
                     <select id="coordSys" class="form-control form-control-lg" onchange="logSelectedEpsg()">
                         <option value="None">Choose coordinatesystem</option>
