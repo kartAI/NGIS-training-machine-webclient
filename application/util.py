@@ -213,3 +213,21 @@ def create_bbox(coordinates):
     max_x = max(coord[0] for coord in coordinates)
     max_y = max(coord[1] for coord in coordinates)
     return {"minx": min_x, "miny":min_y, "maxx":max_x, "maxy":max_y}
+
+
+def bbox_overlap(bbox1, bbox2):
+    """
+    Check if two bounding boxes overlap.
+    
+    Parameters:
+        bbox1 (tuple): Coordinates of the first bounding box in the format (x1, y1, x2, y2),
+                       where (x1, y1) represent the top-left corner and (x2, y2) represent the bottom-right corner.
+        bbox2 (tuple): Coordinates of the second bounding box in the same format as bbox1.
+    
+    Returns:
+        bool: True if the bounding boxes overlap, False otherwise.
+    """
+    polygon1 = Polygon(bbox1)
+    polygon2 = Polygon(bbox2)
+    return polygon1.intersects(polygon2)
+    
