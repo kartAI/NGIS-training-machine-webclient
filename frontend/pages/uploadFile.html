@@ -17,6 +17,19 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
         integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="">
 
+    <style>
+
+        h1, p {
+        font-size: 2vw; /* Example of responsive font size */
+        }
+
+        #map {
+        height: 40vh;  /* 100% of the viewport height */
+        width: 100%;   /* 100% of the viewport width */
+        z-index: 1;     /* ensures the map is not hidden behind other content */
+        }
+    </style>
+
 </head>
 
 <body>
@@ -27,10 +40,10 @@
         </header>
 
         <!-- Page content -->
-        <div style="padding-top: 7rem" class="container">
+        <div style="padding-top: 4rem" class="container">
             <div class="row w-90">
                 <h1 class="display-4 fw-normal text-center">Upload geoJSON file</h1>
-            <p class=" text-muted fs-5 text-center">Choose and upload a geoJSON-file with coordinates
+            <p class=" text-muted fs-5 text-center">Choose and upload a geoJSON-file with coordinates<br>Remember to choose coordinatesystem
             </p>
             </div>
             <div class="row w-90">
@@ -44,7 +57,7 @@
                       </div>
                       <hr class="hr" />
                       <label for="coordSys" class="col-form-label col-form-label-lg">Coordinatesystem <span class="question-mark" onclick="showCoordinateSystemInfo()">?
-                        <span class="tooltip-text">Info about the coordinate system</span></span>
+                        <span class="tooltip-text">Choose the coordinatesystem for the map data in the file that you are uploading</span></span>
                     </label>
                     <select id="coordSys" class="form-control form-control-lg">
                         <option value="None">Choose coordinatesystem</option>

@@ -7,6 +7,13 @@ html, body {
   margin: 0;
 }
 
+body {
+  background-image: url('frontend/images/topography_1.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .d-grid {
   margin-bottom: 50px; /* Adjust this value as needed to create more space */
 }
@@ -484,4 +491,17 @@ margin-right: 20px; /* Increase this value to add more space */
 h4 {
   font-family: Arial, sans-serif; 
   color: black;
+}
+
+/*background image*/
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-image: url('frontend/images/topography_1.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }

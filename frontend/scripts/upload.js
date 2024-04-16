@@ -121,3 +121,9 @@ function convertToEPSG25832(coordsArray, originalEPSG) {
       const data = await response.json();
       return data; // Return the server's response data.
     }
+
+    // Map reseizes with the window
+    window.addEventListener('resize', function() {
+        map.invalidateSize();  // This Leaflet method helps to ensure the map sizes itself correctly after the container size changes
+    });
+    
