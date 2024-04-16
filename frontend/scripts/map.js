@@ -51,8 +51,7 @@ map.on("draw:created", function (c) {
             map.removeLayer(layer)
         }
     });
-    // Enable the next button
-    document.getElementById("nextButton").disabled = false;
+    
 
     // Retrieves drawn shape
     var layer = c.layer;
@@ -97,8 +96,6 @@ map.on("draw:created", function (c) {
             cornerCircles.forEach(function (circle) {
                 map.removeLayer(circle);
             });
-            // Clear the array
-            
         });
     }
 
@@ -131,21 +128,6 @@ map.on("draw:created", function (c) {
 
     // Add the first coordinate again at the end of the array
     uniqueCoordsArray.push(uniqueCoordsArray[0]);
-
-
-    // Convert the unique coordinates back to Leaflet LatLng objects
-    var uniqueCoords = uniqueCoordsArray.map(function (coord) {
-        return L.latLng(coord[0], coord[1]);
-    });
-
-    // Update the HTML element with the unique coordinates
-    var coordinatesElement = document.getElementById("coordinates");
-    var coordinatesString = "";
-    for (var i = 0; i < uniqueCoords.length; i++) {
-        var point = L.CRS.EPSG4326.project(uniqueCoords[i]);
-        coordinatesString += "<b>P" + (i + 1) + ": </b>" + uniqueCoords[i].lat + ", " + uniqueCoords[i].lng + "<br>";
-    }
-
     kartAIcoords4326 = uniqueCoordsArray; // KartAI coordinates in EPSG:4326, used for conversion
 
     // EPSG:4326 to EPSG:25832 conversion defined in proj4
@@ -153,7 +135,6 @@ map.on("draw:created", function (c) {
 
     // Define the source (EPSG:4326) and destination (EPSG:3857) projections
     const epsg4326 = 'EPSG:4326'; 
-    const epsg3857 = 'EPSG:3857'; // Default EPSG for Leaflet
     const epsg25832 = 'EPSG:25832'; // Default EPSG for this project
 
     // Function to convert coordinates from EPSG:4326 to EPSG:3857
@@ -170,9 +151,12 @@ map.on("draw:created", function (c) {
     
     console.log(kartAIcoords); // Log the converted coordinates for debugging
 
-    // Update the HTML element with the converted coordinates
-    coordinatesElement.innerHTML = coordinatesString;
-    updateCoordinateFile(kartAIcoords);
+    // Enable the next button
+    if(updateCoordinateFile(kartAIcoords)){
+        console.log("HELLO??")
+        document.getElementById("error-message").setAttribute("hidden", true)
+        document.getElementById("nextButton").disabled = false;
+    }
 });
 
 // On window load, set up necessary cookies for the session
@@ -206,8 +190,14 @@ async function updateCoordinateFile(coordinates) {
         body: JSON.stringify({"input": coordinates}), // Send the coordinates as JSON
     });
 
-    const data = await response.json(); 
-    return data; // Return the server's response data
+    const data = await response.json();  
+    if(data.error_message){
+        let element = document.getElementById("error-message")
+        element.innerHTML = data.error_message
+        element.removeAttribute("hidden");
+        return false
+    }
+    return true; // Return the server's response data
 }
 
 const geoJSONData = {

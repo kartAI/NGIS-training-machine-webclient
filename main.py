@@ -201,6 +201,19 @@ async def update_coordinate_file(input: Input, request: Request):
     '''
     session_id = request.cookies.get("session_id", None) # Get the session ID from the cookie
     coordinate_path = get_paths(session_id)["coordinates"]  # Get the path to the coordinates file
+    config_path = get_paths(session_id)["config"] #Get the path to the config file
+    configData = util.read_file(config_path)["Config"] #Get the content of the config file
+
+    #Define the choices
+
+    if(configData["label_source"] != "WMS" or configData["orto_source"] != "WMS"):
+        sombbox = [ [ 445455.840260153403506, 6447241.938237250782549 ], [ 446411.136294620053377, 6446821.367656039074063 ], [ 446200.851004014199134, 6445709.859691408462822 ], [ 445696.166306560102385, 6445000.897854508832097 ], [ 444800.951783695199993, 6444171.772994405589998 ], [ 444392.397504803782795, 6444315.968622249551117 ], [ 443749.52533066587057, 6445295.297261357307434 ], [ 444512.560528007161338, 6446989.595888524316251 ], [ 445455.840260153403506, 6447241.938237250782549 ] ]
+        if(not util.bbox_overlap(input.input, sombbox)):
+            return {"error_message": "Your chosen coordinates do not overlap with the disclosed areas, please choose a different area or data sources"}
+
+    #Check for overlap between the disclosed areas and chosen coordinates
+   #if(not util.bbox_overlap(input.input), ):
+
     data = {"Coordinates": input.input} # Get the input from the request
     if(util.write_file(coordinate_path, data)): # Write the data to the coordinates file
         return {"success_message": "Coordinates were updated successfully"}
