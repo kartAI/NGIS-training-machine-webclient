@@ -151,12 +151,21 @@ map.on("draw:created", function (c) {
     
     console.log(kartAIcoords); // Log the converted coordinates for debugging
 
-    // Enable the next button
-    if(updateCoordinateFile(kartAIcoords)){
-        console.log("HELLO??")
-        document.getElementById("error-message").setAttribute("hidden", true)
-        document.getElementById("nextButton").disabled = false;
-    }
+
+    result = updateCoordinateFile(kartAIcoords)
+    updateCoordinateFile(kartAIcoords).then(function(result){
+        console.log(result)
+        if(result.error_message == "Your chosen coordinates do not overlap with the disclosed areas, please choose a different area or data source"){
+            let element = document.getElementById("error-message")
+            element.innerHTML = result.error_message
+            element.removeAttribute("hidden");
+            console.log("Test1")
+            document.getElementById("nextButton").disabled = true;
+        }else{
+            document.getElementById("error-message").setAttribute("hidden", true)
+            document.getElementById("nextButton").disabled = false;
+        }
+    })
 });
 
 // On window load, set up necessary cookies for the session
@@ -190,14 +199,9 @@ async function updateCoordinateFile(coordinates) {
         body: JSON.stringify({"input": coordinates}), // Send the coordinates as JSON
     });
 
-    const data = await response.json();  
-    if(data.error_message){
-        let element = document.getElementById("error-message")
-        element.innerHTML = data.error_message
-        element.removeAttribute("hidden");
-        return false
-    }
-    return true; // Return the server's response data
+    const data = await response.json();
+    return data;  
+
 }
 
 const geoJSONData = {
