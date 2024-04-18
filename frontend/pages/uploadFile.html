@@ -1,89 +1,132 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Trainingdata Generator</title>
 
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="frontend/style.css">
+    <link rel="stylesheet" href="frontend/style.css" />
 
     <!-- Stylesheet for Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
 
     <!-- Stylesheet for Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
 
     <style>
-
-        #map {
-        height: 40vh;  /* 100% of the viewport height */
-        width: 100%;   /* 100% of the viewport width */
-        z-index: 1;     /* ensures the map is not hidden behind other content */
-        }
+      #map {
+        height: 40vh; /* 100% of the viewport height */
+        width: 100%; /* 100% of the viewport width */
+        z-index: 1; /* ensures the map is not hidden behind other content */
+      }
     </style>
+  </head>
 
-</head>
+  <body>
+    <!-- Header/navbar -->
+    <header>
+      <div id="header"></div>
+    </header>
 
-<body>
+    <!-- Page content -->
+    <div style="padding-top: 4rem" class="container">
+      <div class="row w-90">
+        <h1 class="display-5 fw-normal text-center">Upload geoJSON file</h1>
+        <p class="text-muted fs-6 text-center">
+          Choose and upload a geoJSON-file with coordinates<br />Remember to
+          choose coordinatesystem
+        </p>
+      </div>
+      <div class="row w-90">
+        <div class="col">
+          <div id="map" onmouseenter="return noScroll();"></div>
+        </div>
+        <div class="col">
+          <div>
+            <label for="file-input" class="ol-form-label col-form-label-lg"
+              >Choose file (GeoJSON/JSON)</label
+            >
+            <input
+              class="form-control form-control-lg"
+              id="file-input"
+              accept=".json, .geojson"
+              type="file"
+            />
+          </div>
+          <hr class="hr" />
+          <label for="coordSys" class="col-form-label col-form-label-lg"
+            >Coordinatesystem
+            <span class="question-mark" onclick="showCoordinateSystemInfo()"
+              >?
+              <span class="tooltip-text"
+                >Choose the coordinatesystem for the map data in the file that
+                you are uploading</span
+              ></span
+            >
+          </label>
+          <select id="coordSys" class="form-control form-control-lg">
+            <option value="None">Choose coordinatesystem</option>
+            <option value="EPSG:25832">EPSG:25832</option>
+            <option value="EPSG:4326" selected>EPSG:4326</option>
+            <option value="EPSG:3587">EPSG:3587</option>
+          </select>
+          <div style="float: left" class="btn-container">
+            <button
+              type="button"
+              style="margin-right: 3rem"
+              class="btn btn-primary btn-lg"
+              onclick="uploadFile()"
+            >
+              Upload
+            </button>
+            <button
+              type="button"
+              id="nextBtn"
+              class="btn btn-primary btn-lg col-3"
+              onclick="return nav();"
+              disabled
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <!-- Header/navbar -->
-        <header>
-            <div id="header"></div>
-        </header>
+    <!-- Proj4 library for coordinate transformations  -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
+      integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
 
-        <!-- Page content -->
-        <div style="padding-top: 4rem" class="container">
-            <div class="row w-90">
-                <h1 class="display-5 fw-normal text-center">Upload geoJSON file</h1>
-            <p class=" text-muted fs-6 text-center">Choose and upload a geoJSON-file with coordinates<br>Remember to choose coordinatesystem
-            </p>
-            </div>
-            <div class="row w-90">
-                <div class="col">
-                    <div id="map" onmouseenter="return noScroll();"></div>
-                </div>
-                <div class="col"> 
-                    <div>
-                        <label for="file-input" class="ol-form-label col-form-label-lg">Choose file (GeoJSON/JSON)</label>
-                        <input class="form-control form-control-lg" id="file-input" accept=".json, .geojson" type="file">
-                      </div>
-                      <hr class="hr" />
-                      <label for="coordSys" class="col-form-label col-form-label-lg">Coordinatesystem <span class="question-mark" onclick="showCoordinateSystemInfo()">?
-                        <span class="tooltip-text">Choose the coordinatesystem for the map data in the file that you are uploading</span></span>
-                    </label>
-                    <select id="coordSys" class="form-control form-control-lg">
-                        <option value="None">Choose coordinatesystem</option>
-                        <option value="EPSG:25832" >EPSG:25832</option>
-                        <option value="EPSG:4326" selected>EPSG:4326</option>
-                        <option value="EPSG:3587">EPSG:3587</option>
-                    </select>
-                    <div style="float:left" class="btn-container">
-                        <button type="button" style="margin-right: 3rem" class="btn btn-primary btn-lg" onclick="uploadFile()">Upload</button>
-                        <button type="button" id="nextBtn" class="btn btn-primary btn-lg col-3" onclick="return nav();"
-                            disabled>Next</button>
-                    </div>
-                </div>
-                </div>
-            </div>
+    <!-- Leaflet JS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""
+    ></script>
 
-            <!-- Proj4 library for coordinate transformations  -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
-                integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
-                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-
-            <!-- Leaflet JS -->
-            <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-                integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-
-            <!-- Custom JS-->
-            <script src="frontend/scripts/map.js"></script>
-            <script src="frontend/scripts/upload.js"></script>
-            <script src="frontend/scripts/script.js"></script>
-</body>
-
+    <!-- Custom JS-->
+    <script src="frontend/scripts/map.js"></script>
+    <script src="frontend/scripts/upload.js"></script>
+    <script src="frontend/scripts/script.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
