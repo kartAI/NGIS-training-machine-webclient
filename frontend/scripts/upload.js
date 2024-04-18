@@ -46,7 +46,20 @@ function uploadFile(){
             }
             console.log(coordinateArray)
             console.log(data["features"][0]["geometry"]["coordinates"])
-            updateCoordinateFile(coordinateArray)
+            result = updateCoordinateFile(kartAIcoords)
+    updateCoordinateFile(kartAIcoords).then(function(result){
+        console.log(result)
+        if(result.error_message == "Your chosen coordinates do not overlap with the disclosed areas, please choose a different area or data source"){
+            let element = document.getElementById("error-message")
+            element.innerHTML = result.error_message
+            element.removeAttribute("hidden");
+            console.log("Test1")
+            document.getElementById("nextButton").disabled = true;
+        }else{
+            document.getElementById("error-message").setAttribute("hidden", true)
+            document.getElementById("nextButton").disabled = false;
+        }
+    })
         } catch (error) {
             // Alert the user in case of an error parsing the JSON file content 
             alert('Error parsing the JSON file: ' + error);
