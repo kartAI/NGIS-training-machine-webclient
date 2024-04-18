@@ -478,7 +478,7 @@ def send_email(to_email, attachment_name, dataset_name):
     part = MIMEBase("application", "octet_stream")
     part.set_payload((attachment).read())
     encoders.encode_base64(part)
-    part.add_header('Content-Disposition', "attachment; filename= %s" % f"{dataset_name}")
+    part.add_header('Content-Disposition', "attachment; filename= %s" % f"{dataset_name}.zip")
 
     message.attach(part)
 
