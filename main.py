@@ -70,7 +70,7 @@ SETUP FASTAPI
 '''
 
 # Mount the different directories for static files
-static_dirs = ["frontend", "frontend/resources", "frontend/scripts"]
+static_dirs = ["frontend", "frontend/scripts"]
 for dir_name in static_dirs:
     app.mount(f"/{dir_name}", StaticFiles(directory=dir_name), name=dir_name)
 
