@@ -9,16 +9,17 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
-from application import util
-from application import ortoPhotoWMS
-from application import labelPhotoWMS
-from application import ortoCOG
-from application import labelFGB
-from application import satWMS
-from application import labelNGIS
+from application import util, ortoPhotoWMS, labelPhotoWMS, ortoCOG, labelFGB, satWMS, labelNGIS
 from zipfile import ZipFile
 import random
 import json
+import email, smtplib, ssl
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+
 from datetime import datetime
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
@@ -330,7 +331,7 @@ async def generatePhotos(request: Request):
         datasetName = config["dataset_name"]
         zip_files(os.path.join(paths["root"]), f"{datasetName}_{session_id}.zip")
         if(config["email"] != ""):
-            send_email_with_attachment(config["email"],"Here is your dataset!","Dataset from the training data generator", os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"))
+            send_email(config["email"], os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"), config["dataset_name"])
         return 0
     
 def generateTrainingData(paths, label_source, orto_source): 
@@ -455,40 +456,38 @@ env_file_path = os.path.join("application", ".env")
 
 # Laster .env fra riktig path
 load_dotenv(env_file_path)
+
+def send_email(to_email, attachment_name, dataset_name):
+
+    message = MIMEMultipart()
+    user = os.getenv('SMTP_USER')
+    password = os.getenv('SMTP_PASS')
+    server = os.getenv('SMTP_SERVER')
+    port = os.getenv('SMTP_PORT')
     
-def send_email_with_attachment(to_emails, subject, content, attachment_path):
-    """Define email sending through SendGrid"""
+    message = MIMEMultipart()
+    message['From'] = user
+    message['To'] = to_email
+    message['Subject'] = "KARTAI TRENINGSDATA"
+    message.attach(MIMEText("This is your requested training data from the training data generator", 'plain'))
 
-    if not os.path.exists(attachment_path):
-        raise FileNotFoundError(f"Attachment '{attachment_path}' not found.")
+    filename = attachment_name.split("/")[-1]  # Extracting just the filename from the path
+    attachment = open(attachment_name, "rb")
+
+    print(filename)
+    part = MIMEBase("application", "octet_stream")
+    part.set_payload((attachment).read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', "attachment; filename= %s" % f"{dataset_name}.zip")
+
+    message.attach(part)
 
 
-    message = Mail(
-        from_email='victbakk@gmail.com', # Sender epost api
-        to_emails=to_emails, # Til epost som blir lagt inn, tror den er definert som "email" i koden.
-        subject=subject,
-        html_content=content
-    )
-
-    with open(attachment_path, 'rb') as f:
-        data = f.read()
-    encoded_file = base64.b64encode(data).decode()
-
-    attachedFile = Attachment(
-        FileContent(encoded_file),
-        FileName(os.path.basename(attachment_path)),
-        FileType('application/zip'),
-        Disposition('attachment')
-    )
-    message.attachment = attachedFile
-
-    try:
-        sg = SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))  # Henter API nøkkel
-        response = sg.send(message)
-        # Prints response below
-        print(f"Email sent. Status code: {response.status_code}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    with smtplib.SMTP(server, port) as server:
+                server.starttls()
+                server.login(user, password)
+                server.sendmail(user, to_email, message.as_string())
+                print("Email sent successfully.")
 
 def zip_files(directory_path: str, zip_name: str = 'attachments.zip'):
     """Zip all files in the specified directory and save them to a zip file."""
