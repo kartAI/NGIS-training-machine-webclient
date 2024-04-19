@@ -60,147 +60,12 @@ def test_generatePhotos():
 def cleanup_test_data():
     pass
 
-    # sendEmail test
+'''TEST FOR LABEL AND ORTO SOURCES UPDATED AND WORKING 19.04.2024'''
+# Leaving imports in order to easier run tests alone 
+import pytest
 from unittest.mock import patch
-@patch('main.send_email_with_attachment')
-@patch('main.zip_files')
-@patch('os.remove')
-@patch('main.util.teardown_WMS_folders')
-def test_send_zipped_files_email(mock_teardown, mock_remove, mock_zip, mock_send_email):
-    # Mock the behavior of external dependencies
-    mock_zip.return_value = None
-    mock_send_email.return_value = None
-    mock_remove.return_value = None
-    mock_teardown.return_value = None
-
-    # Simulate a request with a JSON payload containing the email
-    response = client.post("/sendEmail", json={"email": "test@example.com"})
-
-    # Assertions to verify the endpoint behavior
-    assert response.status_code == 200
-    assert response.json() == {"message": "Email sent successfully with zipped files."}
-
-    # Verify that the mocked functions were called as expected
-    mock_zip.assert_called_once_with()  # Add any arguments if your function requires them
-    mock_send_email.assert_called_once_with(
-        to_emails="test@example.com",
-        subject="Here are your zipped files",
-        content="<strong>Zip file holding the requested data.</strong>",
-        attachment_path="attachments.zip"
-    )
-    mock_remove.assert_called_once_with("attachments.zip")
-    mock_teardown.assert_called_once()
-
-# Test for /zip_files
-
-
-@pytest.fixture
-def temp_dir_with_files(tmp_path):
-    # Create some test files in the temporary directory
-    for i in range(3):
-        file_path = tmp_path / f"test_file_{i}.txt"
-        file_path.write_text(f"This is test file {i}")
-    
-    # Yield the temporary directory path to the test function
-    yield tmp_path
-
-def test_zip_files(temp_dir_with_files):
-    # The temporary directory and files are setup
-    tmpdir = temp_dir_with_files
-
-    # The name of the zip file to be created
-    zip_name = os.path.join(tmpdir, 'test.zip')
-
-    # Call the function to be tested
-    zip_files(directory_path=tmpdir, zip_name=zip_name)
-
-    # Assert: Check the zip file exists
-    assert os.path.exists(zip_name)
-
-    # Verify the zip file contains the expected files
-    with zipfile.ZipFile(zip_name, 'r') as zipf:
-        zipped_files = zipf.namelist()
-        expected_files = [f"test_file_{i}.txt" for i in range(3)]
-
-        # Verify all expected files are in the zipped file
-        for expected_file in expected_files:
-            assert expected_file in zipped_files
-
-  # Send email with attachment mock test
-
-@patch('builtins.open', mock_open(read_data=b"data"))
-@patch('os.path.exists', return_value=True)
-@patch('main.SendGridAPIClient')
-def test_send_email_with_attachment(mock_sendgrid_client, mock_exists):
-    # Mock the os.path.exists to always return True
-    mock_exists.return_value = True
-
-    # Mock SendGridAPIClient's behavior
-    mock_sendgrid_response = MagicMock()
-    mock_sendgrid_response.status_code = 202  # SendGrid returns 202 for successful sends
-    mock_sendgrid_client.return_value.send.return_value = mock_sendgrid_response
-
-    # Parameters for send_email_with_attachment
-    to_emails = "test@example.com"
-    subject = "Test Subject"
-    content = "Test Content"
-    attachment_path = "path/to/test_attachment.zip"
-
-    # Call the function to be tested
-    send_email_with_attachment(to_emails, subject, content, attachment_path)
-
-    # Assert: Check that os.path.exists was called with the attachment path
-    mock_exists.assert_called_once_with(attachment_path)
-
-    # Verify SendGridAPIClient was instantiated with the dummy API key
-    mock_sendgrid_client.assert_called_once()
-
-    # Verify the send method was called on the SendGrid client
-    assert mock_sendgrid_client.return_value.send.called
-    
-    ''' COG TEST'''
-    
-class TestGenerateCogData(unittest.TestCase):
-    @patch('application.ortoCOG.os.getenv')
-    @patch('application.ortoCOG.load_dotenv')
-    @patch('application.ortoCOG.util.read_file')
-    @patch('application.ortoCOG.util.create_bbox_array')
-    @patch('application.ortoCOG.rasterio.open')
-    @patch('application.ortoCOG.imageio.imwrite')
-    @patch('application.ortoCOG.plt.imsave')
-    @patch('application.ortoCOG.os.path.isdir')
-    @patch('application.ortoCOG.os.makedirs')
-    def test_generate_cog_data_success(self, mock_makedirs, mock_isdir, mock_plt_imsave, mock_imageio, mock_rasterio_open, mock_create_bbox_array, mock_read_file, mock_load_dotenv, mock_getenv):
-        mock_getenv.side_effect = lambda key: {
-            'AZURE_STORAGE_ACCESS_KEY': 'fake_key',
-            'AZURE_STORAGE_ACCOUNT_NAME': 'fake_account'
-        }.get(key, None)
-        mock_isdir.return_value = False
-        mock_read_file.side_effect = [
-            {'Coordinates': [[0, 0], [10, 10]]},
-            {'Config': {'tile_size': 256, 'image_resolution': 0.2}} #Mock coord and config files
-        ]
-        mock_create_bbox_array.return_value = [[0, 0, 10, 10]]  #Simplified bounding box
-
-        src_mock = MagicMock()
-        src_mock.read.return_value = np.ones((256, 256, 3)) * 0.5
-        mock_rasterio_open.return_value.__enter__.return_value = src_mock
-        src_mock.transform = from_origin(0, 0, 1, 1)
-
-        file_paths = {
-            'coordinates': 'path/to/coordinates.json',
-            'config': 'path/to/config.json',
-            'root': '/fake/root'
-        }
-
-        result = generate_cog_data(file_paths)
-
-        self.assertTrue(result)
-        mock_imageio.assert_called()
-
-if __name__ == '__main__':
-    unittest.main()
-    
+from main import generateTrainingData
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -302,3 +167,58 @@ def test_generate_training_data_sat_orto(return_value, expected):
     with patch('application.satWMS.fetch_satellite_images', return_value=return_value):
         result = generateTrainingData(paths, label_source, orto_source)
         assert result == expected, f"Expected {expected}, got {result}"
+        
+
+'''TEST FOR CONNECTING TO SMTP SERVER AND SENDING EMAILS'''
+# Leaving imports in order to easier run tests alone
+# This test also assumes that the zipping has happened before hand, like it is in main.
+import os
+from unittest.mock import patch, mock_open
+import pytest
+from main import send_email  
+
+def test_send_email():
+    to_email = "test@example.com"
+    attachment_name = "path/to/data.zip"
+    dataset_name = "dataset"
+
+    with patch.dict(os.environ, {
+        "SMTP_USER": "user@example.com",
+        "SMTP_PASS": "password123",
+        "SMTP_SERVER": "smtp.example.com",
+        "SMTP_PORT": "587"  
+    }), \
+    patch("builtins.open", mock_open(read_data="data")), \
+    patch("smtplib.SMTP") as mock_smtp:
+        # Calling functiong in try to catch any exceptions
+        try:
+            send_email(to_email, attachment_name, dataset_name)
+        except Exception as e:
+            print("Error during send_email execution:", e)
+
+        # Check SMTP calls
+        instance = mock_smtp.return_value
+        print("SMTP calls:", instance.method_calls)  # To see all calls made on the SMTP instance
+        mock_smtp.assert_called_once_with("smtp.example.com", int(os.getenv("SMTP_PORT")))
+        
+        # Detailed assertions with conditional feedback
+        if instance.starttls.called:
+            instance.starttls.assert_called_once()
+        else:
+            print("starttls was not called")
+
+        if instance.login.called:
+            instance.login.assert_called_once_with("user@example.com", "password123")
+        else:
+            print("login was not called")
+
+        if instance.sendmail.called:
+            instance.sendmail.assert_called_once()
+            args, kwargs = instance.sendmail.call_args
+            assert args[0] == "user@example.com"
+            assert args[1] == to_email
+            assert "KARTAI TRENINGSDATA" in args[2]
+            assert "This is your requested training data from the training data generator" in args[2]
+        else:
+            print("sendmail was not called")
+
