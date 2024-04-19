@@ -281,6 +281,3 @@ document.getElementById('sat-ortofoto').addEventListener('change', function(e) {
 });
 
 
-document.getElementById('ortoDatabase').addEventListener('change', function(e) {
-  updateImageSources()
-});
