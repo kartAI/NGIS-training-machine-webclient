@@ -14,6 +14,7 @@ from zipfile import ZipFile
 import random
 import json
 import email, smtplib, ssl
+import mimetypes
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -70,7 +71,7 @@ SETUP FASTAPI
 '''
 
 # Mount the different directories for static files
-static_dirs = ["frontend", "frontend/resources", "frontend/scripts"]
+static_dirs = ["frontend", "frontend/scripts"]
 for dir_name in static_dirs:
     app.mount(f"/{dir_name}", StaticFiles(directory=dir_name), name=dir_name)
 
@@ -81,13 +82,25 @@ async def getNGIS():
     labelNGIS.getNGIS()
 
 @app.get("/", response_class=HTMLResponse)
-async def read_index(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+async def read_index(request: Request, response: Response):
+    response.headers["Content-Type"] = "text/javascript"
+    mimetypes.add_type('application/javascript', '.js')
+    mimetypes.add_type('text/css', '.css')
+    mimetypes.add_type('image/svg+xml', '.svg')
+    template = "home.html"
+    context = {"request": request}
+    return templates.TemplateResponse(template, context, media_type='text/html')
 
 
 @app.get("/{page}.html", response_class=HTMLResponse)
-async def read_page(request: Request, page: str):
-    return templates.TemplateResponse(f"{page}.html", {"request": request})
+async def read_page(request: Request, page: str, response: Response):
+    response.headers["Content-Type"] = "text/javascript"
+    mimetypes.add_type('application/javascript', '.js')
+    mimetypes.add_type('text/css', '.css')
+    mimetypes.add_type('image/svg+xml', '.svg')
+    template = "home.html"
+    context = {"request": request}
+    return templates.TemplateResponse(f"{page}.html",context=context, media_type="text/html")
 
 
 @app.get("/favicon.ico")
