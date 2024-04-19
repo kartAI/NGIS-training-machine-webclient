@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock, mock_open
 import tempfile
 import zipfile
 from main import zip_files
-from main import send_email_with_attachment
+from main import send_email
 from pathlib import Path
 import pytest
 import os
@@ -14,6 +14,9 @@ from main import zip_files
 import numpy as np
 from application.ortoCOG import generate_cog_data
 from rasterio.transform import from_origin
+from main import generateTrainingData
+from dotenv import load_dotenv
+
 
 #Import test client
 client = TestClient(app)
@@ -58,7 +61,7 @@ def cleanup_test_data():
     pass
 
     # sendEmail test
-
+from unittest.mock import patch
 @patch('main.send_email_with_attachment')
 @patch('main.zip_files')
 @patch('os.remove')
@@ -90,16 +93,16 @@ def test_send_zipped_files_email(mock_teardown, mock_remove, mock_zip, mock_send
 
 # Test for /zip_files
 
+
 @pytest.fixture
-def temp_dir_with_files():
-    # Create a temporary directory using pytest's built-in tmp_path fixture
-    with tempfile.TemporaryDirectory() as tmpdir:
-        # Create some test files in the temporary directory
-        for i in range(3):
-            with open(Path(tmpdir) / f"test_file_{i}.txt", "w") as f:
-                f.write(f"This is test file {i}")
-        # Yield the temporary directory path to the test function
-        yield tmpdir
+def temp_dir_with_files(tmp_path):
+    # Create some test files in the temporary directory
+    for i in range(3):
+        file_path = tmp_path / f"test_file_{i}.txt"
+        file_path.write_text(f"This is test file {i}")
+    
+    # Yield the temporary directory path to the test function
+    yield tmp_path
 
 def test_zip_files(temp_dir_with_files):
     # The temporary directory and files are setup
@@ -197,3 +200,105 @@ class TestGenerateCogData(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    
+
+load_dotenv()
+
+@pytest.mark.parametrize("label_return_values, expected", [
+    ((True, True), True),
+    ((True, False), False),
+    ((False, True), False),
+    ((False, False), False)
+])
+def test_generate_training_data_wms_label(label_return_values, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "WMS"
+    orto_source = "None" 
+
+    with patch('application.labelPhotoWMS.generate_label_data', return_value=label_return_values[0]), \
+         patch('application.labelPhotoWMS.generate_label_data_colorized', return_value=label_return_values[1]):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
+
+@pytest.mark.parametrize("label_return_values, expected", [
+    ((True, True), True),
+    ((True, False), False),
+    ((False, True), False),
+    ((False, False), False)
+])
+
+def test_generate_training_data_wms_label(label_return_values, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "WMS"
+    orto_source = "None"  # Assuming orto_source does not affect the outcome here
+
+    with patch('application.labelPhotoWMS.generate_label_data', return_value=label_return_values[0]), \
+         patch('application.labelPhotoWMS.generate_label_data_colorized', return_value=label_return_values[1]):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
+
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_fgb_label(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "FGB"
+    orto_source = "None"  # No orto source interaction in this test
+
+    with patch('application.labelFGB.generate_label_data', return_value=return_value):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
+        
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_wms_orto(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "None"  # No label source interaction in this test
+    orto_source = "WMS"
+
+    with patch('application.ortoPhotoWMS.generate_training_data', return_value=return_value):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
+
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_cog_orto(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "None"  # No label source interaction in this test
+    orto_source = "COG"
+
+    with patch('application.ortoCOG.generate_cog_data', return_value=return_value):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
+
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_sat_orto(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+        "root": "dummy_root_directory"  
+    }
+    label_source = "None"
+    orto_source = "SAT"
+
+    with patch('application.satWMS.fetch_satellite_images', return_value=return_value):
+        result = generateTrainingData(paths, label_source, orto_source)
+        assert result == expected, f"Expected {expected}, got {result}"

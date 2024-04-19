@@ -7,8 +7,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 from application import util, ortoPhotoWMS, labelPhotoWMS, ortoCOG, labelFGB, satWMS, labelNGIS
 from zipfile import ZipFile
 import random
@@ -19,8 +17,6 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-
 from datetime import datetime
 
 # Class for the FastAPI. Will contain all our methods for updating values and starting scripts
@@ -371,6 +367,7 @@ def generateTrainingData(paths, label_source, orto_source):
     elif(orto_source == "SAT"):
         if satWMS.fetch_satellite_images(paths) is not True:
             print("Satellite photo failed")
+            all_ran = False
 
     return all_ran # Return if all the functions ran successfully
 
