@@ -473,7 +473,7 @@ def send_email(to_email, attachment_name, dataset_name):
     user = os.getenv('SMTP_USER')
     password = os.getenv('SMTP_PASS')
     server = os.getenv('SMTP_SERVER')
-    port = os.getenv('SMTP_PORT')
+    port = int(os.getenv('SMTP_PORT'))
     
     message = MIMEMultipart()
     message['From'] = user
