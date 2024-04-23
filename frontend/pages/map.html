@@ -38,7 +38,7 @@
                 <!-- Headline and info -->
                 <div class="text-center">
                     <h1 class="display-5 fw-normal">Mark desired training area</h1>
-                    <p class="fs-6 text-muted">Mark the desired training area(s) on the map using the rectangle shape. Click on the rectangle to delete it and click “Next” when you are done.
+                    <p class="fs-6 text-muted">Mark the desired training area(s) on the map using the rectangle or polygon shape. Click on the rectangle to shape it and click “Next” when you are done.
                     </p>
                     <div id="error-message" class="alert alert-danger" role="alert" hidden></div>
                 </div>
@@ -48,13 +48,14 @@
             </div>
 
                     <div id="drawControl"></div>
-
-                <div class="btn-container col-9 d-flex justify-content-between align-items-center">
         
                 <!--Button/popup to show areas with publicly disclosed training data-->
 
-    <div class="availableAreas">
-        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#areaModal" onclick="showDisclosedAreas()" id="disclosedAreasButton">Show disclosed Areas</button>
+    <div class="btn-container col-9 d-flex justify-content-between align-items-center">
+       
+           <!-- Next button container -->
+           <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" style="width: 15rem" data-bs-target="#areaModal" onclick="showDisclosedAreas()" id="disclosedAreasButton">Show Disclosed Areas</button>
+    <button type="button" class="btn btn-primary btn-lg col-3" onclick="return nav();" id="nextButton" disabled>Next</button>
     </div>
 
     <div class="modal" id="areaModal" data-bs-backdrop="static">
@@ -73,8 +74,6 @@
         </div>
     </div>
                 
-    <!-- Next button container -->
-    <button type="button" class="btn btn-primary btn-lg col-3" onclick="return nav();" id="nextButton" disabled>Next</button>
 
     <!-- Leaflet map library -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
