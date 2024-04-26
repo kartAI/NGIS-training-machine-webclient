@@ -26,18 +26,13 @@ Once this project is set up correctly you will have the option to order training
 
 1. In the "Application" folder of your projects create a file that you name ".env"
 2. Paste the following variables into the .env file
-	"SENDGRID_API_KEY" = ""
-	"NK_WMS_API_KEY" = ""
-	"OSM_DB_PWD" : "",
-	"AZURE_STORAGE_ACCESS_KEY' = ""
-	"AZURE_STORAGE_ACCOUNT_NAME' = ""
-	"NGISAPI_URL"=""
-	"NGISAPI_USER"=""
-	"NGISAPI_PASS"=""
-	"db_host"=""
-	"db_name=""
-	"db_user=""
-	"db_pass=""
+'NK_WMS_API_KEY' = ""
+'AZURE_STORAGE_ACCESS_KEY' = ""
+'AZURE_STORAGE_ACCOUNT_NAME' = ""
+'SMTP_USER' = ""
+'SMTP_PASS' = ""
+'SMTP_SERVER' = ""
+'SMTP_PORT' = ""
 3. Fill in the empty variables, 
 
 ## Localhost 
