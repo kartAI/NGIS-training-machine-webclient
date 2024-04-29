@@ -23,6 +23,19 @@
             <div id="header"></div>
         </header>
 
+        <!--Removing the info button from header-->
+<script>
+  
+    if (window.location.href.includes('order.html')) {
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById("infoBtn").style.display = "none"
+    });
+ }
+ else{
+   console.log('failed to remove info button');
+}
+ </script>
+ 
         <!-- Page content -->
         <div style="padding-top: 7rem" class="container">
             <!-- Headline and info -->
@@ -115,7 +128,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-
+<script src="header.html"></script>
     <!-- Custom JS -->
     <script src="frontend/scripts/nav.js"></script>
 </body>
