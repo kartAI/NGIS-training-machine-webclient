@@ -49,7 +49,7 @@
                 </div>
                 <div class="col">
                     <!--Select field-->
-                    <label for="coordSys" class="col-form-label col-form-label-lg">Coordinatesystem <span class="question-mark" onclick="showCoordinateSystemInfo()">?
+                    <label for="coordSys" class="col-form-label col-form-label-lg">Coordinatesystem<span class="req">*</span><span class="question-mark" onclick="showCoordinateSystemInfo()">?
                         <span class="tooltip-text">Choose between EPSG:25832, EPSG4326 or EPSG:3587</span></span>
                     </label>
                     <select id="coordSys" class="form-control form-control-lg" onchange="logSelectedEpsg()">
@@ -60,7 +60,7 @@
                     </select>
                     <hr class="hr" />
                     <!--Coordinates input-->
-                    <label for="coordinates-input" class="col-form-label col-form-label-lg">Coordinates <span class="question-mark" onclick="showCoordinatesInfo()">?
+                    <label for="coordinates-input" class="col-form-label col-form-label-lg">Coordinates<span class="req">*</span><span class="question-mark" onclick="showCoordinatesInfo()">?
                         <span class="tooltip-text">Enter your coordinates either as a long string 1,2,3,4 or as comma seperated points [1,2], [3,4]</span>
                     </span></label>
                     <div class="input-group ">

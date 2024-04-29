@@ -56,18 +56,20 @@
         <div class="col">
           <div>
             <label for="file-input" class="ol-form-label col-form-label-lg"
-              >Choose file (GeoJSON/JSON)</label
+              >Choose file<span class="req">*</span></label
             >
+            
             <input
-              class="form-control form-control-lg"
-              id="file-input"
-              accept=".json, .geojson"
-              type="file"
+            class="form-control form-control-lg"
+            id="file-input"
+            accept=".json, .geojson"
+            type="file"
             />
+            <small id="emailHelp" class="form-text text-muted">Only GeoJSON and JSON files are supported.</small>
           </div>
           <hr class="hr" />
           <label for="coordSys" class="col-form-label col-form-label-lg"
-            >Coordinatesystem
+            >Coordinatesystem<span class="req">*</span>
             <span class="question-mark" onclick="showCoordinateSystemInfo()"
               >?
               <span class="tooltip-text"

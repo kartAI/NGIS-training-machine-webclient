@@ -40,13 +40,13 @@
         </div>
         <div class="row w-90">
           <div class="col">
-            <label for="training" class="col-form-label-lg">Training (%)*</label><span class="question-mark" onclick="showTrainingInfo()">?<span class="tooltip-text">Training percentage determines how much of the data to be allocated to training data. This data is used to train your Ai model</span></span>
+            <label for="training" class="col-form-label-lg">Training (%)<span class="req">*</span></label><span class="question-mark" onclick="showTrainingInfo()">?<span class="tooltip-text">Training percentage determines how much of the data to be allocated to training data. This data is used to train your Ai model</span></span>
           </div>
           <div class="col">
-            <label for="validation" class="col-form-label-lg">Validation (%)*</label><span class="question-mark" onclick="showValidationInfo()">?<span class="tooltip-text">Validation percentage determines of much of the data to be allocated to validation data. This data is used to validate your Ai models performance during training</span></span>
+            <label for="validation" class="col-form-label-lg">Validation (%)<span class="req">*</span></label><span class="question-mark" onclick="showValidationInfo()">?<span class="tooltip-text">Validation percentage determines of much of the data to be allocated to validation data. This data is used to validate your Ai models performance during training</span></span>
           </div>
           <div class="col">
-            <label for="building" class="col-form-label-lg">Building percentage (%)*</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Building percentage ensures that the generated data has the specified percentage of buildings. If you put in "10%", the generated images have to contain atleast 10% buildings</span></span>
+            <label for="building" class="col-form-label-lg">Building percentage (%)<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Building percentage ensures that the generated data has the specified percentage of buildings. If you put in "10%", the generated images have to contain atleast 10% buildings</span></span>
           </div>
         </div>
          <!--Row for input fields-->
@@ -77,7 +77,7 @@
         <hr class="hr" />
         <div class="row w-90">
           <div class="col">
-            <label for="building" class="display-6">WMS Layers</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Only applicable if you chose "WMS" as a data source</span></span>
+            <label for="building" class="display-6">WMS Layers (Optional)</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Only applicable if you chose "WMS" as a data source</span></span>
           </div>
         </div>
         <div class="row w-90">
@@ -112,10 +112,10 @@
         <!--Labels for image settings-->
         <div class="row w-90">
           <div class="col">
-            <label for="building" class="col-form-label-lg">Tile Size*</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Tile size determines how big the generated tiles are in pixels. An input of 500, outputs an image of 500x500 pixels. Please input a value between 100 - 1104</span></span>
+            <label for="building" class="col-form-label-lg">Tile Size<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Tile size determines how big the generated tiles are in pixels. An input of 500, outputs an image of 500x500 pixels. Please input a value between 100 - 1104</span></span>
           </div>
           <div class="col">
-            <label for="building" class="col-form-label-lg">Image Resolution*</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Image resolution determines the level of detail present in the genereated images. A resolution of 0.2 means that each pixel represents an area of 2m, therefore lower tile size and higher image resolution results in a more detailed picture. Please input a value between 0.1 - 0.5</span></span>
+            <label for="building" class="col-form-label-lg">Image Resolution<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Image resolution determines the level of detail present in the genereated images. A resolution of 0.2 means that each pixel represents an area of 20cm, a tile size of 500 and a resolution of 0.2 means that each tile covers 100 square meters (0.2 * 500 = 100). Please input a value between 0.1 - 0.5</span></span>
           </div>
         </div>
         <div class="row w-90">
@@ -131,7 +131,7 @@
         <hr/>
         <div class="row w-90">
           <div class="col">
-            <label class="display-6">Dataset settings</label>
+            <label class="display-6">Dataset settings (Optional)</label>
           </div>
         </div>
         <div class="row w-90">

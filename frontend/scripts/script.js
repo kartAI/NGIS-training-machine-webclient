@@ -234,3 +234,6 @@ if(localStorage.getItem("ConfigSet") != null){
   inputTileSize.value = parseFloat(localStorage.getItem("tile_size"))
   inputResolution.value = parseFloat(localStorage.getItem("image_resolution"))
 }
+
+
+

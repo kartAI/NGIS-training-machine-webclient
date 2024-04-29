@@ -35,20 +35,6 @@
     <header>
       <div id="header"></div>
     </header>
-<!--Removing the info button from header-->
-<script>
-  
-   if (window.location.href.includes('info.html')) {
-   document.addEventListener('DOMContentLoaded', function() {
-       document.getElementById("infoBtn").style.display = "none"
-   });
-}
-else{
-   console.log('failed to remove info button');
-}
-
-</script>
-
     <div style="padding-top: 7rem" class="container content">
       <h1>Info Page</h1>
       <br />
@@ -330,9 +316,16 @@ else{
         const data = await response.json();
         return data;
       }
-    </script>
 
+      //Removing the info button from header
+      if (window.location.href.includes("info.html")) {
+        document.addEventListener("DOMContentLoaded", function () {
+          document.getElementById("infoBtn").style.display = "none";
+        });
+      } else {
+        console.log("failed to remove info button");
+      }
+    </script>
     <script src="frontend/scripts/home.js"></script>
-    <script src="header.html"></script>
   </body>
 </html>
