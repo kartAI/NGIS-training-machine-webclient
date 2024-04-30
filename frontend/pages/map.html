@@ -55,7 +55,7 @@
        
            <!-- Next button container -->
            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" style="width: 15rem" data-bs-target="#areaModal" onclick="showDisclosedAreas()" id="disclosedAreasButton">Show Disclosed Areas</button>
-    <button type="button" class="btn btn-primary btn-lg col-3" onclick="return nav();" id="nextButton" disabled>Next</button>
+           <button type="button" class="btn btn-primary btn-lg col-3" onclick="return nav();" id="nextButton" disabled>Next</button>
     </div>
 
     <div class="modal" id="areaModal" data-bs-backdrop="static">
@@ -77,27 +77,38 @@
 
     <!-- Leaflet map library -->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    
     <!--Script for leaflet søkefunksjon, ved hjelp av geocoder-->    
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
+    
     <!-- Proj4 library for coordinate transformations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
-        integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    integrity="sha512-lO8f7sIViqr9x5VE6Q72PS6f4FoZcuh5W9YzeSyfNRJ9z/qL3bkweiwG6keGzWS0BQzNDqAWXdBhYzFD6KffIw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <!-- plugin for drawing shapes on Leaflet maps-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
-
+    
     <!-- Custom JS -->
     <script src="frontend/scripts/map.js" type="module" type="text/javascript"></script>
     <script src="frontend/scripts/helper.js" type="module" type="text/javascript"></script>
     <script src="frontend/scripts/nav.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" 
-         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" 
+    crossorigin="anonymous"></script>
+    <script>
+        console.log("HELLO")
+        window.onload = () =>{
+            console.log("HELLO")
+            console.log(localStorage.getItem("orto_source"))
+            console.log(localStorage.getItem("label_source"))
+            if(localStorage.getItem("orto_source") && localStorage.getItem("label_source")){
+                document.getElementById("disclosedAreasButton").style.display = "none";
+            }
+        }
+    </script>
 </body>
 
 

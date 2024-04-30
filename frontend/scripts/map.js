@@ -165,6 +165,9 @@ map.on("draw:created", function (c) {
 
 //Check for preloaded coordinates in localstorage
 window.onload = () => {
+  if(localStorage.getItem("orto_source") == "WMS" && localStorage.getItem("label_source") == "WMS"){
+    document.getElementById("disclosedAreasButton").style.visibility  = "hidden";
+}
   checkPreLoadedCoordinates(map);
 };
 
