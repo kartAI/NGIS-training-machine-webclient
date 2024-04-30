@@ -76,6 +76,49 @@
 
                 </div>
             </div>
+            
+    <!--Info Modal-->
+    <div
+    class="modal fade"
+    id="infoModal"
+    tabindex="-1"
+    aria-labelledby="infoModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoModalLabel">Info about settings</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <p id="info-modal-text"></p>
+          <!-- Content will be populated by script.js -->
+          <h4>Coordinatesystem (EPSG):</h4>
+          <p>The coordinatesystem that your coordinates are in. The application currently only supports the ones listed here</p>
+          <h4>Coordinates:</h4>
+          <p>The coordinates for the area you want training data from. Make sure the coordinates are in the same ESPG as you have selected.</p>
+        </div>
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <!-- Proj4 library for coordinate transformations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"

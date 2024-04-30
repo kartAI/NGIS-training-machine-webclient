@@ -287,6 +287,75 @@
         </div>
       </div>
     </div>
+    <div
+      class="modal fade"
+      id="infoModal"
+      tabindex="-1"
+      aria-labelledby="infoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="infoModalLabel">Info about settings</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <p id="info-modal-text"></p>
+            <!-- Content will be populated by script.js -->
+            <h4>Reccomended settings:</h4>
+            <p>If you're unsure about what settings to use there are some predefined settings you can use.</p>
+            <ul>
+              <li>Training (%): 60%</li>
+              <li>Validation (%): 40%</li>
+              <li>Building Percentage (%): 10%</li>
+              <li>WMS Layers: Leave as is</li>
+              <li>Tile Size: 500</li>
+              <li>Image Resolution: 0.2</li>
+            </ul>
+            <h4>Application Settings:</h4>
+            <ul>
+              <li>Training (%) - This is the percentage of data that will be distributed to the training portion of the data.</li>
+              <li>Validation (%) - This is the percentage of data that will be distributed to the validation portion of the data.</li>
+              <li>Building Percentage (%) - The minimum amount of buildings required in an image for the image to be included in the dataset (Non-functional)</li>
+            </ul>
+            <h4>WMS Layers:</h4>
+            <ul>
+              <li>Buildings - If you check this box your WMS requests will include building data in the final image.</li>
+              <li>Roads - If you check this box your WMS requests will include road data in the final image.</li>
+              <li>Bridges - If you check this box your WMS requests will include bridge data in the final image.</li>
+            </ul>
+            <h4>Image Settings:</h4>
+            <ul>
+              <li>Tile Size - Tile size determines how big the generated tiles are in pixels. An input of 500, outputs an image of 500x500 pixels. Please input a value between 100 - 1104.</li>
+              <li>Resolution - Image resolution determines the level of detail present in the genereated images. A resolution of 0.2 means that each pixel represents an area of 20cm, a tile size of 500 and a resolution of 0.2 means that each tile covers 100 square meters (0.2 * 500 = 100). Please input a value between 0.1 - 0.5</li>
+            </ul>
+            <h4>Dataset settings:</h4>
+            <ul>
+              <li>E-mail - The email you want the data to be delivered to, if you do not enter an email then you will be able to download the training data directly.</li>
+              <li>Dataset Name - The name you want for your dataset.</li>
+            </ul>
+          </div>
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
