@@ -341,6 +341,7 @@ async def generatePhotos(request: Request):
         zip_files(os.path.join(paths["root"]), f"{datasetName}_{session_id}.zip")
         if(config["email"] != ""):
             send_email(config["email"], os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"), config["dataset_name"])
+            util.teardown_user_session_folders(datasetName, session_id);
         return 0
     
 def generateTrainingData(paths, label_source, orto_source): 

@@ -117,7 +117,7 @@ def setup_user_session_folders(session_id):
     return allCreated
 
 # Utilizes shutil library to remove the folders
-def teardown_user_session_folders(session_id):
+def teardown_user_session_folders(dataset_name, session_id):
     shutil.rmtree(os.path.join("datasets", "dataset_" + str(session_id)))
  
 
