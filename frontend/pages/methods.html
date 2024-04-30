@@ -1,16 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-
     <title>Trainingdata Generator</title>
-
-    <!-- CSS Stylesheet -->
-
-    <link rel="stylesheet" href="frontend/style.css" />
 
     <!--  Bootstrap Stylesheet-->
     <link
@@ -25,145 +19,126 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="frontend/style.css" />
+    
   </head>
-
   <body>
-    <div class="content">
-      <!-- Header/navbar-->
-      <header>
-        <div id="header"></div>
-      </header>
-
-      <!-- Page content -->
-      <div class="main-container">
-        <!-- Headline and info -->
-        <div class="text-center">
-          <h1 class="display-4 fw-normal">Choose method</h1>
-          <p class="fs-5 text-muted">Choose method for input of coordinates</p>
-          
-          <div class="choices-container">
-            <h6 class="display-6 fw-noprmal">Choose database</h6>
-
-            <div class="choices">
-              <form id="labelForm">
-                <h5>
-                  Choose label source
-                  <span class="question-mark" onclick="showLayerInfo()"
-                    >?
-                    <span class="tooltip-text">Info about label data</span>
-                  </span>
-                </h5>
-                <div class="radio-group-layer">
-                  <input
-                    type="radio"
-                    id="ngis-layer"
-                    name="mapDatabase"
-                    value="NGIS"
-                  />
-                  <label for="ngis"
-                    >NGIS<span class="question-mark"
-                      >?
-                      <span class="tooltip-text">Information about NGIS</span>
-                    </span></label
-                  >
-
-                  <input
-                    type="radio"
-                    id="wms-layer"
-                    name="mapDatabase"
-                    value="WMS"
-                    checked
-                    />
-                  <label for="wms"
-                    >WMS<span class="question-mark"
-                      >?
-                      <span class="tooltip-text">Information about WMS</span>
-                    </span></label
-                  >
-
-                  <input
-                    type="radio"
-                    id="fgb-layer"
-                    name="mapDatabase"
-                    value="WMS"
-                  />
-                  <label for="wms"
-                    >FGB<span class="question-mark"
-                      >?
-                      <span class="tooltip-text">Information about FGB</span>
-                    </span></label
-                  >
-                </div>
-              </form>
-
-              <form id="ortoForm">
-                <h5>
-                  Choose Ortofoto
-                  <span class="question-mark" onclick="showOrtofotoInfo()"
-                    >?
-                    <span class="tooltip-text">Info about Ortofoto</span>
-                  </span>
-                </h5>
-                <div class="radio-group-ortofoto">
-                  <input
-                    type="radio"
-                    id="wms-ortofoto"
-                    name="ortoDatabase"
-                    value="WMS"
-                  checked/>
-                  <label for="wms"
-                    >WMS<span class="question-mark"
-                      >?
-                      <span class="tooltip-text">Information about WMS</span>
-                    </span></label
-                  >
-
-                  <input
-                    type="radio"
-                    id="cog-ortofoto"
-                    name="ortoDatabase"
-                    value="WMS"
-                  />
-                  <label for="wms"
-                    >COG<span class="question-mark"
-                      >?
-                      <span class="tooltip-text">Information about COG</span>
-                    </span></label
-                  >
-                </div>
-              </form>
-            </div>
+    <header>
+      <div id="header"></div>
+    </header>
+    <div style="padding-top: 5rem"  class="container">
+      <div class="text-center">
+        <p class="display-6 fw-normal">Choose your data sources or upload a metadata file</p>
+        <br>
+      </div>
+    </div>
+    <div class="row align-items-center">
+      <div class="col-3">
+        <div class="choice-card" style="background-color: transparent !important; cursor: default;">
+          <h5>Choose label source<span class="req">*</span><span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Choose which datasource you want the labeldata to come from</span></span></h5>
+          <div class="radio-group-layer">
+            <input type="radio" id="ngis-layer"name="mapDataBase"style="cursor:pointer"><label class="form-check-label">NGIS</label>
+            <input type="radio" id="wms-layer" name="mapDataBase" style="cursor:pointer" checked><label class="form-check-label">WMS</label>
+            <input type="radio" id="fgb-layer" name="mapDataBase" style="cursor:pointer"><label class="form-check-label">FGB</label>
           </div>
         </div>
-        <button type="button" class="btn btn-primary btn-lg px-4 gap-3" onclick="updateImageSources()">Lagre valg!</button>
-        <p id="Error" style="color: red; font-size: 2rem;""></p>
-
-
-        <!-- Cards -->
-        <div id="card-container"></div>
       </div>
-     </div>
+    <div class="col-3">
+      <div  class="choice-card" style="background-color: transparent !important">
+        <h5>Choose orto source<span class="req">*</span><span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Choose which datasource you want the ortophoto to come from</span></span></h5>
+        <div class="radio-group-layer">
+          <input type="radio" id="wms-ortofoto" name="ortoDatabase" style="cursor:pointer"><label class="form-check-label" selected>WMS</label>
+          <input type="radio" id="cog-ortofoto" name="ortoDatabase" style="cursor:pointer" checked/><label class="form-check-label">COG</label>
+          <input type="radio" id="sat-ortofoto" name="ortoDatabase" style="cursor:pointer"><label class="form-check-label">Satellite</label>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="choice-card">
+        <h6>Upload a metadata file (Optional)<span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Here you can upload a metadata file with a predefined area and constraints, to replicate the result. This also specifies the data sources</span></span></h5>
+        <input class="form-control" style="width: 90%; margin: 0 auto;" id="file-input" accept=".json" type="file">
+      </div>
+    </div>
+    </div>
+    <div class="row">
+      <div class="col-3"></div>
+      
+      <div class="col-6 datasourceLoad">
+        <div id="message" class="alert alert-success" role="alert" hidden></div>
+        <div id="folder-message" class="alert alert-danger" role="alert" hidden></div>
+        <div id="loadingIcon" class="spinner-border text-primary" role="status" hidden></div>
 
-    <!-- Custom Scripts -->
-    <script src="frontend/scripts/script.js"></script>
+       </div>
+    </div>
+    </div>
+    <div id="card-container"></div>
+    </div>
+
+    
+    <!--Info Modal-->
+    <div
+      class="modal fade"
+      id="infoModal"
+      tabindex="-1"
+      aria-labelledby="infoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="infoModalLabel">Info about methods</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <p id="info-modal-text"></p>
+            <!-- Content will be populated by script.js -->
+            <h4>Label Sources:</h4>
+            <ul>
+              <li>NGIS - Data directly from the central map database of the Norwegian mapping authority.</li>
+              <li>WMS  - Openly released data from Kartverket stored in a Web Map Service</li>
+              <li>FGB  - Data stored in FlatGeoBuf format, this data is part of the KartAI dataset.</li>
+            </ul>
+            <h4>Orto Sources:</h4>
+            <ul>
+              <li>WMS - Openly released data from Norkart stored in a Web Map Service</li>
+              <li>COG - Data stored in the Cloud Optimized GeoTiff format, this data is part of the KartAI dataset. </li>
+              <li>Satellite - Collect data directly from Planet Labs' Sentinel Hub Satellite imagery.</li>
+            </ul>
+            <h4>Metadata file:</h4>
+            <p>You also have the option to upload a metadata file from a previous project. If you do this then the application will preload all the settings from the metadata but you can still edit parameteres such as coordinates and application data settings.</p>
+            <h4>Methods:</h4>
+            <ul>
+              <li>Draw Shape On Map - Draw your desired coordinates directly on the map.</li>
+              <li>Write Coordinates - Input your coordinates as a text string.</li>
+              <li>Upload geoJSON File - Upload and parse a geoJSON file for your coordinates.</li>
+            </ul>
+          </div>
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="frontend/scripts/nav.js"></script>
     <script src="frontend/scripts/methods.js"></script>
-    <script>
-      window.onload = () => {
-        setup_folders();
-      };
-
-      async function setup_folders() {
-        const response = await fetch("/setupUserSessionFolders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const data = await response.json();
-        return data;
-      }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" 
+    crossorigin="anonymous"></script>
   </body>
 </html>
-

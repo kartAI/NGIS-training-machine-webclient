@@ -23,13 +23,10 @@
       </header>
 
       <!-- Page content -->
-      <div style="padding-top: 7rem" class="container">
+      <div style="padding-top: 4rem" class="container">
           <!-- Headline and info -->
         <div class="text-center">
-          <h1 class="display-4 fw-normal">Constraints</h1>
-          <p class="fs-5 text-muted">
-            Fill in fields for constrains to be applied to trainingdata
-          </p>
+          <h1 class="display-4 fw-normal">Settings</h1>
         </div>
 
         <!-- Form-->
@@ -37,18 +34,19 @@
         <hr class="hr" />
         <div class="row w-90">
           <div class="col">
-            <label for="building" class="display-6">Data settings</label>
+            <p id="error-message" style="color: red; font-size: 1rem;""></p>
+            <label for="building" class="display-6">Define Application Settings</label>
           </div>
         </div>
         <div class="row w-90">
           <div class="col">
-            <label for="training" class="col-form-label-lg">Training (%)</label><span class="question-mark" onclick="showTrainingInfo()">?<span class="tooltip-text">Info about training data percentage</span></span>
+            <label for="training" class="col-form-label-lg">Training (%)<span class="req">*</span></label><span class="question-mark" onclick="showTrainingInfo()">?<span class="tooltip-text">Training percentage determines how much of the data to be allocated to training data. This data is used to train your Ai model</span></span>
           </div>
           <div class="col">
-            <label for="validation" class="col-form-label-lg">Validation (%)</label><span class="question-mark" onclick="showValidationInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+            <label for="validation" class="col-form-label-lg">Validation (%)<span class="req">*</span></label><span class="question-mark" onclick="showValidationInfo()">?<span class="tooltip-text">Validation percentage determines of much of the data to be allocated to validation data. This data is used to validate your Ai models performance during training</span></span>
           </div>
           <div class="col">
-            <label for="building" class="col-form-label-lg">Building percentage (%)</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+            <label for="building" class="col-form-label-lg">Building percentage (%)<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Building percentage ensures that the generated data has the specified percentage of buildings. If you put in "10%", the generated images have to contain atleast 10% buildings</span></span>
           </div>
         </div>
          <!--Row for input fields-->
@@ -79,7 +77,7 @@
         <hr class="hr" />
         <div class="row w-90">
           <div class="col">
-            <label for="building" class="display-6">WMS Layers</label>
+            <label for="building" class="display-6">WMS Layers (Optional)</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Only applicable if you chose "WMS" as a data source</span></span>
           </div>
         </div>
         <div class="row w-90">
@@ -114,10 +112,10 @@
         <!--Labels for image settings-->
         <div class="row w-90">
           <div class="col">
-            <label for="building" class="col-form-label-lg">Tile Size</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+            <label for="building" class="col-form-label-lg">Tile Size<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Tile size determines how big the generated tiles are in pixels. An input of 500, outputs an image of 500x500 pixels. Please input a value between 100 - 1104</span></span>
           </div>
           <div class="col">
-            <label for="building" class="col-form-label-lg">Image Resolution</label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Info about validation data percentage</span></span>
+            <label for="building" class="col-form-label-lg">Image Resolution<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Image resolution determines the level of detail present in the genereated images. A resolution of 0.2 means that each pixel represents an area of 20cm, a tile size of 500 and a resolution of 0.2 means that each tile covers 100 square meters (0.2 * 500 = 100). Please input a value between 0.1 - 0.5</span></span>
           </div>
         </div>
         <div class="row w-90">
@@ -128,6 +126,29 @@
           <div class="col">
             <input type="number" class="form-control form-control-lg" id="imageResolution" placeholder="Enter your desired image resolution"/>
             <div id="error-message-imageResolution" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+        </div>
+        <hr/>
+        <div class="row w-90">
+          <div class="col">
+            <label class="display-6">Dataset settings (Optional)</label>
+          </div>
+        </div>
+        <div class="row w-90">
+          <div  class="col">
+            <label class="col-form-label-lg">E-mail (Optional)</label>
+          </div>
+          <div  class="col">
+            <label class="col-form-label-lg">Dataset Name (Optional)</label>
+          </div>
+        </div>
+        <div class="row w-90">
+          <div class="col">
+            <input type="email" class="form-control form-control-lg" id="email" placeholder="Enter your e-mail (Optional)"/>
+            <div id="error-message-email" class="alert alert-danger alert-dismissible fade show d-none" ></div>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control form-control-lg" id="datasetName" placeholder="Enter a name for your dataset (Optional)"/>
           </div>
         </div>
         <!-- Continue & cancel button -->
@@ -182,20 +203,22 @@
                     finished.</strong
                   >
                 </p>
+                <div id="message" class="alert alert-danger" role="alert" hidden></div>
               </div>
 
               <div class="modal-footer d-flex">
                 <button
                   type="button"
                   class="btn btn-primary btn-lg col-auto ms-3 bg-danger border-0"
-                  data-dismiss="modal"
+                  data-bs-dismiss="modal"
+                  data-bs-target="confirmationModal"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   class="btn btn-primary btn-lg col me-3 ms-3"
-                  onclick="generatePhotos(), loadingModal();"
+                  onclick="loadingModal(), generatePhotos();"
                   data-dismiss="modal"
                 >
                   Confirm
@@ -264,12 +287,83 @@
         </div>
       </div>
     </div>
+    <div
+      class="modal fade"
+      id="infoModal"
+      tabindex="-1"
+      aria-labelledby="infoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="infoModalLabel">Info about settings</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <p id="info-modal-text"></p>
+            <!-- Content will be populated by script.js -->
+            <h4>Reccomended settings:</h4>
+            <p>If you're unsure about what settings to use there are some predefined settings you can use.</p>
+            <ul>
+              <li>Training (%): 60%</li>
+              <li>Validation (%): 40%</li>
+              <li>Building Percentage (%): 10%</li>
+              <li>WMS Layers: Leave as is</li>
+              <li>Tile Size: 500</li>
+              <li>Image Resolution: 0.2</li>
+            </ul>
+            <h4>Application Settings:</h4>
+            <ul>
+              <li>Training (%) - This is the percentage of data that will be distributed to the training portion of the data.</li>
+              <li>Validation (%) - This is the percentage of data that will be distributed to the validation portion of the data.</li>
+              <li>Building Percentage (%) - The minimum amount of buildings required in an image for the image to be included in the dataset (Non-functional)</li>
+            </ul>
+            <h4>WMS Layers:</h4>
+            <ul>
+              <li>Buildings - If you check this box your WMS requests will include building data in the final image.</li>
+              <li>Roads - If you check this box your WMS requests will include road data in the final image.</li>
+              <li>Bridges - If you check this box your WMS requests will include bridge data in the final image.</li>
+            </ul>
+            <h4>Image Settings:</h4>
+            <ul>
+              <li>Tile Size - Tile size determines how big the generated tiles are in pixels. An input of 500, outputs an image of 500x500 pixels. Please input a value between 100 - 1104.</li>
+              <li>Resolution - Image resolution determines the level of detail present in the genereated images. A resolution of 0.2 means that each pixel represents an area of 20cm, a tile size of 500 and a resolution of 0.2 means that each tile covers 100 square meters (0.2 * 500 = 100). Please input a value between 0.1 - 0.5</li>
+            </ul>
+            <h4>Dataset settings:</h4>
+            <ul>
+              <li>E-mail - The email you want the data to be delivered to, if you do not enter an email then you will be able to download the training data directly.</li>
+              <li>Dataset Name - The name you want for your dataset.</li>
+            </ul>
+          </div>
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 
     <!-- Custom script -->
     <script src="frontend/scripts/script.js"></script>
+    <script src="frontend/scripts/nav.js"></script>
   </body>
 </html>

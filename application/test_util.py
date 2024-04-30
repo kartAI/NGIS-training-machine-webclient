@@ -3,115 +3,116 @@ import os
 import shutil
 from PIL import Image
 import util
-from util import write_file
+from util import write_file, setup_user_session_folders, teardown_user_session_folders, split_files, read_file, create_bbox_array, create_bbox
 from fastapi.exceptions import HTTPException
 from unittest.mock import mock_open, patch
 import json
 
-#Test class for the utilities library
-class TestUtil(unittest.TestCase):
+class TestSplitFiles(unittest.TestCase):
 
-    #Setup for testing
+    '''
+    Test Class for the split files function in util
+    '''
+
+    def __init__(self, *args, **kwargs):
+        self.test_session_id = 1
+        self.files_to_make = 100
+        self.trainingFraction = 50
+        self.validationFraction = 50
+        self.output_folder = os.path.join("datasets", f"dataset_{str(self.test_session_id)}", "email")
+        self.image_folder = os.path.join("datasets", f"dataset_{self.test_session_id}", "tiles")
+        super(TestSplitFiles, self).__init__(*args, **kwargs)
+
     def setUp(self):
-        image = Image.new("RGB", (1024, 1024))
-        image.save("image.png");
-        os.mkdir("output")
-        file = open("test.json", "a")
-        file.write('{"Test Content": 1}')
-        file.close()
-    
-    #Teardown after testing
+        setup_user_session_folders(self.test_session_id)
+        for i in range(self.files_to_make):
+            f = open(os.path.join(self.image_folder, "orto", f"file_{i}.txt"), "x").close()
+            f = open(os.path.join(self.image_folder, "fasit", f"file_{i}.txt"), "x").close()
+   
     def tearDown(self):
-        os.remove("image.png")
-        shutil.rmtree("output")
-        os.remove("test.json")
+        teardown_user_session_folders(self.test_session_id)
 
-    #Test for the setup of WMS folders
-    def test_setup_WMS_folders(self):
-        util.setup_WMS_folders()
-
-        #Assumes all folders are created by the function
-        allCreated = True
-
-        folders_to_check = [os.path.join("WMS", "email", "train", "images"),
-        os.path.join("WMS", "email", "train", "masks"),
-        os.path.join("WMS", "email", "val", "images"),
-        os.path.join("WMS", "email", "val", "masks"),
-        os.path.join("WMS", "rawphotos"),
-        os.path.join("WMS", "tiles", "fasit"),
-        os.path.join("WMS", "tiles", "orto")]
-       
-       #If a folder is not created by the function it will fail the test
-        for folder in folders_to_check:
-            if not os.path.exists(folder):
-                allCreated = False
-       
-        self.assertEqual(allCreated, True)
-        
-        #Removes the temp folders created for the test 
-        shutil.rmtree("WMS")
-
-    #Test for the setup of WMS folders
-    def test_setup_WMS_folders_if_folder_exists(self):
-        #Creates a folder that will be created by the function
-        os.makedirs(os.path.join("WMS", "email", "train", "images"))
-        util.setup_WMS_folders()
-
-        #Assumes all folders are created by the function
-        allCreated = True
-
-        folders_to_check = [os.path.join("WMS", "email", "train", "images"),
-        os.path.join("WMS", "email", "train", "masks"),
-        os.path.join("WMS", "email", "val", "images"),
-        os.path.join("WMS", "email", "val", "masks"),
-        os.path.join("WMS", "rawphotos"),
-        os.path.join("WMS", "tiles", "fasit"),
-        os.path.join("WMS", "tiles", "orto")]
-       
-       #If a folder is not created by the function it will fail the test
-        for folder in folders_to_check:
-            if not os.path.exists(folder):
-                allCreated = False
-       
-        self.assertEqual(allCreated, True)
-        
-        #Removes the temp folders created for the test 
-        shutil.rmtree("WMS")
-
-
-    #Test for the teardown WMS folders function
-    def test_teardown_WMS_folders(self):
-        #Run the create function to create folders
-        util.setup_WMS_folders()
-
-        #Run the delete function
-        util.teardown_WMS_folders()
-
-        #Assumes all folders are deleted by the function
-        allDeleted = True 
-
-        folders_to_check = [os.path.join("WMS", "email"),
-        os.path.join("WMS", "rawphotos"),
-        os.path.join("WMS", "tiles")]
-
-        #If a folder is not deleted by the function it will fail the test
-        for folder in folders_to_check:
-            if os.path.exists(folder):
-                allDeleted = False
-        
-        self.assertEqual(allDeleted, True)
-
-        shutil.rmtree("WMS") 
-
-    #Test for the readfile function
-    def test_read_file(self):
-        result = util.read_file("test.json")
-        self.assertEqual(result, {'Test Content': 1})
+    def test_split_files_success(self):
+        result = split_files(self.image_folder, self.output_folder, self.trainingFraction)
+        self.assertEqual(result, True)
     
+    def test_split_files_fail_wrong_input(self):
+        result = split_files("", self.output_folder, self.trainingFraction)
+        self.assertEqual(result, False)
 
+    def test_split_files_wrong_output(self):
+        result = split_files(self.image_folder, "", self.trainingFraction)
+        self.assertEqual(result, False)
+    
 
     if __name__ == "main":
         unittest.main()
+
+
+class TestSetupUserFolders(unittest.TestCase):
+
+    def __init__(self, *args, **kwargs):
+        self.test_session_id = 1
+        super(TestSetupUserFolders, self).__init__(*args, **kwargs)
+
+    def tearDown(self):
+        teardown_user_session_folders(self.test_session_id)
+
+    def test_setup_success(self):
+        result = setup_user_session_folders(self.test_session_id)
+        self.assertEqual(result, True)
+    
+
+class TestReadFile(unittest.TestCase):
+
+    def __init__(self, *args, **kwargs):
+        self.data = {"key": "value"}
+        self.filename = "file.json"
+        super(TestReadFile, self).__init__(*args, **kwargs)
+
+    def tearDown(self):
+        os.remove(self.filename)
+
+    def setUp(self):
+        open(self.filename, "x").close()
+        write_file(self.filename, self.data)
+
+    def test_read_file_success(self):
+        result = read_file(self.filename)
+        self.assertEqual(result, self.data)
+
+    def test_read_file_wrong_path(self):
+        with self.assertRaises(HTTPException) as context:
+            read_file(self.filename + ".txt")
+        self.assertEqual(context.exception.status_code, 500)
+        self.assertTrue(f"Could not find file: {str(self.filename)}" in str(context.exception.detail))
+
+
+
+class TestBBOXArray(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        self.coordinateFile =  [[1000, 1000], [2000, 1000], [2000, 2000], [1000, 2000], [1000, 1000]]
+        self.coordinateFile_notSquare =  [[1000, 1000], [2000, 1000], [2000, 2000], [1000, 1000]]
+        self.config = {"label_source": "WMS", "orto_source": "WMS", "data_parameters": ["100", "0", "80"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#563d7c", "#563d7c", "#563d7c"], "tile_size": 500, "image_resolution": 0.2}
+        super(TestBBOXArray, self).__init__(*args, **kwargs)
+
+    def test_create_bbox_array(self):
+        result = create_bbox_array(self.coordinateFile, self.config)
+        self.assertEqual(len(result), 100)
+    
+    def test_create_bbox_array_polygon(self):
+        result = create_bbox_array(self.coordinateFile_notSquare, self.config)
+        self.assertEqual(len(result), 64)   
+
+class TestSingleBBOX(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        self.coordinateFile =  [[1000, 1000], [2000, 1000], [2000, 2000], [1000, 2000], [1000, 1000]]
+        self.config = {"label_source": "WMS", "orto_source": "WMS", "data_parameters": ["100", "0", "80"], "layers": ["Bygning", "Veg", "Bru"], "colors": ["#563d7c", "#563d7c", "#563d7c"], "tile_size": 500, "image_resolution": 0.2}
+        super(TestSingleBBOX, self).__init__(*args, **kwargs)
+
+    def test_create_bbox_success(self):
+        result = create_bbox(self.coordinateFile)
+        self.assertEqual(result["minx"], 1000)
 
         # Write file test 
 

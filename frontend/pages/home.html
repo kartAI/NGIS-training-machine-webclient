@@ -22,9 +22,9 @@
 
 <body>
     <div class="main-container">
-        <h1 class="display-4">Training Data Generator</h1><br>
-        <p class="fs-4">This application generates map data to train an AI model</p><br>
-        <p class="fs-5 mb-4">Some more information about this amazing app</p>
+        <h1 class="display-4">KartAi Training Data Generator</h1><br>
+        <p class="fs-4">This application generates map data in the form of tiles to train an AI model</p><br>
+        <p class="fs-5 mb-4">If you wish to know more, click on "Learn more"</p>
         <br><br><br>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a href="info.html" style="text-decoration: none;">
@@ -52,44 +52,148 @@
                 <img src="frontend/images/UniversitetetIAgder.png" alt="Logo for Universitetet i Agder" class="footerimg"> 
             </a>
         </div>
-    
-        <div class="cookie-policy-container">
-            <a href="#" id="cookiePolicyLink">Cookie Policy</a>
-            <div id="cookiePolicyPopup" class="cookie-policy-popup">
-                <h2>Cookie Policy for Training Data Generator</h2>
 
-                <p><strong>Last updated:</strong> 18.03.2024</p>
+        <div id="modalOverlay" class="modal-overlay"></div>
+        
+        <div class="policy-container" style="position: relative;">
+            <div class="privacy-policy-container">
+                <a href="#" id="privacyPolicyLink">Privacy Policy</a>
+                <div id="privacyPolicyPopup" class="privacy-policy-popup">
+                    <h2><strong>Privacy Policy</strong></h2>
 
-                <p>At KartAI, we believe in being clear and open about how we collect and use data related to you. This policy provides detailed information about how and when we use cookies. By using Training Data Generator, you agree to our use of cookies as described in this Cookie Policy.</p>
+                    <p><strong>Last updated:</strong> 11.04.2024</p>
+                    <br>
 
-                <h4>What is a cookie?</h4>
+                    <p>This privacy policy contains information about how KartAi Training Data Generator handles your personal data. We encourage you to read the privacy policy carefully.</p>
+                    <br>
 
-                <p>A cookie is a small file placed onto your device that enables Training Data Generator features and functionality. For example, cookies enable us to identify your device and secure your access to Training Data Generator.</p>
+                    <p>1. Contact information for KartAi</p>
+                    <p>2. Central concepts</p>
+                    <p>3. KartAi is the data controller</p>
+                    <p>4. What kind of information do we collect?</p>
+                    <p>5. Alternative to email</p>
+                    <p>6. The purpose of the processing of the personal data?</p>
+                    <p>7. How long is the information stored?</p>
+                    <p>8. With whom can the information be shared with?</p>
+                    <p>9. Information sharing with third parties</p>
+                    <p>10. Where is the information stored?</p>
+                    <p>11. Information cookies</p>
+                    <br>
 
-                <h4>Why does Training Data Generator use cookies?</h4>
+                    <h4>1. Contact information for KartAi</h4>
 
-                <p>Cookies play an important role. They help us provide you with a seamless experience by maintaining session continuity and safe connections as you navigate through the application. Here's a brief overview of the types of cookies we use:</p>
+                    <p>KartAi is responsible for handling your personal data when using this application. If you have questions about the processing or wish to get in touch with us to exercise your rights, you will find our contact information below:
+                    <br><br>
+                    KartAi - https://kartai.no/<br>
+                    Contact person: alexander.nossum@norkart.no
+                    </p>
+                    <br>
 
-                <ul>
-                    <li><strong>Session Cookies:</strong> These are temporary cookies used to remember you during the course of your visit to the application, and they expire when you close the web browser.</li>
-                </ul>
+                    <h4>2. Central concepts</h4>
 
-                <h4>How does Training Data Generator use cookies?</h4>
+                    <p>Personal data is information that alone or together with other information can be used to identify, locate or contact a person. Examples of personal data are name, telephone number and IP address.
+                    <br><br>
+                    Processing of personal data involves all forms of handling of personal data such as: collection, analysis, registration and storage.
+                    <br><br>
+                    The controller is the person who determines the purpose of the processing of personal data and which information is requested. It is the data controller who is responsible for the handling of your personal data in accordance with the applicable Personal Data Act.     
+                    </p>
+                    <br>
 
-                <p><strong>Sessions Management:</strong> Cookies help us keep track of your activity as you navigate through the application, ensuring that the application remembers your activity.</p>
+                    <h4>3. KartAi is the data controller</h4>
 
-                <h4>What to do if you don't want cookies to be set</h4>
+                    <p>KartAi is responsible for handling your personal data.</p>
+                    <br>
 
-                <p>You can usually manage cookies through your browser settings. Most browsers provide the ability to block cookies or block cookies from specific sites. Browsers can also help you delete cookies when you close the application. However, you should note that our application requires cookies to function properly, and disabling cookies may affect your experience.</p>
+                    <h4>4. What kind of information do we collect?</h4>
 
-                <h4>Changes to this policy</h4>
+                    <p>When you order training data from the application, we need your email address to be able to send it to you. For that reason, we ask you for your e-mail address. The email address is not saved.</p>
+                    <br>
 
-                <p>We may update this policy from time to time. Please revisit this page to stay aware of any changes. By continuing to use Training Data Generator and our services after those changes become effective, you agree to be bound by the revised Cookie Policy.</p>
+                    <h4>5. Alternative to mail</h4>
 
-                <button id="closePopup">Close</button>
+                    <p>An alternative to email is to download training data directly from the site.</p>
+                    <br>
+
+                    <h4>6. The purpose of the processing of the personal data?</h4>
+
+                    <p>We need your email address in order to send training data to you instead of downloading directly from the site.</p>
+                    <br>
+
+                    <h4>7. How long is the information stored?</h4>
+
+                    <p>We only process the personal data for as long as it takes to fulfill the purpose of their collection, after which we delete the information. We do not store the e-mail address or any other personal data.</p>
+                    <br>
+
+                    <h4>8. With whom can the information be shared?</h4>
+
+                    <p>The information is not shared with anyone.</p>
+                    <br>
+
+                    <h4>9. Information sharing with third parties</h4>
+
+                    <p>We do not sell your personal data to third parties.</p>
+                    <br>
+
+                    <h4>10. Where is the information stored?</h4>
+
+                    <p>No personal data is stored.</p>
+                    <br>
+                    
+                    <h4>11. Cookies</h4>
+
+                    <p>Cookies are small text files that are placed on your computer when you download a website.
+                    <br><br>
+                    Storage of information and processing of this information is not permitted unless the user has both been informed about and has given his consent to the processing. The user must find out about and approve which information is processed, what the purpose of the processing is and who processes the information.
+                    <br><br>
+                    We only use cookies to give you a better user experience on our pages so that you don't have to fill in fields again every time you are on our pages.<br><br>
+                    </p>
+
+                    <p><strong>Privacy statement - Norwegian Data Protection Authority</strong><br>
+                    Read what the Norwegian Data Protection Authority says about privacy statements: <a href="https://www.datatilsynet.no/rettigheter-og-plikter/virksomhetenes-plikter/informasjon-og-apenhet/" target="_blank">https://www.datatilsynet.no/rettigheter-og-plikter/virksomhetenes-plikter/informasjon-og-apenhet/</a></p>
+                    <button id="closePrivacyPopup" class="popup-close-btn">Close</button>
+                </div>
+            </div>
+
+        <div class="cookie-policy-containter">
+            <div class="cookie-policy-container">
+                <a href="#" id="cookiePolicyLink">Cookie Policy</a>
+                <div id="cookiePolicyPopup" class="cookie-policy-popup">
+                    <h2>Cookie Policy for Training Data Generator</h2>
+
+                    <p><strong>Last updated:</strong> 18.03.2024</p>
+
+                    <p>At KartAI, we believe in being clear and open about how we collect and use data related to you. This policy provides detailed information about how and when we use cookies. By using Training Data Generator, you agree to our use of cookies as described in this Cookie Policy.</p>
+
+                    <h4>What is a cookie?</h4>
+
+                    <p>A cookie is a small file placed onto your device that enables Training Data Generator features and functionality. For example, cookies enable us to identify your device and secure your access to Training Data Generator.</p>
+
+                    <h4>Why does Training Data Generator use cookies?</h4>
+
+                    <p>Cookies play an important role. They help us provide you with a seamless experience by maintaining session continuity and safe connections as you navigate through the application. Here's a brief overview of the types of cookies we use:</p>
+
+                    <ul>
+                        <li><strong>Session Cookies:</strong> These are temporary cookies used to remember you during the course of your visit to the application, and they expire when you close the web browser.</li>
+                    </ul>
+
+                    <h4>How does Training Data Generator use cookies?</h4>
+
+                    <p><strong>Sessions Management:</strong> Cookies help us keep track of your activity as you navigate through the application, ensuring that the application remembers your activity.</p>
+
+                    <h4>What to do if you don't want cookies to be set</h4>
+
+                    <p>You can usually manage cookies through your browser settings. Most browsers provide the ability to block cookies or block cookies from specific sites. Browsers can also help you delete cookies when you close the application. However, you should note that our application requires cookies to function properly, and disabling cookies may affect your experience.</p>
+
+                    <h4>Changes to this policy</h4>
+
+                    <p>We may update this policy from time to time. Please revisit this page to stay aware of any changes. By continuing to use Training Data Generator and our services after those changes become effective, you agree to be bound by the revised Cookie Policy.</p>
+
+                    <button id="closeCookiePopup" class="popup-close-btn">Close</button>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"

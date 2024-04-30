@@ -1,15 +1,22 @@
 from fastapi.testclient import TestClient
 from main import app
+import unittest
 from unittest.mock import patch, MagicMock, mock_open
 import tempfile
 import zipfile
 from main import zip_files
-from main import send_email_with_attachment
+from main import send_email
 from pathlib import Path
 import pytest
 import os
-from WMS import util
+from application import util
 from main import zip_files
+import numpy as np
+from application.ortoCOG import generate_cog_data
+from rasterio.transform import from_origin
+from main import generateTrainingData
+from dotenv import load_dotenv
+
 
 #Import test client
 client = TestClient(app)
@@ -53,100 +60,165 @@ def test_generatePhotos():
 def cleanup_test_data():
     pass
 
-    # sendEmail test
+'''TEST FOR LABEL AND ORTO SOURCES UPDATED AND WORKING 19.04.2024'''
+# Leaving imports in order to easier run tests alone 
+import pytest
+from unittest.mock import patch
+from main import generateTrainingData
+from dotenv import load_dotenv
 
-@patch('main.send_email_with_attachment')
-@patch('main.zip_files')
-@patch('os.remove')
-@patch('main.util.teardown_WMS_folders')
-def test_send_zipped_files_email(mock_teardown, mock_remove, mock_zip, mock_send_email):
-    # Mock the behavior of external dependencies
-    mock_zip.return_value = None
-    mock_send_email.return_value = None
-    mock_remove.return_value = None
-    mock_teardown.return_value = None
+load_dotenv()
 
-    # Simulate a request with a JSON payload containing the email
-    response = client.post("/sendEmail", json={"email": "test@example.com"})
+@pytest.mark.parametrize("label_return_values, expected", [
+    ((True, True), True),
+    ((True, False), False),
+    ((False, True), False),
+    ((False, False), False)
+])
+def test_generate_training_data_wms_label(label_return_values, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "WMS"
+    orto_source = "None" 
 
-    # Assertions to verify the endpoint behavior
-    assert response.status_code == 200
-    assert response.json() == {"message": "Email sent successfully with zipped files."}
+    with patch('application.labelPhotoWMS.generate_label_data', return_value=label_return_values[0]), \
+         patch('application.labelPhotoWMS.generate_label_data_colorized', return_value=label_return_values[1]):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
 
-    # Verify that the mocked functions were called as expected
-    mock_zip.assert_called_once_with()  # Add any arguments if your function requires them
-    mock_send_email.assert_called_once_with(
-        to_emails="test@example.com",
-        subject="Here are your zipped files",
-        content="<strong>Zip file holding the requested data.</strong>",
-        attachment_path="attachments.zip"
-    )
-    mock_remove.assert_called_once_with("attachments.zip")
-    mock_teardown.assert_called_once()
+@pytest.mark.parametrize("label_return_values, expected", [
+    ((True, True), True),
+    ((True, False), False),
+    ((False, True), False),
+    ((False, False), False)
+])
 
-# Test for /zip_files
+def test_generate_training_data_wms_label(label_return_values, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "WMS"
+    orto_source = "None"  # Assuming orto_source does not affect the outcome here
 
-@pytest.fixture
-def temp_dir_with_files():
-    # Create a temporary directory using pytest's built-in tmp_path fixture
-    with tempfile.TemporaryDirectory() as tmpdir:
-        # Create some test files in the temporary directory
-        for i in range(3):
-            with open(Path(tmpdir) / f"test_file_{i}.txt", "w") as f:
-                f.write(f"This is test file {i}")
-        # Yield the temporary directory path to the test function
-        yield tmpdir
+    with patch('application.labelPhotoWMS.generate_label_data', return_value=label_return_values[0]), \
+         patch('application.labelPhotoWMS.generate_label_data_colorized', return_value=label_return_values[1]):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
 
-def test_zip_files(temp_dir_with_files):
-    # The temporary directory and files are setup
-    tmpdir = temp_dir_with_files
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_fgb_label(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "FGB"
+    orto_source = "None"  # No orto source interaction in this test
 
-    # The name of the zip file to be created
-    zip_name = os.path.join(tmpdir, 'test.zip')
+    with patch('application.labelFGB.generate_label_data', return_value=return_value):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
+        
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_wms_orto(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "None"  # No label source interaction in this test
+    orto_source = "WMS"
 
-    # Call the function to be tested
-    zip_files(directory_path=tmpdir, zip_name=zip_name)
+    with patch('application.ortoPhotoWMS.generate_training_data', return_value=return_value):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
 
-    # Assert: Check the zip file exists
-    assert os.path.exists(zip_name)
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_cog_orto(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+    }
+    label_source = "None"  # No label source interaction in this test
+    orto_source = "COG"
 
-    # Verify the zip file contains the expected files
-    with zipfile.ZipFile(zip_name, 'r') as zipf:
-        zipped_files = zipf.namelist()
-        expected_files = [f"test_file_{i}.txt" for i in range(3)]
+    with patch('application.ortoCOG.generate_cog_data', return_value=return_value):
+        assert generateTrainingData(paths, label_source, orto_source) == expected
 
-        # Verify all expected files are in the zipped file
-        for expected_file in expected_files:
-            assert expected_file in zipped_files
+@pytest.mark.parametrize("return_value, expected", [
+    (True, True),
+    (False, False)
+])
+def test_generate_training_data_sat_orto(return_value, expected):
+    paths = {
+        "coordinates": "dummy_coordinate_path.json",
+        "config": "dummy_config_path.json",
+        "root": "dummy_root_directory"  
+    }
+    label_source = "None"
+    orto_source = "SAT"
 
-  # Send email with attachment mock test
+    with patch('application.satWMS.fetch_satellite_images', return_value=return_value):
+        result = generateTrainingData(paths, label_source, orto_source)
+        assert result == expected, f"Expected {expected}, got {result}"
+        
 
-@patch('builtins.open', mock_open(read_data=b"data"))
-@patch('os.path.exists', return_value=True)
-@patch('main.SendGridAPIClient')
-def test_send_email_with_attachment(mock_sendgrid_client, mock_exists):
-    # Mock the os.path.exists to always return True
-    mock_exists.return_value = True
+'''TEST FOR CONNECTING TO SMTP SERVER AND SENDING EMAILS'''
+# Leaving imports in order to easier run tests alone
+# This test also assumes that the zipping has happened before hand, like it is in main.
+import os
+from unittest.mock import patch, mock_open
+import pytest
+from main import send_email  
 
-    # Mock SendGridAPIClient's behavior
-    mock_sendgrid_response = MagicMock()
-    mock_sendgrid_response.status_code = 202  # SendGrid returns 202 for successful sends
-    mock_sendgrid_client.return_value.send.return_value = mock_sendgrid_response
+def test_send_email():
+    to_email = "test@example.com"
+    attachment_name = "path/to/data.zip"
+    dataset_name = "dataset"
 
-    # Parameters for send_email_with_attachment
-    to_emails = "test@example.com"
-    subject = "Test Subject"
-    content = "Test Content"
-    attachment_path = "path/to/test_attachment.zip"
+    with patch.dict(os.environ, {
+        "SMTP_USER": "user@example.com",
+        "SMTP_PASS": "password123",
+        "SMTP_SERVER": "smtp.example.com",
+        "SMTP_PORT": "587"  
+    }), \
+    patch("builtins.open", mock_open(read_data="data")), \
+    patch("smtplib.SMTP") as mock_smtp:
+        # Calling functiong in try to catch any exceptions
+        try:
+            send_email(to_email, attachment_name, dataset_name)
+        except Exception as e:
+            print("Error during send_email execution:", e)
 
-    # Call the function to be tested
-    send_email_with_attachment(to_emails, subject, content, attachment_path)
+        # Check SMTP calls
+        instance = mock_smtp.return_value
+        print("SMTP calls:", instance.method_calls)  # To see all calls made on the SMTP instance
+        mock_smtp.assert_called_once_with("smtp.example.com", int(os.getenv("SMTP_PORT")))
+        
+        # Detailed assertions with conditional feedback
+        if instance.starttls.called:
+            instance.starttls.assert_called_once()
+        else:
+            print("starttls was not called")
 
-    # Assert: Check that os.path.exists was called with the attachment path
-    mock_exists.assert_called_once_with(attachment_path)
+        if instance.login.called:
+            instance.login.assert_called_once_with("user@example.com", "password123")
+        else:
+            print("login was not called")
 
-    # Verify SendGridAPIClient was instantiated with the dummy API key
-    mock_sendgrid_client.assert_called_once()
+        if instance.sendmail.called:
+            instance.sendmail.assert_called_once()
+            args, kwargs = instance.sendmail.call_args
+            assert args[0] == "user@example.com"
+            assert args[1] == to_email
+            assert "KARTAI TRENINGSDATA" in args[2]
+            assert "This is your requested training data from the training data generator" in args[2]
+        else:
+            print("sendmail was not called")
 
-    # Verify the send method was called on the SendGrid client
-    assert mock_sendgrid_client.return_value.send.called

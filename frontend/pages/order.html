@@ -1,158 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Trainingdata Generator</title>
 
-
     <!-- Styles -->
     <!-- Bootstrap core CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="frontend/style.css">
-    <Style>
-        .button-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px; 
-        }
+    <link rel="stylesheet" href="frontend/style.css" />
+  </head>
 
-        .btn-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px; 
-        margin-bottom: 30px;
-        }
+  <body>
+    <!-- Header/navbar -->
+    <header>
+      <div id="header"></div>
+    </header>
 
-        .cancel-button-container {
-        margin-top: 20px; 
-        }
-    </Style>
-</head>
+    <!--Removing the info button from header-->
+    <script></script>
 
-<body>
-    <div class="content">
+    <!-- Page content -->
+    <div style="padding-top: 7rem" class="container">
+      <!-- Headline and info -->
+      <div class="text-center">
+        <h1 class="display-4 fw-normal">Order data</h1>
+        <p class="fs-5 text-muted">
+          This page allows you to download your training data, click the
+          "Download" button to do so
+        </p>
+      </div>
+      <div class="button-container text-center">
+        <button
+          type="button"
+          class="btn btn-cancel btn-lg"
+          id="customCancelBtn"
+          data-bs-toggle="modal"
+          data-bs-target="#cancelModal"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary btn-lg"
+          id="downloadButton"
+          data-bs-toggle="modal"
+          data-bs-target="#doneModal"
+        >
+          Download
+        </button>
+      </div>
+    </div>
 
-        <!-- Header/navbar -->
-        <header>
-            <div id="header"></div>
-        </header>
-
-        <!-- Page content -->
-        <div class="main-container">
-
-            <!-- Headline and info -->
-            <div class="pricing-header pb-md-4 mx-auto text-center">
-                <h1 class="display-4 fw-normal">Order data</h1>
-                <p class=" text-muted"> Add your email-adress to recieve the data to your mail or download the data</p>
-
-            </div>
-            <div class="row w-75">
-                <!-- Form container-->
-
-                <!-- <form id="emailForm">
-                    <!-- Email-field -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label col-form-label col-form-label-lg" for="emailInput">Email</label>
-                        <input type="email" id="emailInput" name="email" class="form-control form-control-lg">
-                    </div>
-
-                    <!-- Preview files -->
-                    <div id="filesPreview">
-                        <p class="form-label col-form-label col-form-label-lg ">
-                        </p>
-                        <p id="fileCountSummary"></p>
-                        <span>
-                            <ul id="fileList" class="text-center"></ul>
-                        </span>
-                    </div>
-
-                    <!-- order button -->
-                    <div class="btn-container">
-                        <button type="button" class="btn btn-primary btn-lg" onclick="sendEmail()" id="submitButton">Order</button>
-                    </div>
-                </form>
-                <div class="text-center">
-                    <h1 id="downloadText" style="font-size: 1.25rem; font-weight: 400; color: #212529;">Click the download button to download the training data to your computer</h1>
-                </div>
-                <div class="button-container text-center">
-                    <button type="button" class="btn btn-primary btn-lg" id="downloadButton">Download</button>
-                </div>
-
-                <!-- Cancel Button and Modal Trigger -->
-                <br>
-                <div class="d-flex justify-content-center mb-5">
-                    <button type="button" class="btn btn-cancel" id="customCancelBtn" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel</button>
-                </div>
-
-                <!-- Cancel Confirmation Modal -->
-                <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="cancelModalLabel">Cancel Confirmation</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                Are you sure you want to cancel?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                                <a href="home.html" class="btn btn-primary">Yes</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Cancel Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="cancelModal"
+      tabindex="-1"
+      aria-labelledby="cancelModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cancelModalLabel">
+              Cancel Confirmation
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">Are you sure you want to cancel?</div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary btn-cancel"
+              data-bs-dismiss="modal"
+            >
+              No
+            </button>
+            <a href="home.html" class="btn btn-primary">Yes</a>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      class="modal fade"
+      id="doneModal"
+      tabindex="-1"
+      aria-labelledby="doneModal"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="doneModalLabel">
+              You have completed the process for generating training data
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Your data will now be downloaded. Would you like to repeat the
+            process or stay on this page?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Stay on this page
+            </button>
+            <a href="home.html" class="btn btn-primary">Go back to the start</a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        document.getElementById("downloadButton").addEventListener("click", function() {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/downloadFile", true);
-            xhr.responseType = "blob";
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var blob = xhr.response;
-                    var link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = "Dataset.zip";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+      document
+        .getElementById("downloadButton")
+        .addEventListener("click", function () {
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", "/downloadFile", true);
+          xhr.responseType = "blob";
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              var blob = xhr.response;
+              var link = document.createElement("a");
+              link.href = window.URL.createObjectURL(blob);
+              datasetName = localStorage.getItem("datasetName");
+              link.download = datasetName + ".zip";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
 
-                    deleteFile()
-                }
-            };
-            xhr.send();
+              deleteFile();
+            }
+          };
+          xhr.send();
         });
 
-        function deleteFile() {
+      function deleteFile() {
         var deleteXhr = new XMLHttpRequest();
         deleteXhr.open("POST", `/deleteFile`, true);
-        deleteXhr.onload = function() {
-            if (deleteXhr.status === 200) {
-                console.log("File deleted successfully");
-            } else {
-                console.error("Error deleting file");
-            }
+        deleteXhr.onload = function () {
+          if (deleteXhr.status === 200) {
+            console.log("File deleted successfully");
+          } else {
+            console.error("Error deleting file");
+          }
         };
         deleteXhr.send();
-    }
+        localStorage.clear();
+      }
+
+      //Removing the info button from header
+      if (window.location.href.includes("order.html")) {
+        document.addEventListener("DOMContentLoaded", function () {
+          document.getElementById("infoBtn").style.display = "none";
+        });
+      } else {
+        console.log("failed to remove info button");
+      }
     </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+    <script src="header.html"></script>
     <!-- Custom JS -->
-    <script src="frontend/scripts/email.js"></script>
-    <script src="frontend/scripts/order.js"></script>
-</body>
-
+    <script src="frontend/scripts/nav.js"></script>
+  </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"> 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trainingdata Generator</title>
@@ -16,64 +16,109 @@
 </head>
 
 <body>
-    <div class="content">
 
         <!-- Header/navbar-->
         <header>
             <div id="header"></div>
         </header>
-
+       
         <!-- Page content -->
-        <div class="main-container">
-
-            <!-- Headline and info -->
-            <div class="text-center">
-                <h1 class="display-4 fw-normal">Coordinates</h1>
-                <p class="fs-5">1. Choose coordinate system</p>
-                <p class="fs-5">2. Enter coordinates in the field and click "Done"</p>
-                <p class="fs-5">3. Review the area on the map of the coordinates and then click "Next"</p>
+        <div style="padding-top: 4rem" class="container">
+            <div class="row w-90">
+                <div class="col-3"></div>
+                <div class="col-6">
+                    <h1 class="display-6 fw-normal">Write Coordinates</h1>
+                </div>
+                <div class="col-2"></div>
             </div>
-
-            <!-- Form -->
-            <div class="row w-75">
-                <div class="form-group pb-3" id="form-container">
-
-                    <!-- Selectfield -->
-                    <label for="coordSys" class="col-sm-2 col-form-label col-form-label-lg">Coordinatesystem <span class="question-mark" onclick="showCoordinateSystemInfo()">?
-                        <span class="tooltip-text">Info about the coordinate system</span>
-                      </span>
+            <div class="row w-90">
+                <div class="col-3"></div>
+                <div class="col-6">
+                    <ol>
+                        <li class="fs-6"> Choose coordinate system</li>
+                        <li class="fs-6"> Enter coordinates in the field and click "Done"</li>
+                        <li class="fs-6">Review the area on the map of the coordinates and then click "Next"</li>
+                    </ol>
+                </div>
+                <div id="error-message" class="alert alert-danger" role="alert" hidden></div>
+                <div class="col-2"></div>
+            </div>
+            <div class="row w-90">
+                <div class="col">
+                    <div id="map" onmouseenter="return noScroll();"></div>
+                </div>
+                <div class="col">
+                    <!--Select field-->
+                    <label for="coordSys" class="col-form-label col-form-label-lg">Coordinatesystem<span class="req">*</span><span class="question-mark" onclick="showCoordinateSystemInfo()">?
+                        <span class="tooltip-text">Choose between EPSG:25832, EPSG4326 or EPSG:3587</span></span>
                     </label>
                     <select id="coordSys" class="form-control form-control-lg" onchange="logSelectedEpsg()">
-                        <option selected>Choose coordinatesystem</option>
-                        <option>EPSG:4326</option>
+                        <option value="None">Choose coordinatesystem</option>
+                        <option value="EPSG:25832" selected>EPSG:25832</option>
+                        <option value="EPSG:4326">EPSG:4326</option>
+                        <option value="EPSG:3587">EPSG:3587</option>
                     </select>
-                    
-                    <!-- Freetext-field -->
-                    <label for="coordinates-input" class="col-sm-2 col-form-label col-form-label-lg">Coordinates <span class="question-mark" onclick="showCoordinatesInfo()">?
-                        <span class="tooltip-text">Info about how to enter coordinates</span>
-                      </span>
-                    </label>
+                    <hr class="hr" />
+                    <!--Coordinates input-->
+                    <label for="coordinates-input" class="col-form-label col-form-label-lg">Coordinates<span class="req">*</span><span class="question-mark" onclick="showCoordinatesInfo()">?
+                        <span class="tooltip-text">Enter your coordinates either as a long string 1,2,3,4 or as comma seperated points [1,2], [3,4]</span>
+                    </span></label>
                     <div class="input-group ">
                         <textarea id="coordinates-input" class="form-control form-control-lg"
                             aria-describedby="coordinateHelp" rows="3"
                             placeholder="Enter coordinates, separated by commas"></textarea>
-                        <button type="button" class="btn btn-primary btn-lg" id="done-button">Done</button>
-                    </div>
-                </div>
+                        </div>
+                        <hr class="hr" />
+                        <div style="float: left;" class="btn-container">
+                            <button style="margin-right: 3rem;" type="button" class="btn btn-primary btn-lg" id="done-button">Done</button>
+                            <button type="button" class="btn btn-primary btn-lg" id="nextButton" disabled onclick="return nav();">Next</button>
+                        </div>
 
-                <!-- Map -->
-                <div>
-                    <div id="map" onmouseenter="return noScroll();"></div>
-                </div>
-
-                <!-- Continue button -->
-                <div class="btn-container">
-                    <button type="button" class="btn btn-primary btn-lg col-md-3 offset-md-3" id="next-button" disabled onclick="return nav();">Go
-                        to order</button>
                 </div>
             </div>
+            
+    <!--Info Modal-->
+    <div
+    class="modal fade"
+    id="infoModal"
+    tabindex="-1"
+    aria-labelledby="infoModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoModalLabel">Info about settings</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <p id="info-modal-text"></p>
+          <!-- Content will be populated by script.js -->
+          <h4>Coordinatesystem (EPSG):</h4>
+          <p>The coordinatesystem that your coordinates are in. The application currently only supports the ones listed here</p>
+          <h4>Coordinates:</h4>
+          <p>The coordinates for the area you want training data from. Make sure the coordinates are in the same ESPG as you have selected.</p>
+        </div>
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 
     <!-- Proj4 library for coordinate transformations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"
@@ -85,10 +130,13 @@
         integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 
     <!-- Custom JS files -->
-    <script src="frontend/scripts/coordinates.js"></script>
-    <script src="frontend/scripts/script.js"></script>
-    <script src="frontend/scripts/map.js"></script>
-
+    <script src="frontend/scripts/coordinates.js" type="module"></script>
+    <script src="frontend/scripts/nav.js"></script>
+    <script src="frontend/scripts/script.js"></script> 
+    <script src="frontend/scripts/helper.js" type="module" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" 
+    crossorigin="anonymous"></script>
 </body>
 
 </html>
