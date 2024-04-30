@@ -31,7 +31,7 @@ const cardData = [
 const cardContainer = document.getElementById("card-container");
 cardData.forEach((card) => {
   const cardHtml = `
-    <a href="${card.link}" class="card p-5 mb-4 rounded-3 shadow-sm>
+    <a href="${card.link}" class="card p-5 mb-5 rounded-3 shadow-sm>
       <div class="card-body">
         <span class="fas ${card.icon}"></span>
         <br> 
@@ -117,7 +117,10 @@ async function updateImageSources() {
         orto_source: ortoSource,
       }),
     });
-
+    
+    localStorage.setItem("label_source", labelSource)
+    localStorage.setItem("orto_source", ortoSource)
+    
     const data = await response.json(); // Parse the JSON response
     console.log(data);
     if (data.error == 1) {

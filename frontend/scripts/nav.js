@@ -12,7 +12,10 @@ xhr.onload = function () {
   }
 };
 xhr.send(); // Sends the request to the server
-
+document.addEventListener("DOMContentLoaded", function(event){
+  // your code here
+  document.getElementById("infoBtn").remove()
+});
 // Defines a map of pages to their corresponding next pages for navigation
 const pageMap = {
   "uploadFile.html": "setConstraints.html",
@@ -35,12 +38,4 @@ function nav() {
 function home() {
   var url = "frontend/pages/home.html"; // Define the URL of the home page
   window.location(url); // Redirect to the home page
-}
-
-//Info Popups
-if (window.location.href.includes("methods.html")) {
-  document.addEventListener("DOMContentLoaded", function () {
-    console.log("HELLO");
-    document.getElementById("info-modal-text").innerHTML = "none";
-  });
 }
