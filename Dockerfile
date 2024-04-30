@@ -10,7 +10,7 @@ COPY . /app
 # Install the necessary packages using pip
 RUN apt-get update && \
     apt-get install -y python3-pip bash && \
-    pip3 install python-dotenv requests psycopg2-binary matplotlib tensorflow azure-storage-blob imageio fastapi uvicorn sendgrid jinja2 pyproj shapely python-multipart httpx pytest python-env imageio rasterio fastapi-sessions
+    pip3 install python-dotenv requests matplotlib azure-storage-blob imageio fastapi uvicorn jinja2 pyproj shapely python-multipart httpx pytest python-env imageio rasterio fastapi-sessions
 
 # Make the kai script executable
 RUN chmod +x /app/kartAI/kai
