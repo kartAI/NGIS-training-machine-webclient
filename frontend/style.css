@@ -122,16 +122,31 @@ a.card.p-5 {
   color: white;
 }
 
-.choice-card {
-  text-align: center;
-  border: 1px solid #000;
-  border-radius: 5px;
-  margin-left: 10rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-color: lightgray;
-  width: 100%;
-}
+
+.col-4{
+  display: flex;
+    justify-content:center;
+  }
+  
+  .choice-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-color: lightgray;
+    width: 70%;
+    text-align: center;
+  }
+  
+  .radio-group-layer {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Center radio buttons horizontally */
+    justify-items: center;
+  }
 
 /* Map style */
 #map {
