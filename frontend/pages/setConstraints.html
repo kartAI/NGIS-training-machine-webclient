@@ -46,7 +46,9 @@
             <label for="validation" class="col-form-label-lg">Validation (%)<span class="req">*</span></label><span class="question-mark" onclick="showValidationInfo()">?<span class="tooltip-text">Validation percentage determines of much of the data to be allocated to validation data. This data is used to validate your Ai models performance during training</span></span>
           </div>
           <div class="col">
-            <label for="building" class="col-form-label-lg">Building percentage (%)<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Building percentage ensures that the generated data has the specified percentage of buildings. If you put in "10%", the generated images have to contain atleast 10% buildings</span></span>
+            <label for="building" class="col-form-label-lg">Building percentage (%)<span class="req">*</span></label><span class="question-mark" onclick="showBuildingInfo()">?<span class="tooltip-text">Building percentage ensures that the generated data has the specified percentage of buildings. If you put in "10%", the generated images have to contain atleast 10% buildings. 
+              Only applicable if you chose "NGIS" as a label source
+            </span></span>
           </div>
         </div>
          <!--Row for input fields-->
@@ -186,11 +188,8 @@
                 <button
                   type="button"
                   class="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
+                  data-bs-dismiss="modal"
+                  data-bs-target="confirmationModal">x</button>
               </div>
               <div class="modal-body">
                 <p>
@@ -207,15 +206,7 @@
               </div>
 
               <div class="modal-footer d-flex">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-lg col-auto ms-3 bg-danger border-0"
-                  data-bs-dismiss="modal"
-                  data-bs-target="confirmationModal"
-                >
-                  Cancel
-                </button>
-                <button
+                 <button
                   type="button"
                   class="btn btn-primary btn-lg col me-3 ms-3"
                   onclick="loadingModal(), generatePhotos();"
