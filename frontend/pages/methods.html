@@ -39,9 +39,9 @@
         <div class="choice-card" style="background-color: transparent !important; cursor: default;">
           <h5>Choose label source<span class="req">*</span><span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Choose which datasource you want the labeldata to come from</span></span></h5>
           <div class="radio-group-layer">
-            <input type="radio" id="ngis-layer"name="mapDataBase"style="cursor:pointer"><label class="form-check-label">NGIS</label>
-            <input type="radio" id="wms-layer" name="mapDataBase" style="cursor:pointer" checked><label class="form-check-label">WMS</label>
-            <input type="radio" id="fgb-layer" name="mapDataBase" style="cursor:pointer"><label class="form-check-label">FGB</label>
+            <input type="radio" id="ngis-layer"name="mapDataBase"style="cursor:pointer" disabled><label for="ngis-layer" style="color: grey" class="form-check-label">NGIS</label>
+            <input type="radio" id="wms-layer" name="mapDataBase" style="cursor:pointer" checked><label for="wms-layer" class="form-check-label">WMS</label>
+            <input type="radio" id="fgb-layer" name="mapDataBase" style="cursor:pointer"><label for="fgb-layer" class="form-check-label">FGB</label>
           </div>
         </div>
       </div>
@@ -49,9 +49,9 @@
       <div  class="choice-card" style="background-color: transparent !important">
         <h5>Choose orto source<span class="req">*</span><span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Choose which datasource you want the ortophoto to come from</span></span></h5>
         <div class="radio-group-layer">
-          <input type="radio" id="wms-ortofoto" name="ortoDatabase" style="cursor:pointer"><label class="form-check-label" selected>WMS</label>
-          <input type="radio" id="cog-ortofoto" name="ortoDatabase" style="cursor:pointer" checked/><label class="form-check-label">COG</label>
-          <input type="radio" id="sat-ortofoto" name="ortoDatabase" style="cursor:pointer"><label class="form-check-label">Satellite</label>
+          <input type="radio" id="wms-ortofoto" name="ortoDatabase" style="cursor:pointer"><label for="wms-ortofoto" class="form-check-label" selected>WMS</label>
+          <input type="radio" id="cog-ortofoto" name="ortoDatabase" style="cursor:pointer" checked/><label for="cog-ortofoto" class="form-check-label">COG</label>
+          <input type="radio" id="sat-ortofoto" name="ortoDatabase" style="cursor:pointer" disabled><label for="sat-ortofoto" class="form-check-label" style="color: grey">Satellite</label>
         </div>
       </div>
     </div>
@@ -103,7 +103,7 @@
             <!-- Content will be populated by script.js -->
             <h4>Label Sources:</h4>
             <ul>
-              <li>NGIS - Data directly from the central map database of the Norwegian mapping authority.</li>
+              <li>NGIS - Data directly from the central map database of the Norwegian mapping authority. (Non functional)</li>
               <li>WMS  - Openly released data from Kartverket stored in a Web Map Service</li>
               <li>FGB  - Data stored in FlatGeoBuf format, this data is part of the KartAI dataset.</li>
             </ul>
@@ -111,7 +111,9 @@
             <ul>
               <li>WMS - Openly released data from Norkart stored in a Web Map Service</li>
               <li>COG - Data stored in the Cloud Optimized GeoTiff format, this data is part of the KartAI dataset. </li>
-              <li>Satellite - Collect data directly from Planet Labs' Sentinel Hub Satellite imagery.</li>
+
+              <li>Satellite - Collect data directly from Planet Labs' Sentinel Hub Satellite imagery. (Access token expired)<li>
+
             </ul>
             <h4>Metadata file:</h4>
             <p>You also have the option to upload a metadata file from a previous project. If you do this then the application will preload all the settings from the metadata but you can still edit parameteres such as coordinates and application data settings.</p>

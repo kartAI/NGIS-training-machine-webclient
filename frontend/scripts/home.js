@@ -1,3 +1,4 @@
+//Event listeners for the privacy popup and the cookie popup
 document.getElementById('privacyPolicyLink').addEventListener('click', function(event) {
   event.preventDefault();
   document.getElementById('privacyPolicyPopup').style.display = 'block';

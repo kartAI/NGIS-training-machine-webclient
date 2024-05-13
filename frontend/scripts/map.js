@@ -171,7 +171,11 @@ window.onload = () => {
   checkPreLoadedCoordinates(map);
 };
 
+
+//Function that draws the predefined disclosed areas on the map
 function showDisclosedAreas() {
+
+  //These are the coordinates for the disclosed areas
   const geoJSONData = {
     type: "FeatureCollection",
     name: "leafletArea",
@@ -202,6 +206,7 @@ function showDisclosedAreas() {
     ],
   };
 
+  //Draw the feature on the map
   let coordinatesToDraw =
     geoJSONData["features"][0]["geometry"]["coordinates"][0][0];
   let color = "#ff0000";
