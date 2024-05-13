@@ -72,8 +72,10 @@ function drawCoordinatesOnMap(coordinates, color = "#cd32cd", map) {
   map.fitBounds(polygon.getBounds());
 }
 
+//This function checks if there are existing coordinates in the local storage from the browser localstorage
 function checkPreLoadedCoordinates(map) {
   if (localStorage.getItem("Coordinates")) {
+    //Convert the coordinates that are stored for drawing
     let tempCoordinateArrayStrings = localStorage.getItem("Coordinates").split(",");
     let tempCoordinateArray = [];
     for (let i = 0; i < tempCoordinateArrayStrings.length; i++) {
@@ -88,6 +90,7 @@ function checkPreLoadedCoordinates(map) {
     }
     let color ="#FF0000"
     console.log(finalCoordinateArray);
+    //Draw the coordinates on the map
     drawCoordinatesOnMap(finalCoordinateArray, color, map);
     enableNextButton()
   }
