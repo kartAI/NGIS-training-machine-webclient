@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="row align-items-center">
-      <div class="col-3">
+      <div class="col-4">
         <div class="choice-card" style="background-color: transparent !important; cursor: default;">
           <h5>Choose label source<span class="req">*</span><span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Choose which datasource you want the labeldata to come from</span></span></h5>
           <div class="radio-group-layer">
@@ -45,7 +45,7 @@
           </div>
         </div>
       </div>
-    <div class="col-3">
+    <div class="col-4">
       <div  class="choice-card" style="background-color: transparent !important">
         <h5>Choose orto source<span class="req">*</span><span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Choose which datasource you want the ortophoto to come from</span></span></h5>
         <div class="radio-group-layer">
@@ -55,7 +55,7 @@
         </div>
       </div>
     </div>
-    <div class="col-3">
+    <div class="col-4">
       <div class="choice-card">
         <h6>Upload a metadata file (Optional)<span class="question-mark" onclick ="showLayerInfo()">?<span class="tooltip-text">Here you can upload a metadata file with a predefined area and constraints, to replicate the result. This also specifies the data sources</span></span></h5>
         <input class="form-control" style="width: 90%; margin: 0 auto;" id="file-input" accept=".json" type="file">
@@ -111,7 +111,7 @@
             <ul>
               <li>WMS - Openly released data from Norkart stored in a Web Map Service</li>
               <li>COG - Data stored in the Cloud Optimized GeoTiff format, this data is part of the KartAI dataset. </li>
-              <li>Satellite - ...</li>
+              <li>Satellite - Collect data directly from Planet Labs' Sentinel Hub Satellite imagery.</li>
             </ul>
             <h4>Metadata file:</h4>
             <p>You also have the option to upload a metadata file from a previous project. If you do this then the application will preload all the settings from the metadata but you can still edit parameteres such as coordinates and application data settings.</p>
