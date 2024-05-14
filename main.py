@@ -338,9 +338,12 @@ async def generatePhotos(request: Request):
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), config["data_parameters"][0])
         createMetaData(paths)
         datasetName = config["dataset_name"]
+        if(datasetName == ""):
+            datasetName = "Dataset"
+        
         zip_files(os.path.join(paths["root"]), f"{datasetName}_{session_id}.zip")
         if(config["email"] != ""):
-            send_email(config["email"], os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"), config["dataset_name"])
+            send_email(config["email"], os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"), datasetName)
             util.teardown_user_session_folders(datasetName, session_id);
         return 0
     
@@ -444,6 +447,10 @@ async def download_file(request: Request):
     paths = get_paths(session_id)
     config = util.read_file(paths["config"])["Config"]
     datasetName = config["dataset_name"]
+
+    if(datasetName == ""):
+        datasetName = "Dataset"
+    
     headers = {'Content-Disposition': f'attachment; filename="{datasetName}_{session_id}.zip"'} # Set the headers for the file
     return FileResponse(os.path.join(paths["root"], f"{datasetName}_{session_id}.zip") ,headers= headers) # Return the file for download
 
@@ -482,10 +489,8 @@ def send_email(to_email, attachment_name, dataset_name):
     message['Subject'] = "KARTAI TRENINGSDATA"
     message.attach(MIMEText("This is your requested training data from the training data generator", 'plain'))
 
-    filename = attachment_name.split("/")[-1]  # Extracting just the filename from the path
     attachment = open(attachment_name, "rb")
-
-    print(filename)
+    print("dataset_name: " + dataset_name)
     part = MIMEBase("application", "octet_stream")
     part.set_payload((attachment).read())
     encoders.encode_base64(part)
