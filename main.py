@@ -35,11 +35,12 @@ class ConfigInput(BaseModel):
     dataset_name: str
     image_resolution: float
 
-#Class for datasource input
+# Class for datasource input
 class DataSourceInput(BaseModel):
     label_source: str
     orto_source: str
 
+# Class for metadata input
 class MetaDataInput(BaseModel):
     coordinates_input: object
     data_parameters: list
@@ -72,7 +73,7 @@ for dir_name in static_dirs:
     app.mount(f"/{dir_name}", StaticFiles(directory=dir_name), name=dir_name)
 
 templates = Jinja2Templates(directory="frontend/pages")
-
+ 
 @app.get("/ngis")
 async def getNGIS():
     labelNGIS.getNGIS()
@@ -86,7 +87,6 @@ async def read_index(request: Request, response: Response):
     template = "home.html"
     context = {"request": request}
     return templates.TemplateResponse(template, context, media_type='text/html')
-
 
 @app.get("/{page}.html", response_class=HTMLResponse)
 async def read_page(request: Request, page: str, response: Response):
@@ -122,7 +122,7 @@ def set_session_cookie(response: Response, session_id: str = None): # Sets sessi
         session_id = str(random.randint(0, 1000000000000000))
     response.set_cookie(key="session_id", value=session_id,httponly=True, samesite='Lax') # httponly=True is done for security reasons, unaccessable to javascript.
     print(f"Session cookie set successfully for session_id {session_id}")
-    return {"Session_id": session_id}
+    return {"Session_id": session_id} 
 
 def get_session_id(request: Request): # Returns session ID
     '''
@@ -148,7 +148,7 @@ def read_main(request: Request, response: Response): # Sets session ID in cookie
     '''
     session_id = get_session_id(request)  # Corrected function call
     if not session_id: # If the session ID does not exist, set the cookie
-        set_session_cookie(response)
+        set_session_cookie(response) # Set the cookie
         return {"message": True}
     return {"message": False} 
 
@@ -181,7 +181,7 @@ async def setup_session_folders(request: Request, response: Response):
     
     '''
     session_id = get_session_id(request);  # Get the session ID from the cookie
-    if session_id == None: 
+    if session_id == None: # If the session ID does not exist, return to home
         set_session_cookie(response, None)
         print("Cookie not set, returning to home")
         return FileResponse(os.path.join("frontend", "pages", "home.html")) # Return to home if the cookie is not set
@@ -336,14 +336,18 @@ async def generatePhotos(request: Request):
             #return {"message": "Amount of tiles do not match, please try again"}
         
         util.split_files(os.path.join(paths["root"], "tiles"), os.path.join(paths["root"],"email"), config["data_parameters"][0])
+
         createMetaData(paths)
         datasetName = config["dataset_name"]
+        if(datasetName == ""):
+            datasetName = "Dataset"
+        
         zip_files(os.path.join(paths["root"]), f"{datasetName}_{session_id}.zip")
         if(config["email"] != ""):
-            send_email(config["email"], os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"), config["dataset_name"])
+            send_email(config["email"], os.path.join(paths["root"], f"{datasetName}_{session_id}.zip"), datasetName)
             util.teardown_user_session_folders(datasetName, session_id);
         return 0
-    
+
 def generateTrainingData(paths, label_source, orto_source): 
     all_ran = True # Check if all the functions ran successfully
     if(label_source == "WMS"):
@@ -372,7 +376,7 @@ def generateTrainingData(paths, label_source, orto_source):
 
     return all_ran # Return if all the functions ran successfully
 
-def createMetaData(paths):
+def createMetaData(paths): 
 
     '''
     Helperfunction to write metadata to a file
@@ -384,8 +388,8 @@ def createMetaData(paths):
 
     config = util.read_file(paths["config"])["Config"]; # Read the config file
     coordinates = util.read_file(paths["coordinates"])["Coordinates"]; # Read the coordinates file
-    num_training_tiles = len(os.listdir(os.path.join(paths["root"],"tiles", "orto")))
-    num_label_tiles = len(os.listdir(os.path.join(paths["root"],"tiles", "fasit")))
+    num_training_tiles = len(os.listdir(os.path.join(paths["root"],"tiles", "orto"))) # Get the amount of training tiles
+    num_label_tiles = len(os.listdir(os.path.join(paths["root"],"tiles", "fasit"))) # Get the amount of label tiles
 
     #Date and time of creation.
     now = datetime.now()
@@ -422,13 +426,13 @@ async def download_metadata(request: Request, metaDataInput : MetaDataInput):
     written = True
     message = "Successfully uploaded metadata file!"
     if(util.write_file(paths["config"], configData) != 1 or util.write_file(paths["coordinates"], coordinateInput) != 1):
-        written = False
-        message = "Someting failed with uploading metadata file, please check that your file is correctly formatted and try again!"
-    return {"written": written, "message": message}
+        written = False # If the files were not written successfully, set written to false
+        message = "Someting failed with uploading metadata file, please check that your file is correctly formatted and try again!" # Set the message to an error message
+    return {"written": written, "message": message} # Return if the files were written successfully and a message
 
 
 
-@app.get("/downloadFile")
+@app.get("/downloadFile") # Downloads the file after generation
 async def download_file(request: Request):
     '''
     FastAPI route that allows a user to download a zip file for their session
@@ -440,10 +444,14 @@ async def download_file(request: Request):
     file (FileResponse): The file the user requested, ready for download
     '''
 
-    session_id = request.cookies.get("session_id", None)
-    paths = get_paths(session_id)
+    session_id = request.cookies.get("session_id", None) 
+    paths = get_paths(session_id) 
     config = util.read_file(paths["config"])["Config"]
     datasetName = config["dataset_name"]
+
+    if(datasetName == ""):
+        datasetName = "Dataset"
+    
     headers = {'Content-Disposition': f'attachment; filename="{datasetName}_{session_id}.zip"'} # Set the headers for the file
     return FileResponse(os.path.join(paths["root"], f"{datasetName}_{session_id}.zip") ,headers= headers) # Return the file for download
 
@@ -470,36 +478,37 @@ load_dotenv(env_file_path)
 
 def send_email(to_email, attachment_name, dataset_name):
 
-    message = MIMEMultipart()
-    user = os.getenv('SMTP_USER')
-    password = os.getenv('SMTP_PASS')
-    server = os.getenv('SMTP_SERVER')
-    port = int(os.getenv('SMTP_PORT'))
+    message = MIMEMultipart() # Create a MIMEMultipart object
+    user = os.getenv('SMTP_USER') # Get the user from the environment variables
+    password = os.getenv('SMTP_PASS') # Get the password from the environment variables
+    server = os.getenv('SMTP_SERVER') # Get the server from the environment variables
+    port = int(os.getenv('SMTP_PORT')) # Get the port from the environment variables
     
-    message = MIMEMultipart()
-    message['From'] = user
-    message['To'] = to_email
-    message['Subject'] = "KARTAI TRENINGSDATA"
-    message.attach(MIMEText("This is your requested training data from the training data generator", 'plain'))
+    message = MIMEMultipart() # Create a MIMEMultipart object
+    message['From'] = user # Set the sender
+    message['To'] = to_email # Set the receiver
+    message['Subject'] = "KARTAI TRENINGSDATA" # Set the subject
+    message.attach(MIMEText("This is your requested training data from the training data generator", 'plain')) # Attach the message
 
-    filename = attachment_name.split("/")[-1]  # Extracting just the filename from the path
     attachment = open(attachment_name, "rb")
 
-    print(filename)
+    print("dataset_name: " + dataset_name)
     part = MIMEBase("application", "octet_stream")
     part.set_payload((attachment).read())
     encoders.encode_base64(part)
     part.add_header('Content-Disposition', "attachment; filename= %s" % f"{dataset_name}.zip")
 
-    message.attach(part)
 
-
-    with smtplib.SMTP(server, port) as server:
+    message.attach(part) # Attach the part
+ 
+ # Connect to the SMTP server and send the email
+    with smtplib.SMTP(server, port) as server: 
                 server.starttls()
-                server.login(user, password)
-                server.sendmail(user, to_email, message.as_string())
-                print("Email sent successfully.")
+                server.login(user, password) # Login to the server 
+                server.sendmail(user, to_email, message.as_string()) # Send the email
+                print("Email sent successfully.") # Print that the email was sent successfully
 
+# Zip all files in the specified directory and save them to a zip file
 def zip_files(directory_path: str, zip_name: str = 'attachments.zip'):
     """Zip all files in the specified directory and save them to a zip file."""
     with ZipFile(os.path.join(directory_path, zip_name), 'w') as zipf:
