@@ -255,30 +255,32 @@ window.onload = () => {
  document.getElementById('file-input').addEventListener('change', function(e) {
   loadMetaData()
 });
-
+// NGIS
 document.getElementById('ngis-layer').addEventListener('change', function(e) {
   updateImageSources()
 });
 
+// WMS LAYER
 document.getElementById('wms-layer').addEventListener('change', function(e) {
   updateImageSources()
 });
 
-
+// FGB LAYER
 document.getElementById('fgb-layer').addEventListener('change', function(e) {
   updateImageSources()
 });
 
-
+// WMS ORTOPHOTO
 document.getElementById('wms-ortofoto').addEventListener('change', function(e) {
   updateImageSources()
 });
 
-
+// COG ORTOPHOTO
 document.getElementById('cog-ortofoto').addEventListener('change', function(e) {
   updateImageSources()
 });
 
+// SAT ORTOPHOTO
 document.getElementById('sat-ortofoto').addEventListener('change', function(e) {
   updateImageSources()
 });
