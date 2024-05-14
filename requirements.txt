@@ -5,7 +5,6 @@ azure-storage-blob
 imageio
 fastapi
 uvicorn
-sendgrid
 jinja2
 pyproj
 shapely

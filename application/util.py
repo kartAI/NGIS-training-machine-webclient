@@ -22,10 +22,11 @@ def split_files(image_path, output_folder, training_fraction):
     Returns:
     bool: True if all files were moved successfully, False otherwise
     '''
-
+    # Check if the folders exist
     if(not os.path.exists(os.path.join(image_path, "orto")) or not os.path.exists(os.path.join(image_path, "fasit")) or not os.path.exists(output_folder)):
         return False
     
+    # Get the list of files in the folders
     training_tiles = os.listdir(os.path.join(image_path, "orto"))
     validation_tiles = os.listdir(os.path.join(image_path, "fasit"))
 
@@ -33,11 +34,13 @@ def split_files(image_path, output_folder, training_fraction):
     total_tiles = len(training_tiles) + len(validation_tiles)
     training_files = int(training_fraction)/100 * total_tiles  
     
+    # Move the files to the correct folders
     training_tiles_moved = 0
     validation_tiles_moved = 0
 
     print("Starting the process of distributing the files according to your settings.")
 
+    # Move the files to the correct folders
     for i in range(0, len(training_tiles)):
         if(i < training_files):
             destination = os.path.join(output_folder, "train", "images")
@@ -49,6 +52,7 @@ def split_files(image_path, output_folder, training_fraction):
         except:
             print("Couldn't copy training data correctly")
 
+    # Move the files to the correct folders
     for i in range(0, len(validation_tiles)):
         if(i < training_files):
             destination = os.path.join(output_folder, "train", "masks")
@@ -60,6 +64,7 @@ def split_files(image_path, output_folder, training_fraction):
         except:
             print("Couldn't copy validation data correctly")
 
+    # Check if all files were moved
     if(validation_tiles_moved == len(validation_tiles) and training_tiles_moved == len(training_tiles)):
         print("Finished distributing files successfully!")
         return True
@@ -67,10 +72,6 @@ def split_files(image_path, output_folder, training_fraction):
         print("Something went wrong with distributing the files")
         return False
         
-
-
-
-
 def setup_user_session_folders(session_id):
     '''Sets up folders for a new user session'''
     # If the datasets folder does not exist, create a new one
@@ -97,7 +98,6 @@ def setup_user_session_folders(session_id):
     os.path.join("datasets", main_folder_name, "tiles", "fasit"),
     os.path.join("datasets", main_folder_name, "tiles", "orto")]
     
-  
     # Create the folders
     for folder in folders_to_make:
             os.makedirs(folder, exist_ok=True)
@@ -119,16 +119,15 @@ def setup_user_session_folders(session_id):
 # Utilizes shutil library to remove the folders
 def teardown_user_session_folders(dataset_name, session_id):
     shutil.rmtree(os.path.join("datasets", "dataset_" + str(session_id)))
- 
 
-
+# Utilizes the json library to read the file
 def read_file(file_path):
     '''
     Reads a json file and returns the json contents
     Args:
     file_path (str): The path to the file that you want to read
     '''
-    if(os.path.exists(file_path)):
+    if(os.path.exists(file_path)): 
         file = open(file_path)
         data = json.load(file)
         file.close()
@@ -136,7 +135,7 @@ def read_file(file_path):
     else:
         raise HTTPException(status_code=500, detail=f"Could not find file: {str(file_path)}")
         
-
+# Utilizes the json library to write to the file
 def write_file(file_path, data):
     '''
     Writes json to a file
@@ -200,6 +199,7 @@ def create_bbox_array(coordinates, config):
                 bboxes.append([x0, y0, x1, y1])
     return bboxes
 
+# Utilizes the shapely library to create a bbox
 def create_bbox(coordinates):
     '''
     Creates a bbox based on coordiantess
@@ -214,7 +214,7 @@ def create_bbox(coordinates):
     max_y = max(coord[1] for coord in coordinates)
     return {"minx": min_x, "miny":min_y, "maxx":max_x, "maxy":max_y}
 
-
+# Utilizes the shapely library to check if two bboxes overlap
 def bbox_overlap(bbox1, bbox2):
     """
     Check if two bounding boxes overlap.
